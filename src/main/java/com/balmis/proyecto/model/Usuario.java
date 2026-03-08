@@ -63,15 +63,6 @@ public class Usuario implements Serializable {
     @Column(name = "apellido", nullable = false)
     private String apellido;
 
-//    @NotBlank(message = "El nombre de usuario es obligatorio")
-//    @Size(min=1, max=60, message = "El nombre de usuario no puede tener más de 60 caracteres")
-//    @Column(name = "nombre_usuario", nullable = false) 
-//    private String nombreUsuario;
-//    
-//    @NotBlank(message = "La contraseña es obligatorio")
-//    @Size(min=1, max=255, message = "La contraseña no puede tener más de 255 caracteres")
-//    @Column(name = "hash_password", nullable = false) 
-//    private String hashPassword;
     @Schema(description = "Rol del usuario", example = "Logistica")
     @NotNull(message = "El rol es obligatorio")
     @Enumerated(EnumType.STRING)
