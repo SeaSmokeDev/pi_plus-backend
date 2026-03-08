@@ -45,3 +45,21 @@ INSERT INTO users_security (id, username, email, password, rol, activado, usuari
 ALTER TABLE users_security
 ALTER COLUMN id
 RESTART WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM users_security);
+
+
+-- =========================
+-- DATOS DE PRUEBA - CAJAS
+-- =========================
+INSERT INTO cajas (etiqueta, modelo_producto, palet_id) VALUES
+('CAJA-A1', 'Verifone V240', 101),
+('CAJA-B2', 'Ingenico Move5000', 102),
+('CAJA-C3', 'PAX A920', NULL);
+
+-- =========================
+-- DATOS DE PRUEBA - TERMINALES
+-- =========================
+INSERT INTO terminales_pago (numero_serie, modelo, marca, estado, notas, fecha_ingreso, fecha_creacion, caja_id) VALUES
+('SN10001', 'V240', 'Verifone', 'operativo', 'Terminal en uso tienda centro', '2025-01-10', '2024-12-15', 1),
+('SN10002', 'Move5000', 'Ingenico', 'pendiente_revision', 'Error en lector de tarjetas', '2025-01-20', '2024-11-10', 2),
+('SN10003', 'A920', 'PAX', 'en_transito', 'Enviado desde almacén central', '2025-02-01', '2025-01-25', NULL),
+('SN10004', 'V240', 'Verifone', 'nivel_1', 'Configuración inicial pendiente', '2025-01-05', '2024-12-01', 1);
