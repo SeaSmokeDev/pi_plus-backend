@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data                       // => @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
 
 // SWAGGER
-@Schema(description = "Modelo de Usuario", name="Usuario")
+@Schema(description = "Modelo Pasillo", name="Pasillo")
 // JPA
 @Entity
 @Table(name = "pasillos")
@@ -36,7 +36,7 @@ public class Pasillo {
     
     @Schema(description = "Numero pasillo", example = "2")
     @Min(1)
-    @Column(name = "numero_pasillo", nullable = false, unique = false) 
+    @Column(name = "numero_pasillo", nullable = false, unique = true) 
     private Integer numeroPasillo;
     
 }
