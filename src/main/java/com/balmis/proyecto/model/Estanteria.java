@@ -6,21 +6,19 @@ package com.balmis.proyecto.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,8 +28,8 @@ import lombok.ToString;
 @AllArgsConstructor         // => Constructor con todos los argumentos
 @NoArgsConstructor          // => Constructor sin argumentos
 @Data                       // => @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
-@ToString(exclude = "pasillos")           // Excluir del toString para evitar recursividad
-@EqualsAndHashCode(exclude = "pasillos")
+@ToString(exclude = "pasillo")           // Excluir del toString para evitar recursividad
+@EqualsAndHashCode(exclude = "pasillo")
 
 // SWAGGER
 @Schema(description = "Modelo Estanteria", name = "Estanteria")
@@ -40,7 +38,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "estanterias")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Estanterias implements Serializable{
+public class Estanteria implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "ID unico de la estanteria", example = "1")
@@ -65,8 +63,9 @@ public class Estanterias implements Serializable{
     @Column(name = "capacidad_nivel", nullable = false)
     private Integer capacidadNivel;
     
-    @Schema(description = "Numero de expediciones", example = "2")
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("usuario")
-    private Set<Expedicion> expediciones = new HashSet<>();
+    @Schema(description = "Pasillo al que pertenece la estanteria")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pasillo_id", nullable = false)
+    @JsonIgnoreProperties("estanterias")
+    private Pasillo pasillo;
 }
