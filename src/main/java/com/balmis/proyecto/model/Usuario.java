@@ -79,6 +79,7 @@ public class Usuario implements Serializable {
     @JsonIgnoreProperties("usuario")
     private Set<Expedicion> expediciones = new HashSet<>();
 
+    @Schema(description = "Usuario Securtity", example = "1")
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("usuario")
     private UsuarioSecurity usuarioSecurity;

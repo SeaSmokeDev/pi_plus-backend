@@ -8,9 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-
-
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +20,7 @@ import lombok.NoArgsConstructor;
 
 // SWAGGER
 @Schema(description = "Modelo Pasillo", name="Pasillo")
+
 // JPA
 @Entity
 @Table(name = "pasillos")
