@@ -29,8 +29,8 @@ import lombok.ToString;
 @AllArgsConstructor         // => Constructor con todos los argumentos
 @NoArgsConstructor          // => Constructor sin argumentos
 @Data                       // => @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
-@ToString(exclude = "pasillo")           // Excluir del toString para evitar recursividad
-@EqualsAndHashCode(exclude = "pasillo")
+@ToString(exclude = "estanteria")
+@EqualsAndHashCode(exclude = "estanteria")
 
 // SWAGGER
 @Schema(description = "Modelo Ubicaciones en almacen", name = "UbicacionesAlmacen")
@@ -39,7 +39,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "ubicaciones_almacen")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class UbicacionesAlmacen implements Serializable{
+public class UbicacionAlmacen implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "ID unico de la ubicacion en almacen", example = "1")
@@ -50,19 +50,19 @@ public class UbicacionesAlmacen implements Serializable{
 
     @Schema(description = "Referencia del pasillo-estanteria-nivel", example = "1A3")
     @NotBlank(message = "La referencia es obligatoria")
-    @Size(min = 1, max = 255, message = "La referencia no puede tener más de 255 caracteres")
+    @Size(max = 255, message = "La referencia no puede tener más de 255 caracteres")
     @Column(name = "referencia", nullable = false)
     private String referencia;
     
-    @Schema(description = "El nivel que puede tener una ubicacion", example = "Una ubicacion tiene 4 niveles de altura")
+    @Schema(description = "Estantería a la que pertenece la ubicación")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estanteria_id", nullable = false)
+    @JsonIgnoreProperties({"pasillo", "ubicaciones"})
+    private Estanteria estanteria;
+
+    @Schema(description = "Nivel de la ubicación (1 a 4)", example = "3")
     @Min(1)
     @Max(4)
     @Column(name = "nivel", nullable = false)
-    private Integer nivel;
-    
-    @Schema(description = "Pasillo al que pertenece la estanteria")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pasillo_id", nullable = false)
-    @JsonIgnoreProperties("estanterias")
-    private Pasillo pasillo;
+    private Byte nivel;
 }

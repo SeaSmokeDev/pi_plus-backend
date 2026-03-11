@@ -14,11 +14,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,8 +31,8 @@ import lombok.ToString;
 @AllArgsConstructor         // => Constructor con todos los argumentos
 @NoArgsConstructor          // => Constructor sin argumentos
 @Data                       // => @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
-@ToString(exclude = "pasillo")           // Excluir del toString para evitar recursividad
-@EqualsAndHashCode(exclude = "pasillo")
+@ToString(exclude = {"pasillo", "ubicaciones"})           // Excluir del toString para evitar recursividad
+@EqualsAndHashCode(exclude = {"pasillo", "ubicaciones"})
 
 // SWAGGER
 @Schema(description = "Modelo Estanteria", name = "Estanteria")
@@ -68,4 +71,9 @@ public class Estanteria implements Serializable{
     @JoinColumn(name = "pasillo_id", nullable = false)
     @JsonIgnoreProperties("estanterias")
     private Pasillo pasillo;
+    
+    @Schema(description = "Ubicaciones disponibles en la estanteria")
+    @OneToMany(mappedBy = "estanteria", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("estanteria")
+    private Set<UbicacionAlmacen> ubicaciones = new HashSet<>();
 }
