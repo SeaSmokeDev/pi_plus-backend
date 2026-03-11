@@ -70,12 +70,14 @@ CREATE TABLE IF NOT EXISTS ubicaciones_almacen (
   id INT NOT NULL AUTO_INCREMENT,
   referencia VARCHAR(255) NOT NULL COMMENT 'Ejemplo: 1A3 (pasillo-estantería-nivel)',
   estanteria_id INT NOT NULL,
-  nivel ENUM('1','2','3','4') NOT NULL,
+  nivel TINYINT NOT NULL,
   PRIMARY KEY (id),
   CONSTRAINT fk_ubicaciones_estanterias
     FOREIGN KEY (estanteria_id) REFERENCES estanterias(id),
   CONSTRAINT uq_ubicacion_estanteria_nivel
-    UNIQUE (estanteria_id, nivel)
+    UNIQUE (estanteria_id, nivel),
+  CONSTRAINT ck_ubicaciones_nivel
+    CHECK (nivel BETWEEN 1 AND 4)
 );
 
 -- 4) PALLETS
