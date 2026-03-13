@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.balmis.proyecto.repository.TerminalRepository;
-import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -67,6 +66,9 @@ public class TerminalService {
         }
         if (terminalUpdate.getNotas() != null) {
             terminal.setNotas(terminalUpdate.getNotas());
+        }
+         if (terminalUpdate.getFechaIngreso() != null) {
+            terminal.setFechaIngreso(terminalUpdate.getFechaIngreso());
         }
         if (terminalUpdate.getFechaCreacion() != null) {
             terminal.setFechaCreacion(terminalUpdate.getFechaCreacion());
