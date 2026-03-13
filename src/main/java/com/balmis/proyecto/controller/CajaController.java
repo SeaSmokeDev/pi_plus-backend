@@ -216,7 +216,9 @@ public class CajaController {
                  if (caja.getModeloProducto() != null) {
                     existingCaja.setModeloProducto(caja.getModeloProducto());
                 }
-                existingCaja.setIdPale(caja.getIdPale());
+                if (caja.getPalet() != null) {
+                    existingCaja.setPalet(caja.getPalet());
+                }
 
                 Caja cajaPut = cajaService.save(existingCaja);
 

@@ -67,7 +67,7 @@ public class Caja implements Serializable {
     
     @Schema(description = "Palé asignado a la caja")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "palet_id")
+    @JoinColumn(name = "palet_id", nullable = true)
     @JsonIgnoreProperties({"cajas", "ubicacionAlmacen"})
     private Palet palet;
     
