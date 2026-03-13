@@ -47,7 +47,7 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     List<Expedicion> findSqlLikeDireccion(@Param("contiene") String contiene);
 
     // Consulta con SQL mapeado
-    @Query(value = "SELECT COUNT(*) as empleados FROM empleados", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) as expediciones FROM expediciones", nativeQuery = true)
     Long countSql();
 
     // **********************************************************

@@ -1,6 +1,7 @@
 
 package com.balmis.proyecto.repository;
 
+import com.balmis.proyecto.model.EstadoTerminal;
 import com.balmis.proyecto.model.Terminal;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public interface TerminalRepository extends JpaRepository<Terminal, Integer> {
     // Consulta con DQM 
     Optional<Terminal> findByNumeroSerie(String numeroSerie);
     
-    List<Terminal> findByEstado(String estado);
+    List<Terminal> findByEstado(EstadoTerminal estado);
 
     // Consulta con SQL 
     @Query(value = "SELECT * FROM terminales_pago", nativeQuery = true)

@@ -32,7 +32,7 @@ public interface PasilloRepository extends JpaRepository<Pasillo, Integer> {
     // **********************************************************
 
     // Consulta con DQM 
-    Optional<Pasillo> findByNumeroPasillo(String numeroPasillo);
+    Optional<Pasillo> findByNumeroPasillo(Integer numeroPasillo);
     
     // Consulta con SQL 
     @Query(value = "SELECT * FROM pasillos", nativeQuery = true)
