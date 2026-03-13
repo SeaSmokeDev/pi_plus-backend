@@ -44,6 +44,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/expediciones/**").hasAnyRole("ADMIN","LOGISTICA","ALMACEN")    // Acceso identificado productos
                     .requestMatchers("/api/usuarios/**").hasRole("ADMIN")                  // Acceso identificado usuarios
                     .requestMatchers("/api/security/**").hasRole("ADMIN")
+                    .requestMatchers("/api/estanterias/**").hasRole("ADMIN")
+                    .requestMatchers("/api/palets/**").hasRole("ADMIN")
+                    .requestMatchers("/api/ubicaciones/**").hasRole("ADMIN")
                     .requestMatchers("/h2-console/**").hasRole("ADMIN")             // Acceso identificado a consola H2           
                     .anyRequest().denyAll()                                         // Acceso DENEGADO al resto
                 )
