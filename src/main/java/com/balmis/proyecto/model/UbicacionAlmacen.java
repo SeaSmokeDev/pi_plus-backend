@@ -14,12 +14,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,8 +32,8 @@ import lombok.ToString;
 @AllArgsConstructor         // => Constructor con todos los argumentos
 @NoArgsConstructor          // => Constructor sin argumentos
 @Data                       // => @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
-@ToString(exclude = "estanteria")
-@EqualsAndHashCode(exclude = "estanteria")
+@ToString(exclude = {"estanteria", "palets"})
+@EqualsAndHashCode(exclude = {"estanteria", "palets"})
 
 // SWAGGER
 @Schema(description = "Modelo Ubicaciones en almacen", name = "UbicacionesAlmacen")
@@ -65,4 +68,9 @@ public class UbicacionAlmacen implements Serializable{
     @Max(4)
     @Column(name = "nivel", nullable = false)
     private Byte nivel;
+    
+    @Schema(description = "Palés ubicados en esta ubicación")
+    @OneToMany(mappedBy = "ubicacionAlmacen", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("ubicacionAlmacen")
+    private Set<Palet> palets = new HashSet<>();
 }

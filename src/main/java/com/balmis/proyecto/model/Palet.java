@@ -6,12 +6,20 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,8 +30,8 @@ import lombok.ToString;
 @AllArgsConstructor         // => Constructor con todos los argumentos
 @NoArgsConstructor          // => Constructor sin argumentos
 @Data                       // => @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
-@ToString(exclude = "expediciones")           // Excluir del toString para evitar recursividad
-@EqualsAndHashCode(exclude = "expediciones")  // Excluir de equals y hashCode para evitar recursividad
+@ToString(exclude = {"ubicacionAlmacen", "cajas"})
+@EqualsAndHashCode(exclude = {"ubicacionAlmacen", "cajas"})
 
 // SWAGGER
 @Schema(description = "Modelo de Palet", name = "Palet")
@@ -31,7 +39,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "palets")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Palet {
+public class Palet implements Serializable {
 
     @Schema(description = "ID único del palet", example = "1")
     @Id
@@ -40,8 +48,9 @@ public class Palet {
     private Integer id;
 
     @Schema(description = "Descripcion del pale", example = "")
+    @NotBlank(message = "La descripcion es obligatoria")
     @Size(min = 1, max = 255, message = "La descripcion no puede tener más de 255 caracteres")
-    @Column(name = "descripcion", unique = false)
+    @Column(name = "descripcion", nullable = false, unique = false)
     private String descripcion;
     
     @Schema(description = "Material del palet", example = "Madera")
@@ -64,5 +73,15 @@ public class Palet {
     @Column(name = "codigo_marca", unique = false)
     private String codigoMarca;
     
+    @Schema(description = "Ubicación de almacén del palé")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ubicacion_almacen_id")
+    @JsonIgnoreProperties({"palets", "estanteria"})
+    private UbicacionAlmacen ubicacionAlmacen;
+
+    @Schema(description = "Cajas asignadas al palé")
+    @OneToMany(mappedBy = "palet", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("palet")
+    private Set<Caja> cajas = new HashSet<>();
     
 }

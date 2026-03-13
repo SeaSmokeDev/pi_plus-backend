@@ -54,7 +54,7 @@ public class Estanteria implements Serializable{
     @NotBlank(message = "El codigo es obligatorio")
     @Size(min = 1, max = 1)
     @Column(name = "codigo", nullable = false)
-    private char codigo;
+    private String codigo;
 
     @Schema(description = "Nivel maximo de la estanteria", example = "4")
     @Min(1)
