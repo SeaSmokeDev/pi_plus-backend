@@ -114,8 +114,8 @@ CREATE TABLE IF NOT EXISTS terminales_pago (
   marca VARCHAR(255) NOT NULL,
   estado ENUM('en_transito', 'pendiente_revision', 'operativo', 'pendiente_laboratorio', 'nivel_1') NOT NULL,
   notas VARCHAR(255),
-  fecha_ingreso DATE NOT NULL,
-  fecha_creacion DATE NOT NULL,
+  fecha_ingreso TIMESTAMP NOT NULL,
+  fecha_creacion TIMESTAMP NOT NULL,
   caja_id INT DEFAULT NULL,
   PRIMARY KEY (id),
   CONSTRAINT fk_terminales_cajas
