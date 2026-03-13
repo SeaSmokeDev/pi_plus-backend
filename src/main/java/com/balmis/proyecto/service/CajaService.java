@@ -59,7 +59,9 @@ public class CajaService {
             caja.setModeloProducto(cajaUpdate.getModeloProducto());
         }
         
-        caja.setIdPale(cajaUpdate.getIdPale());
+        if (cajaUpdate.getPalet() != null) {
+            caja.setPalet(cajaUpdate.getPalet());
+        }
         
         return cajaRepository.save(caja);
     }
