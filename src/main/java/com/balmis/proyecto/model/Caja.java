@@ -60,10 +60,6 @@ public class Caja implements Serializable {
     @Size(min=1, max=100, message = "La descripción no puede tener más de 100 caracteres")
     @Column(name = "modelo_producto", nullable = false, unique = false) 
     private String modeloProducto;
-
-    @Schema(description = "ID único del palé que está asignado una caja", example = "PALE-1234N")
-    @Column(name = "palet_id", nullable = true, unique = true) 
-    private Integer idPale;
     
     @Schema(description = "Palé asignado a la caja")
     @ManyToOne(fetch = FetchType.LAZY)

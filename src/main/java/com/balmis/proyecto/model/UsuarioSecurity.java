@@ -68,17 +68,6 @@ public class UsuarioSecurity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "rol", nullable = false)
     private Rol rol;
-//    @Schema(description = "Activar permisos de Administrador", example = "false")
-//    @Column(name = "administrador", nullable = false, unique = false) 
-//    private boolean administrador;
-//
-//    @Schema(description = "Activar permisos de Usuario", example = "true")
-//    @Column(name = "usuario", nullable = false, unique = false) 
-//    private boolean usuario;
-//
-//    @Schema(description = "Activar permisos de Invitado", example = "true")
-//    @Column(name = "invitado", nullable = false, unique = false) 
-//    private boolean invitado;
 
     @Schema(description = "Activar el usuario", example = "true")
     @Column(name = "activado", nullable = false, unique = false)
