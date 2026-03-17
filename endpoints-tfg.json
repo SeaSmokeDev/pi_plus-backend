@@ -1,0 +1,250 @@
+{
+  "info": {
+    "_postman_id": "fcd3316e-d46c-46dd-95f4-2c21076dbf01",
+    "name": "pi_plus-backend",
+    "description": "Colección de endpoints detectados en controladores Spring del proyecto pi_plus-backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health/Swagger",
+      "item": [
+        {
+          "name": "Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "OpenAPI docs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api-docs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api-docs"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"cmartinez\",\n  \"password\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Usuario autenticado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {"name":"GET - Todos","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/usuarios","host":["{{baseUrl}}"],"path":["api","usuarios"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/usuarios/{{usuarioId}}","host":["{{baseUrl}}"],"path":["api","usuarios","{{usuarioId}}"]}},"response":[]},
+        {"name":"GET - Por nombre (contiene)","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/usuarios/nombre/x?contiene={{nombreContiene}}","host":["{{baseUrl}}"],"path":["api","usuarios","nombre","x"],"query":[{"key":"contiene","value":"{{nombreContiene}}"}]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/usuarios/count","host":["{{baseUrl}}"],"path":["api","usuarios","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"nombre\": \"Mario\",\n  \"apellido\": \"Santos\",\n  \"rol\": \"tecnico\",\n  \"lugarTrabajo\": \"Almacén A\"\n}"},"url":{"raw":"{{baseUrl}}/api/usuarios","host":["{{baseUrl}}"],"path":["api","usuarios"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{usuarioId}},\n  \"nombre\": \"Ramiro\",\n  \"apellido\": \"Perez\",\n  \"rol\": \"tecnico\",\n  \"lugarTrabajo\": \"Almacén C\"\n}"},"url":{"raw":"{{baseUrl}}/api/usuarios","host":["{{baseUrl}}"],"path":["api","usuarios"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/usuarios/{{usuarioId}}","host":["{{baseUrl}}"],"path":["api","usuarios","{{usuarioId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Expediciones",
+      "item": [
+        {"name":"GET - Todas","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones","host":["{{baseUrl}}"],"path":["api","expediciones"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/{{expedicionId}}","host":["{{baseUrl}}"],"path":["api","expediciones","{{expedicionId}}"]}},"response":[]},
+        {"name":"GET - Por username","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/nombre/usuario/{{username}}","host":["{{baseUrl}}"],"path":["api","expediciones","nombre","usuario","{{username}}"]}},"response":[]},
+        {"name":"GET - Por dirección (contiene)","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/direccion/x?contiene={{direccionContiene}}","host":["{{baseUrl}}"],"path":["api","expediciones","direccion","x"],"query":[{"key":"contiene","value":"{{direccionContiene}}"}]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/count","host":["{{baseUrl}}"],"path":["api","expediciones","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"direccionDestino\": \"Calle Nueva 45, Alicante\",\n  \"paquetes\": 2,\n  \"peso\": 13,\n  \"notas\": \"Entrega frágil\",\n  \"estado\": \"abierta\"\n}"},"url":{"raw":"{{baseUrl}}/api/expediciones/{{idUserExpedicion}}","host":["{{baseUrl}}"],"path":["api","expediciones","{{idUserExpedicion}}"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{expedicionId}},\n  \"direccionDestino\": \"Av. Actualizada 123, Sevilla\",\n  \"paquetes\": 6,\n  \"peso\": 95,\n  \"notas\": \"Entrega Actualizada\",\n  \"estado\": \"abierta\"\n}"},"url":{"raw":"{{baseUrl}}/api/expediciones","host":["{{baseUrl}}"],"path":["api","expediciones"]}},"response":[]},
+        {"name":"PUT - Marcar en tránsito","request":{"method":"PUT","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/{{expedicionId}}/en-transito","host":["{{baseUrl}}"],"path":["api","expediciones","{{expedicionId}}","en-transito"]}},"response":[]},
+        {"name":"PUT - Marcar recibida","request":{"method":"PUT","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/{{expedicionId}}/recibida","host":["{{baseUrl}}"],"path":["api","expediciones","{{expedicionId}}","recibida"]}},"response":[]},
+        {"name":"PUT - Reasignar usuario","request":{"method":"PUT","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/{{expedicionId}}/reasignar/usuario/{{usuarioId}}","host":["{{baseUrl}}"],"path":["api","expediciones","{{expedicionId}}","reasignar","usuario","{{usuarioId}}"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/expediciones/{{expedicionId}}","host":["{{baseUrl}}"],"path":["api","expediciones","{{expedicionId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Usuarios Security",
+      "item": [
+        {"name":"GET - Todos","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/security/usuarios","host":["{{baseUrl}}"],"path":["api","security","usuarios"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/security/usuarios/{{usuarioSecurityId}}","host":["{{baseUrl}}"],"path":["api","security","usuarios","{{usuarioSecurityId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/security/usuarios/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","security","usuarios","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/security/usuarios/count","host":["{{baseUrl}}"],"path":["api","security","usuarios","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"username\": \"nuevo_user\",\n  \"email\": \"nuevo@empresa.com\",\n  \"password\": \"$2a$10$fzcGgF.8xODz7ptkmZC.OeX1Kj5GDI//FhW2sG0vlshW6ZAKJky0e\",\n  \"rol\": \"tecnico\",\n  \"activado\": true\n}"},"url":{"raw":"{{baseUrl}}/api/security/usuarios/{{idUsuarioBase}}","host":["{{baseUrl}}"],"path":["api","security","usuarios","{{idUsuarioBase}}"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{usuarioSecurityId}},\n  \"username\": \"nuevo_user_put\",\n  \"email\": \"actualizado@empresa.com\",\n  \"password\": \"$2a$10$fzcGgF.8xODz7ptkmZC.OeX1Kj5GDI//FhW2sG0vlshW6ZAKJky0e\",\n  \"rol\": \"tecnico\",\n  \"activado\": false\n}"},"url":{"raw":"{{baseUrl}}/api/security/usuarios","host":["{{baseUrl}}"],"path":["api","security","usuarios"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/security/usuarios/{{usuarioSecurityId}}","host":["{{baseUrl}}"],"path":["api","security","usuarios","{{usuarioSecurityId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Pasillos",
+      "item": [
+        {"name":"GET - Todos","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/pasillos","host":["{{baseUrl}}"],"path":["api","pasillos"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/pasillos/{{pasilloId}}","host":["{{baseUrl}}"],"path":["api","pasillos","{{pasilloId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/pasillos/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","pasillos","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/pasillos/count","host":["{{baseUrl}}"],"path":["api","pasillos","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"numeroPasillo\": 10\n}"},"url":{"raw":"{{baseUrl}}/api/pasillos","host":["{{baseUrl}}"],"path":["api","pasillos"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{pasilloId}},\n  \"numeroPasillo\": 11\n}"},"url":{"raw":"{{baseUrl}}/api/pasillos","host":["{{baseUrl}}"],"path":["api","pasillos"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/pasillos/{{pasilloId}}","host":["{{baseUrl}}"],"path":["api","pasillos","{{pasilloId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Estanterias",
+      "item": [
+        {"name":"GET - Todas","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/estanterias","host":["{{baseUrl}}"],"path":["api","estanterias"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/estanterias/{{estanteriaId}}","host":["{{baseUrl}}"],"path":["api","estanterias","{{estanteriaId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/estanterias/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","estanterias","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/estanterias/count","host":["{{baseUrl}}"],"path":["api","estanterias","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"codigo\": \"Z\",\n  \"nivelesMaximos\": 4,\n  \"capacidadNivel\": 8,\n  \"pasillo\": {\n    \"id\": {{pasilloId}}\n  }\n}"},"url":{"raw":"{{baseUrl}}/api/estanterias","host":["{{baseUrl}}"],"path":["api","estanterias"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{estanteriaId}},\n  \"codigo\": \"Y\",\n  \"nivelesMaximos\": 4,\n  \"capacidadNivel\": 10\n}"},"url":{"raw":"{{baseUrl}}/api/estanterias","host":["{{baseUrl}}"],"path":["api","estanterias"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/estanterias/{{estanteriaId}}","host":["{{baseUrl}}"],"path":["api","estanterias","{{estanteriaId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Ubicaciones Almacen",
+      "item": [
+        {"name":"GET - Todas","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/ubicaciones","host":["{{baseUrl}}"],"path":["api","ubicaciones"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/ubicaciones/{{ubicacionId}}","host":["{{baseUrl}}"],"path":["api","ubicaciones","{{ubicacionId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/ubicaciones/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","ubicaciones","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/ubicaciones/count","host":["{{baseUrl}}"],"path":["api","ubicaciones","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"referencia\": \"1A9\",\n  \"nivel\": 3,\n  \"estanteria\": {\n    \"id\": {{estanteriaId}}\n  }\n}"},"url":{"raw":"{{baseUrl}}/api/ubicaciones","host":["{{baseUrl}}"],"path":["api","ubicaciones"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{ubicacionId}},\n  \"referencia\": \"1A8\",\n  \"nivel\": 2\n}"},"url":{"raw":"{{baseUrl}}/api/ubicaciones","host":["{{baseUrl}}"],"path":["api","ubicaciones"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/ubicaciones/{{ubicacionId}}","host":["{{baseUrl}}"],"path":["api","ubicaciones","{{ubicacionId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Palets",
+      "item": [
+        {"name":"GET - Todos","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/palets","host":["{{baseUrl}}"],"path":["api","palets"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/palets/{{paletId}}","host":["{{baseUrl}}"],"path":["api","palets","{{paletId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/palets/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","palets","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/palets/count","host":["{{baseUrl}}"],"path":["api","palets","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"descripcion\": \"Palet test\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8,\n  \"codigoMarca\": \"PAL-TEST-001\",\n  \"ubicacionAlmacen\": {\n    \"id\": {{ubicacionId}}\n  }\n}"},"url":{"raw":"{{baseUrl}}/api/palets","host":["{{baseUrl}}"],"path":["api","palets"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{paletId}},\n  \"descripcion\": \"Palet test actualizado\",\n  \"material\": \"plastico\",\n  \"tipo\": \"americano\",\n  \"capacidadMaxCajas\": 6,\n  \"codigoMarca\": \"PAL-TEST-002\"\n}"},"url":{"raw":"{{baseUrl}}/api/palets","host":["{{baseUrl}}"],"path":["api","palets"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/palets/{{paletId}}","host":["{{baseUrl}}"],"path":["api","palets","{{paletId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Cajas",
+      "item": [
+        {"name":"GET - Todas","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/cajas/cajas","host":["{{baseUrl}}"],"path":["api","cajas","cajas"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/cajas/cajas/{{cajaId}}","host":["{{baseUrl}}"],"path":["api","cajas","cajas","{{cajaId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/cajas/cajas/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","cajas","cajas","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/cajas/cajas/count","host":["{{baseUrl}}"],"path":["api","cajas","cajas","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"etiqueta\": \"CAJA-TEST-001\",\n  \"modeloProducto\": \"Modelo test\",\n  \"palet\": {\n    \"id\": {{paletId}}\n  }\n}"},"url":{"raw":"{{baseUrl}}/api/cajas/cajas","host":["{{baseUrl}}"],"path":["api","cajas","cajas"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{cajaId}},\n  \"etiqueta\": \"CAJA-TEST-002\",\n  \"modeloProducto\": \"Modelo actualizado\"\n}"},"url":{"raw":"{{baseUrl}}/api/cajas/cajas","host":["{{baseUrl}}"],"path":["api","cajas","cajas"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/cajas/cajas/{{cajaId}}","host":["{{baseUrl}}"],"path":["api","cajas","cajas","{{cajaId}}"]}},"response":[]}
+      ]
+    },
+    {
+      "name": "Terminales",
+      "item": [
+        {"name":"GET - Todos","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/terminales/terminales","host":["{{baseUrl}}"],"path":["api","terminales","terminales"]}},"response":[]},
+        {"name":"GET - Por ID","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/terminales/terminales/{{terminalId}}","host":["{{baseUrl}}"],"path":["api","terminales","terminales","{{terminalId}}"]}},"response":[]},
+        {"name":"GET - ID mayor que","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/terminales/terminales/mayor/{{idMayorQue}}","host":["{{baseUrl}}"],"path":["api","terminales","terminales","mayor","{{idMayorQue}}"]}},"response":[]},
+        {"name":"GET - Count","request":{"method":"GET","header":[],"url":{"raw":"{{baseUrl}}/api/terminales/terminales/count","host":["{{baseUrl}}"],"path":["api","terminales","terminales","count"]}},"response":[]},
+        {"name":"POST - Crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"numeroSerie\": \"SN-TST-0001\",\n  \"modelo\": \"VX520\",\n  \"marca\": \"Verifone\",\n  \"estado\": \"operativo\",\n  \"notas\": \"Alta manual\",\n  \"fechaIngreso\": \"2025-01-20T00:00:00\",\n  \"fechaCreacion\": \"2025-01-19T00:00:00\",\n  \"caja\": {\n    \"id\": {{cajaId}}\n  }\n}"},"url":{"raw":"{{baseUrl}}/api/terminales/terminales","host":["{{baseUrl}}"],"path":["api","terminales","terminales"]}},"response":[]},
+        {"name":"PUT - Actualizar","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"id\": {{terminalId}},\n  \"numeroSerie\": \"SN-TST-0001\",\n  \"modelo\": \"VX520\",\n  \"marca\": \"Verifone\",\n  \"estado\": \"pendiente_revision\",\n  \"notas\": \"Actualizado\",\n  \"fechaIngreso\": \"2025-01-20T00:00:00\"\n}"},"url":{"raw":"{{baseUrl}}/api/terminales/terminales","host":["{{baseUrl}}"],"path":["api","terminales","terminales"]}},"response":[]},
+        {"name":"DELETE - Eliminar","request":{"method":"DELETE","header":[],"url":{"raw":"{{baseUrl}}/api/terminales/terminales/{{terminalId}}","host":["{{baseUrl}}"],"path":["api","terminales","terminales","{{terminalId}}"]}},"response":[]}
+      ]
+    }
+  ],
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:8080/bdproyecto"},
+    {"key":"usuarioId","value":"1"},
+    {"key":"usuarioSecurityId","value":"1"},
+    {"key":"expedicionId","value":"1"},
+    {"key":"username","value":"cmartinez"},
+    {"key":"idUserExpedicion","value":"1"},
+    {"key":"idUsuarioBase","value":"1"},
+    {"key":"nombreContiene","value":"car"},
+    {"key":"direccionContiene","value":"madrid"},
+    {"key":"idMayorQue","value":"1"},
+    {"key":"pasilloId","value":"1"},
+    {"key":"estanteriaId","value":"1"},
+    {"key":"ubicacionId","value":"1"},
+    {"key":"paletId","value":"1"},
+    {"key":"cajaId","value":"1"},
+    {"key":"terminalId","value":"1"}
+  ]
+}
