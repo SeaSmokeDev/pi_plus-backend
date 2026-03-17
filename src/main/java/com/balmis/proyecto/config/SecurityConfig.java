@@ -47,6 +47,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/estanterias/**").hasRole("ADMIN")
                     .requestMatchers("/api/palets/**").hasRole("ADMIN")
                     .requestMatchers("/api/ubicaciones/**").hasRole("ADMIN")
+                        .requestMatchers("/api/pasillos/**").hasRole("ADMIN")
+                        .requestMatchers("/api/cajas/**").hasRole("ADMIN")
+                        .requestMatchers("/api/terminales/**").hasRole("ADMIN")
                     .requestMatchers("/h2-console/**").hasRole("ADMIN")             // Acceso identificado a consola H2           
                     .anyRequest().denyAll()                                         // Acceso DENEGADO al resto
                 )
