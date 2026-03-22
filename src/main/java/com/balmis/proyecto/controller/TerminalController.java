@@ -75,7 +75,7 @@ public class TerminalController {
         }
     }
 
-    // http://localhost:8080/bdproyecto/api/terminales/terminales/sn/SN10001
+    // http://localhost:8080/bdproyecto/api/terminales/sn/SN10001
     // ***************************************************************************
     // SWAGGER
     @Operation(summary = "Obtener terminal por número de serie",
