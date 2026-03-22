@@ -83,6 +83,38 @@ public class TerminalService {
     }
 
     @Transactional
+    public Terminal updateByNumeroSerie(String numeroSerie, Terminal terminalUpdate) {
+        Terminal terminal = terminalRepository.findSqlByNumeroSerie(numeroSerie);
+        if (terminal == null) {
+            throw new RuntimeException("Terminal no encontrado");
+        }
+
+        if (terminalUpdate.getNumeroSerie() != null) {
+            terminal.setNumeroSerie(terminalUpdate.getNumeroSerie());
+        }
+        if (terminalUpdate.getModelo() != null) {
+            terminal.setModelo(terminalUpdate.getModelo());
+        }
+        if (terminalUpdate.getMarca() != null) {
+            terminal.setMarca(terminalUpdate.getMarca());
+        }
+        if (terminalUpdate.getEstado() != null) {
+            terminal.setEstado(terminalUpdate.getEstado());
+        }
+        if (terminalUpdate.getNotas() != null) {
+            terminal.setNotas(terminalUpdate.getNotas());
+        }
+        if (terminalUpdate.getFechaIngreso() != null) {
+            terminal.setFechaIngreso(terminalUpdate.getFechaIngreso());
+        }
+        if (terminalUpdate.getFechaCreacion() != null) {
+            terminal.setFechaCreacion(terminalUpdate.getFechaCreacion());
+        }
+
+        return terminalRepository.save(terminal);
+    }
+
+    @Transactional
     public Terminal patch(int id, Terminal terminalPatch) {
         Terminal terminal = terminalRepository.findSqlById(id);
         if (terminal == null) {
