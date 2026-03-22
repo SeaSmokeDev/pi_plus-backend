@@ -46,6 +46,10 @@ public interface TerminalRepository extends JpaRepository<Terminal, Integer> {
     @Query(value = "SELECT * FROM terminales_pago WHERE id = :id", nativeQuery = true)
     Terminal findSqlById(@Param("id") int id);
 
+    // Consulta con SQL
+    @Query(value = "SELECT * FROM terminales_pago WHERE numero_serie = :numeroSerie", nativeQuery = true)
+    Terminal findSqlByNumeroSerie(@Param("numeroSerie") String numeroSerie);
+
     // Consulta con SQL 
       @Query(value = "SELECT COUNT(*) FROM terminales_pago", nativeQuery = true)
     Long countSql(); 

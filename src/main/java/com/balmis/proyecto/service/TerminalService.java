@@ -28,6 +28,11 @@ public class TerminalService {
         return terminalRepository.findSqlById(terminalId);
     }
 
+    @Transactional(readOnly = true)
+    public Terminal findByNumeroSerie(String numeroSerie) {
+        return terminalRepository.findSqlByNumeroSerie(numeroSerie);
+    }
+
     @Transactional(readOnly = true) 
     public Long count() {
         return terminalRepository.count();

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Terminales", description = "API para gestión de Terminales")
 @RestController
-@RequestMapping("/api/terminales")
+@RequestMapping("/api")
 public class TerminalController {
 
     @Autowired
@@ -63,6 +63,31 @@ public class TerminalController {
     @GetMapping("/terminales/{id}")
     public ResponseEntity<Terminal> detailsterminal(@PathVariable int id) {
         Terminal terminal = terminalService.findById(id);
+
+        if (terminal == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(null);  // 404 Not Found
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(terminal);
+        }
+    }
+
+    // http://localhost:8080/bdproyecto/api/terminales/terminales/sn/SN10001
+    // ***************************************************************************
+    // SWAGGER
+    @Operation(summary = "Obtener terminal por número de serie",
+            description = "Retorna un Terminal específico basado en su número de serie (SN)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Terminal encontrado"),
+        @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
+    })
+    // ***************************************************************************
+    @GetMapping("/terminales/sn/{numeroSerie}")
+    public ResponseEntity<Terminal> detailsterminalByNumeroSerie(@PathVariable String numeroSerie) {
+        Terminal terminal = terminalService.findByNumeroSerie(numeroSerie);
 
         if (terminal == null) {
             return ResponseEntity
