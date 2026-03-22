@@ -32,11 +32,25 @@ Prefijos principales de la API:
 - Obtener todos: `GET http://localhost:8080/bdproyecto/api/terminales`
 - Obtener por id: `GET http://localhost:8080/bdproyecto/api/terminales/{id}`
 - Obtener por SN (`numero_serie`): `GET http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
+- Crear: `POST http://localhost:8080/bdproyecto/api/terminales`
+- Reemplazar completo por id: `PUT http://localhost:8080/bdproyecto/api/terminales`
+- Actualizar parcial por id: `PATCH http://localhost:8080/bdproyecto/api/terminales/{id}`
+- Actualizar parcial por SN: `PATCH http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
+- Eliminar por id: `DELETE http://localhost:8080/bdproyecto/api/terminales/{id}`
+- Eliminar por SN: `DELETE http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
 
 Ejemplo por SN:
 
 ```bash
 curl "http://localhost:8080/bdproyecto/api/terminales/sn/SN10001"
+```
+
+Ejemplo PATCH por SN:
+
+```bash
+curl -X PATCH "http://localhost:8080/bdproyecto/api/terminales/sn/SN10001" \
+  -H "Content-Type: application/json" \
+  -d '{"estado":"operativo","notas":"Actualizado por SN"}'
 ```
 
 ## Usuarios de autenticación (cargados por `data.sql`)
