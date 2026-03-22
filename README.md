@@ -33,7 +33,7 @@ Prefijos principales de la API:
 - Obtener por id: `GET http://localhost:8080/bdproyecto/api/terminales/{id}`
 - Obtener por SN (`numero_serie`): `GET http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
 - Crear: `POST http://localhost:8080/bdproyecto/api/terminales`
-- Reemplazar completo por id: `PUT http://localhost:8080/bdproyecto/api/terminales`
+- Reemplazar completo por SN: `PUT http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
 - Actualizar parcial por id: `PATCH http://localhost:8080/bdproyecto/api/terminales/{id}`
 - Actualizar parcial por SN: `PATCH http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
 - Eliminar por id: `DELETE http://localhost:8080/bdproyecto/api/terminales/{id}`
