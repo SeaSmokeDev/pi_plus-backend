@@ -23,9 +23,21 @@ Prefijos principales de la API:
 - `http://localhost:8080/bdproyecto/api/palets`
 - `http://localhost:8080/bdproyecto/api/expediciones`
 - `http://localhost:8080/bdproyecto/api/estanterias`
-- `http://localhost:8080/bdproyecto/api/terminales/terminales`
+- `http://localhost:8080/bdproyecto/api/terminales`
 - `http://localhost:8080/bdproyecto/api/pasillos`
 - `http://localhost:8080/bdproyecto/api/ubicaciones`
+
+## Rutas de terminales (incluye búsqueda por SN)
+
+- Obtener todos: `GET http://localhost:8080/bdproyecto/api/terminales`
+- Obtener por id: `GET http://localhost:8080/bdproyecto/api/terminales/{id}`
+- Obtener por SN (`numero_serie`): `GET http://localhost:8080/bdproyecto/api/terminales/sn/{numeroSerie}`
+
+Ejemplo por SN:
+
+```bash
+curl "http://localhost:8080/bdproyecto/api/terminales/sn/SN10001"
+```
 
 ## Usuarios de autenticación (cargados por `data.sql`)
 
