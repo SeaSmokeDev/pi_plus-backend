@@ -12,10 +12,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface TerminalRepository extends JpaRepository<Terminal, Integer> {
 
-    // ****************************
-    // Métodos HEREDADOS
-    // ****************************
-    /*
+  // ****************************
+  // Métodos HEREDADOS
+  // ****************************
+  /*
         findAll()
         findById(id)
 
@@ -27,51 +27,51 @@ public interface TerminalRepository extends JpaRepository<Terminal, Integer> {
         equals(User)
         exist(User)
         existById(id)
-     */
-    
-    // **********************************************************
-    // Obtener datos (find y count)
-    // **********************************************************
+   */
 
-    // Consulta con DQM 
-    Optional<Terminal> findByNumeroSerie(String numeroSerie);
-    
-    List<Terminal> findByEstado(EstadoTerminal estado);
+  // **********************************************************
+  // Obtener datos (find y count)
+  // **********************************************************
 
-    // Consulta con SQL 
-    @Query(value = "SELECT * FROM terminales_pago", nativeQuery = true)
-    List<Terminal> findSqlAll();
-    
-    // Consulta con SQL 
-    @Query(value = "SELECT * FROM terminales_pago WHERE id = :id", nativeQuery = true)
-    Terminal findSqlById(@Param("id") int id);
+  // Consulta con DQM
+  Optional<Terminal> findByNumeroSerie(String numeroSerie);
 
-    // Consulta con SQL
-    @Query(value = "SELECT * FROM terminales_pago WHERE numero_serie = :numeroSerie", nativeQuery = true)
-    Terminal findSqlByNumeroSerie(@Param("numeroSerie") String numeroSerie);
+  List<Terminal> findByEstado(EstadoTerminal estado);
 
-    // Consulta con SQL 
-      @Query(value = "SELECT COUNT(*) FROM terminales_pago", nativeQuery = true)
-    Long countSql(); 
+  // Consulta con SQL
+  @Query(value = "SELECT * FROM terminales_pago", nativeQuery = true)
+  List<Terminal> findSqlAll();
 
-    // Consulta con SQL 
-   @Query(value = "SELECT * FROM terminales_pago WHERE id > :id", nativeQuery = true)
-    List<Terminal> findSqlByIdGreaterThan(@Param("id") int id);
-    
-    
-    
-    // **********************************************************
-    // Actualizaciones
-    // **********************************************************
-    
-    // ****************************
-    // Métodos HEREDADOS
-    // ****************************
-    /*
-        delete(User)
-        deleteById(id)
-        deleteAll()
+  // Consulta con SQL
+  @Query(value = "SELECT * FROM terminales_pago WHERE id = :id", nativeQuery = true)
+  Terminal findSqlById(@Param("id") int id);
 
-        save(User)
-     */    
+  // Consulta con SQL
+  @Query(value = "SELECT * FROM terminales_pago WHERE UPPER(numero_serie) = UPPER(:numeroSerie)", nativeQuery = true)
+  Terminal findSqlByNumeroSerie(@Param("numeroSerie") String numeroSerie);
+
+  // Consulta con SQL
+  @Query(value = "SELECT COUNT(*) FROM terminales_pago", nativeQuery = true)
+  Long countSql();
+
+  // Consulta con SQL
+  @Query(value = "SELECT * FROM terminales_pago WHERE id > :id", nativeQuery = true)
+  List<Terminal> findSqlByIdGreaterThan(@Param("id") int id);
+    
+    
+
+  // **********************************************************
+  // Actualizaciones
+  // **********************************************************
+
+  // ****************************
+  // Métodos HEREDADOS
+  // ****************************
+  /*
+   * delete(User)
+   * deleteById(id)
+   * deleteAll()
+   * 
+   * save(User)
+   */
 }

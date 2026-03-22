@@ -39,7 +39,7 @@ public class Terminal implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true) 
-    private int id;
+    private Integer id;
     
     @Schema(description = "Numero de serie unico del terminal", example = "123456YZ")
     @NotBlank(message = "El numero de serie es obligatorio")

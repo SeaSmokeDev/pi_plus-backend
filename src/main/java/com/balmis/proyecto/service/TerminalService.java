@@ -81,6 +81,102 @@ public class TerminalService {
       
         return terminalRepository.save(terminal);
     }
+
+    @Transactional
+    public Terminal updateByNumeroSerie(String numeroSerie, Terminal terminalUpdate) {
+        Terminal terminal = terminalRepository.findSqlByNumeroSerie(numeroSerie);
+        if (terminal == null) {
+            throw new RuntimeException("Terminal no encontrado");
+        }
+
+        if (terminalUpdate.getNumeroSerie() != null) {
+            terminal.setNumeroSerie(terminalUpdate.getNumeroSerie());
+        }
+        if (terminalUpdate.getModelo() != null) {
+            terminal.setModelo(terminalUpdate.getModelo());
+        }
+        if (terminalUpdate.getMarca() != null) {
+            terminal.setMarca(terminalUpdate.getMarca());
+        }
+        if (terminalUpdate.getEstado() != null) {
+            terminal.setEstado(terminalUpdate.getEstado());
+        }
+        if (terminalUpdate.getNotas() != null) {
+            terminal.setNotas(terminalUpdate.getNotas());
+        }
+        if (terminalUpdate.getFechaIngreso() != null) {
+            terminal.setFechaIngreso(terminalUpdate.getFechaIngreso());
+        }
+        if (terminalUpdate.getFechaCreacion() != null) {
+            terminal.setFechaCreacion(terminalUpdate.getFechaCreacion());
+        }
+
+        return terminalRepository.save(terminal);
+    }
+
+    @Transactional
+    public Terminal patch(int id, Terminal terminalPatch) {
+        Terminal terminal = terminalRepository.findSqlById(id);
+        if (terminal == null) {
+            throw new RuntimeException("Terminal no encontrado");
+        }
+
+        if (terminalPatch.getNumeroSerie() != null) {
+            terminal.setNumeroSerie(terminalPatch.getNumeroSerie());
+        }
+        if (terminalPatch.getModelo() != null) {
+            terminal.setModelo(terminalPatch.getModelo());
+        }
+        if (terminalPatch.getMarca() != null) {
+            terminal.setMarca(terminalPatch.getMarca());
+        }
+        if (terminalPatch.getEstado() != null) {
+            terminal.setEstado(terminalPatch.getEstado());
+        }
+        if (terminalPatch.getNotas() != null) {
+            terminal.setNotas(terminalPatch.getNotas());
+        }
+        if (terminalPatch.getFechaIngreso() != null) {
+            terminal.setFechaIngreso(terminalPatch.getFechaIngreso());
+        }
+        if (terminalPatch.getFechaCreacion() != null) {
+            terminal.setFechaCreacion(terminalPatch.getFechaCreacion());
+        }
+
+        return terminalRepository.save(terminal);
+    }
+
+    @Transactional
+    public Terminal patchByNumeroSerie(String numeroSerie, Terminal terminalPatch) {
+        Terminal terminal = terminalRepository.findSqlByNumeroSerie(numeroSerie);
+        if (terminal == null) {
+            throw new RuntimeException("Terminal no encontrado");
+        }
+
+        if (terminalPatch.getNumeroSerie() != null) {
+            terminal.setNumeroSerie(terminalPatch.getNumeroSerie());
+        }
+        if (terminalPatch.getModelo() != null) {
+            terminal.setModelo(terminalPatch.getModelo());
+        }
+        if (terminalPatch.getMarca() != null) {
+            terminal.setMarca(terminalPatch.getMarca());
+        }
+        if (terminalPatch.getEstado() != null) {
+            terminal.setEstado(terminalPatch.getEstado());
+        }
+        if (terminalPatch.getNotas() != null) {
+            terminal.setNotas(terminalPatch.getNotas());
+        }
+        if (terminalPatch.getFechaIngreso() != null) {
+            terminal.setFechaIngreso(terminalPatch.getFechaIngreso());
+        }
+        if (terminalPatch.getFechaCreacion() != null) {
+            terminal.setFechaCreacion(terminalPatch.getFechaCreacion());
+        }
+
+        return terminalRepository.save(terminal);
+    }
     
     @Transactional
     public void deleteById(int id) {
@@ -88,5 +184,14 @@ public class TerminalService {
             throw new RuntimeException("Terminal no encontrado");
         }
         terminalRepository.deleteById(id);
-    }        
+    }
+
+    @Transactional
+    public void deleteByNumeroSerie(String numeroSerie) {
+        Terminal terminal = terminalRepository.findSqlByNumeroSerie(numeroSerie);
+        if (terminal == null) {
+            throw new RuntimeException("Terminal no encontrado");
+        }
+        terminalRepository.delete(terminal);
+    }
 }

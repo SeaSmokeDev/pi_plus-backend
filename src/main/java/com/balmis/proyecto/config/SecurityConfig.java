@@ -37,6 +37,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/").permitAll()                               // Acceso público a "/"
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()        // Permitir preflight CORS
                     .requestMatchers("/swagger-ui/**",                             
                             "/swagger-ui.html",
                             "/swagger-ui/index.html",
@@ -75,9 +76,17 @@ public class SecurityConfig {
                 // Fin de Configuraciones adicionales para H2                
                 .formLogin(form -> 
                         form.disable()  // desactivamos formulario login por defecto
-                ) 
-                .httpBasic(httpBasic -> Customizer
-                        .withDefaults()
+                )
+                // IMPORTANTE:
+                // Se desactiva HTTP Basic para evitar el popup nativo del navegador en respuestas 401.
+                // El frontend (SPA React) usa autenticación por sesión/cookie (credentials: include)
+                // contra /api/auth/login y /api/auth/user.
+                // Si se reactiva httpBasic, el navegador puede volver a mostrar la ventana de "Sign in".
+                // .httpBasic(httpBasic -> Customizer
+                //         .withDefaults()
+                // )
+                .httpBasic(httpBasic ->
+                        httpBasic.disable()
                 );
         return http.build();
     }
@@ -105,10 +114,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*"
+        ));
+        config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Set-Cookie"));
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -200,19 +201,20 @@ public class TerminalController {
 
     // ****************************************************************************
     // UPDATE (PUT)
-    // http://localhost:8080/apirest/terminales
+    // http://localhost:8080/bdproyecto/api/terminales/sn/SN10001
     // ***************************************************************************    
     // SWAGGER
     @Operation(summary = "Actualizar un terminal existente",
-            description = "Reemplaza completamente los datos de un Terminal identificado por su ID")
+            description = "Reemplaza completamente los datos de un Terminal identificado por su número de serie (SN)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Terminal actualizado con éxito", content = @Content()),
         @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************    
-    @PutMapping("/terminales")
-    public ResponseEntity<Map<String, Object>> updateterminal(
+    @PutMapping("/terminales/sn/{numeroSerie}")
+    public ResponseEntity<Map<String, Object>> updateterminalByNumeroSerie(
+            @PathVariable String numeroSerie,
             @Valid @RequestBody Terminal terminalUpdate) {
 
         ResponseEntity<Map<String, Object>> response;
@@ -223,7 +225,55 @@ public class TerminalController {
 
             response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
         } else {
-            int id = terminalUpdate.getId();
+            Terminal existingTerminal = terminalService.findByNumeroSerie(numeroSerie);
+
+            if (existingTerminal == null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "Terminal no encontrado");
+                map.put("numeroSerie", numeroSerie);
+
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+            } else {
+                Terminal usuPut = terminalService.updateByNumeroSerie(numeroSerie, terminalUpdate);
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("mensaje", "Terminal actualizado con éxito");
+                map.put("updatedterminal", usuPut);
+
+                response = ResponseEntity.status(HttpStatus.OK).body(map);
+            }
+        }
+
+        return response;
+    }
+
+    // ****************************************************************************
+    // PATCH
+    // http://localhost:8080/bdproyecto/api/terminales/terminales/1
+    // ***************************************************************************
+    // SWAGGER
+    @Operation(summary = "Actualizar parcialmente un terminal existente",
+            description = "Actualiza solo los campos enviados de un Terminal identificado por su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Terminal actualizado parcialmente con éxito", content = @Content()),
+        @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
+    })
+    // ***************************************************************************
+    @PatchMapping("/terminales/{id}")
+    public ResponseEntity<Map<String, Object>> patchTerminal(
+            @PathVariable int id, @RequestBody Terminal terminalPatch) {
+
+        ResponseEntity<Map<String, Object>> response;
+
+        if (terminalPatch == null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "El cuerpo de la solicitud no puede estar vacío");
+
+            response = ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(map);
+        } else {
             Terminal existingTerminal = terminalService.findById(id);
 
             if (existingTerminal == null) {
@@ -231,43 +281,72 @@ public class TerminalController {
                 map.put("error", "Terminal no encontrado");
                 map.put("id", id);
 
-                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+                response = ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(map);
             } else {
-
-                // Actualizar campos si están presentes
-                if (terminalUpdate.getNumeroSerie() != null) {
-                    existingTerminal.setNumeroSerie(terminalUpdate.getNumeroSerie());
-                }
-                if (terminalUpdate.getModelo() != null) {
-                    existingTerminal.setModelo(terminalUpdate.getModelo());
-                }
-                if (terminalUpdate.getMarca() != null) {
-                    existingTerminal.setMarca(terminalUpdate.getMarca());
-                }
-                if (terminalUpdate.getEstado() != null) {
-                    existingTerminal.setEstado(terminalUpdate.getEstado());
-                }
-                if (terminalUpdate.getFechaCreacion() != null) {
-                    existingTerminal.setFechaCreacion(terminalUpdate.getFechaCreacion());
-                }
-                if (terminalUpdate.getFechaIngreso() != null) {
-                    existingTerminal.setFechaIngreso(terminalUpdate.getFechaIngreso());
-                }
-                if (terminalUpdate.getNotas() != null) {
-                existingTerminal.setNotas(terminalUpdate.getNotas());
-            }
-            // if (terminalUpdate.getIdCaja() != null) {
-            //     existingTerminal.setIdCaja(terminalUpdate.getIdCaja());
-            // }
-
-                            
-                Terminal usuPut = terminalService.save(existingTerminal);
+                Terminal terminalPatched = terminalService.patch(id, terminalPatch);
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("mensaje", "Terminal actualizado con éxito");
-                map.put("updatedterminal", usuPut);
+                map.put("mensaje", "Terminal actualizado parcialmente con éxito");
+                map.put("updatedterminal", terminalPatched);
 
-                response = ResponseEntity.status(HttpStatus.OK).body(map);
+                response = ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(map);
+            }
+        }
+
+        return response;
+    }
+
+    // ****************************************************************************
+    // PATCH POR SN
+    // http://localhost:8080/bdproyecto/api/terminales/terminales/sn/SN10001
+    // ***************************************************************************
+    // SWAGGER
+    @Operation(summary = "Actualizar parcialmente un terminal por número de serie",
+            description = "Actualiza solo los campos enviados de un Terminal identificado por su número de serie (SN)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Terminal actualizado parcialmente con éxito", content = @Content()),
+        @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
+    })
+    // ***************************************************************************
+    @PatchMapping("/terminales/sn/{numeroSerie}")
+    public ResponseEntity<Map<String, Object>> patchTerminalByNumeroSerie(
+            @PathVariable String numeroSerie, @RequestBody Terminal terminalPatch) {
+
+        ResponseEntity<Map<String, Object>> response;
+
+        if (terminalPatch == null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "El cuerpo de la solicitud no puede estar vacío");
+
+            response = ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(map);
+        } else {
+            Terminal existingTerminal = terminalService.findByNumeroSerie(numeroSerie);
+
+            if (existingTerminal == null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "Terminal no encontrado");
+                map.put("numeroSerie", numeroSerie);
+
+                response = ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(map);
+            } else {
+                Terminal terminalPatched = terminalService.patchByNumeroSerie(numeroSerie, terminalPatch);
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("mensaje", "Terminal actualizado parcialmente con éxito");
+                map.put("updatedterminal", terminalPatched);
+
+                response = ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(map);
             }
         }
 
@@ -301,6 +380,43 @@ public class TerminalController {
         } else {
 
             terminalService.deleteById(id);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("mensaje", "Terminal eliminado con éxito");
+            map.put("deletedterminal", existingTerminal);
+
+            response = ResponseEntity.status(HttpStatus.OK).body(map);
+        }
+        return response;
+    }
+
+    // ****************************************************************************
+    // DELETE POR SN
+    // http://localhost:8080/bdproyecto/api/terminales/terminales/sn/SN10001
+    // ***************************************************************************
+    // SWAGGER
+    @Operation(summary = "Eliminar Terminal por número de serie",
+            description = "Elimina un Terminal específico del sistema por su número de serie (SN)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Terminal eliminado con éxito", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
+    })
+    // ***************************************************************************
+    @DeleteMapping("/terminales/sn/{numeroSerie}")
+    public ResponseEntity<Map<String, Object>> deleteTerminalByNumeroSerie(@PathVariable String numeroSerie) {
+
+        ResponseEntity<Map<String, Object>> response;
+
+        Terminal existingTerminal = terminalService.findByNumeroSerie(numeroSerie);
+        if (existingTerminal == null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "Terminal no encontrado");
+            map.put("numeroSerie", numeroSerie);
+
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        } else {
+
+            terminalService.deleteByNumeroSerie(numeroSerie);
 
             Map<String, Object> map = new HashMap<>();
             map.put("mensaje", "Terminal eliminado con éxito");
