@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "ubicaciones", description = "API para gestión de ubicaciones en almacen")
+@Tag(name = "Ubicaciones", description = "API para gestión de ubicaciones en almacen")
 @RestController
 @RequestMapping("/api/ubicaciones")
 public class UbicacionesAlmacenController {

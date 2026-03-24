@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Terminales", description = "API para gestión de Terminales")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/terminales")
 public class TerminalController {
 
     @Autowired
@@ -44,7 +44,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "200", description = "Terminales obtenidos con éxito")
     })
     // ***************************************************************************    
-    @GetMapping("/terminales")
+    @GetMapping("")
     public ResponseEntity<List<Terminal>> showterminals() {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -61,7 +61,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************    
-    @GetMapping("/terminales/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Terminal> detailsterminal(@PathVariable int id) {
         Terminal terminal = terminalService.findById(id);
 
@@ -86,7 +86,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************
-    @GetMapping("/terminales/sn/{numeroSerie}")
+    @GetMapping("/sn/{numeroSerie}")
     public ResponseEntity<Terminal> detailsterminalByNumeroSerie(@PathVariable String numeroSerie) {
         Terminal terminal = terminalService.findByNumeroSerie(numeroSerie);
 
@@ -110,7 +110,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "200", description = "Terminales obtenidos con éxito")
     })
     // ***************************************************************************    
-    @GetMapping("/terminales/mayor/{id}")
+    @GetMapping("/mayor/{id}")
     public ResponseEntity<List<Terminal>> showTerminalesMayores(@PathVariable int id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -126,7 +126,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "200", description = "Número de terminales obtenidos con éxito", content = @Content())
     })
     // ***************************************************************************    
-    @GetMapping("/terminales/count")
+    @GetMapping("/count")
     public ResponseEntity<Map<String, Object>> countTerminales() {
 
         ResponseEntity<Map<String, Object>> response = null;
@@ -157,7 +157,7 @@ public class TerminalController {
     })
     // ***************************************************************************    
 
-    @PostMapping("/terminales")
+    @PostMapping("")
     public ResponseEntity<Map<String, Object>> createTerminal(
             @Valid @RequestBody Terminal terminal) {
 
@@ -212,7 +212,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************    
-    @PutMapping("/terminales/sn/{numeroSerie}")
+    @PutMapping("/sn/{numeroSerie}")
     public ResponseEntity<Map<String, Object>> updateterminalByNumeroSerie(
             @PathVariable String numeroSerie,
             @Valid @RequestBody Terminal terminalUpdate) {
@@ -260,7 +260,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************
-    @PatchMapping("/terminales/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Map<String, Object>> patchTerminal(
             @PathVariable int id, @RequestBody Terminal terminalPatch) {
 
@@ -313,7 +313,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************
-    @PatchMapping("/terminales/sn/{numeroSerie}")
+    @PatchMapping("/sn/{numeroSerie}")
     public ResponseEntity<Map<String, Object>> patchTerminalByNumeroSerie(
             @PathVariable String numeroSerie, @RequestBody Terminal terminalPatch) {
 
@@ -365,7 +365,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************    
-    @DeleteMapping("/terminales/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteterminal(@PathVariable int id) {
 
         ResponseEntity<Map<String, Object>> response;
@@ -402,7 +402,7 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************
-    @DeleteMapping("/terminales/sn/{numeroSerie}")
+    @DeleteMapping("/sn/{numeroSerie}")
     public ResponseEntity<Map<String, Object>> deleteTerminalByNumeroSerie(@PathVariable String numeroSerie) {
 
         ResponseEntity<Map<String, Object>> response;
