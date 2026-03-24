@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "palets", description = "API para gestión de palets")
+@Tag(name = "Palets", description = "API para gestión de palets")
 @RestController
 @RequestMapping("/api/palets")
 public class PaletController {

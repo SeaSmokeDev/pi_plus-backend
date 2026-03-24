@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "cajas", description = "API para gestión de cajas")
+@Tag(name = "Cajas", description = "API para gestión de cajas")
 @RestController
 @RequestMapping("/api/cajas")
 public class CajaController {
