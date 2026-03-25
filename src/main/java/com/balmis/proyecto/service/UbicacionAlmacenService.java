@@ -53,7 +53,7 @@ public class UbicacionAlmacenService {
         if (ubicacionUpdate.getEstanteria() != null) {
             ubicacion.setEstanteria(ubicacionUpdate.getEstanteria());
         }
-        if (ubicacionUpdate.getNivel() != null && ubicacionUpdate.getNivel() > 0) {
+        if (ubicacionUpdate.getNivel() > 0) {
             ubicacion.setNivel(ubicacionUpdate.getNivel());
         }
 

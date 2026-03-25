@@ -46,7 +46,7 @@ public class Expedicion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Schema(description = "Fecha de creacion", example = "10/02/2026")
     @Column(name = "fecha_creacion", nullable = false)

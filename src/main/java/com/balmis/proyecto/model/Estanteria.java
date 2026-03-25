@@ -48,7 +48,7 @@ public class Estanteria implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Schema(description = "Codigo de la estanteria", example = "A")
     @NotBlank(message = "El codigo es obligatorio")
@@ -59,7 +59,7 @@ public class Estanteria implements Serializable{
     @Schema(description = "Nivel maximo de la estanteria", example = "4")
     @Min(1)
     @Column(name = "niveles_maximos", nullable = false)
-    private byte nivelesMaximos;
+    private int nivelesMaximos;
     
     @Schema(description = "La capacidad de cada nivel de la estanteria", example = "un palé con un maximo de 8 cajas")
     @Min(1)

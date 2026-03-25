@@ -49,7 +49,7 @@ public class UbicacionAlmacen implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Schema(description = "Referencia del pasillo-estanteria-nivel", example = "1A3")
     @NotBlank(message = "La referencia es obligatoria")
@@ -67,7 +67,7 @@ public class UbicacionAlmacen implements Serializable{
     @Min(1)
     @Max(4)
     @Column(name = "nivel", nullable = false)
-    private Byte nivel;
+    private int nivel;
     
     @Schema(description = "Palés ubicados en esta ubicación")
     @OneToMany(mappedBy = "ubicacionAlmacen", fetch = FetchType.LAZY)
