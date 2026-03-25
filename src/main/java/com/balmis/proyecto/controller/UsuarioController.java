@@ -161,8 +161,6 @@ public class UsuarioController {
 
             if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()
                     || usuario.getApellido() == null || usuario.getApellido().trim().isEmpty()
-//                    || usuario.getNombreUsuario()== null || usuario.getNombreUsuario().trim().isEmpty()
-//                    || usuario.getHashPassword()== null || usuario.getHashPassword().trim().isEmpty()
                     || usuario.getRol()== null) {
 
                 Map<String, Object> map = new HashMap<>();
@@ -179,18 +177,6 @@ public class UsuarioController {
                     }
                     error += "El campo 'Apeliido' es obligatorio";
                 }
-//                if (usuario.getNombreUsuario() == null || usuario.getNombreUsuario().trim().isEmpty()) {
-//                    if (!error.equals("")) {
-//                        error += " - ";
-//                    }
-//                    error += "El campo 'nombre usuario' es obligatorio";
-//                }
-//                if (usuario.getHashPassword() == null || usuario.getHashPassword().trim().isEmpty()) {
-//                    if (!error.equals("")) {
-//                        error += " - ";
-//                    }
-//                    error += "El campo 'contraseña' es obligatorio";
-//                }
                 if (usuario.getRol() == null) {
                     if (!error.equals("")) {
                         error += " - ";
@@ -254,27 +240,18 @@ public class UsuarioController {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
             } else {
 
-                // Actualizar campos si están presentes
                 if (usuario.getNombre() != null) {
                     existingObj.setNombre(usuario.getNombre());
                 }
                 if (usuario.getApellido()!= null) {
                     existingObj.setApellido(usuario.getApellido());
                 }
-//                if (usuario.getNombreUsuario()!= null) {
-//                    existingObj.setNombreUsuario(usuario.getNombreUsuario());
-//                }
-//                if (usuario.getHashPassword()!= null) {
-//                    existingObj.setHashPassword(usuario.getHashPassword());
-//                }
                 if (usuario.getRol()!= null) {
                     existingObj.setRol(usuario.getRol());
                 }      
                 if (usuario.getLugarTrabajo()!= null) {
                     existingObj.setLugarTrabajo(usuario.getLugarTrabajo());
                 }
-
-                //existingObj.setPresupuesto(usuario.getPresupuesto());
 
                 Usuario objPut = usuarioService.save(existingObj);
 

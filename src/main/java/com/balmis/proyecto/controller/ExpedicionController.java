@@ -177,8 +177,7 @@ public class ExpedicionController {
 
             if (expedicion.getDireccionDestino() == null || expedicion.getDireccionDestino().trim().isEmpty()
                     || expedicion.getPaquetes() < 0
-                    || expedicion.getPeso() < 0
-                    || expedicion.getNotas() == null || expedicion.getDireccionDestino().trim().isEmpty()) {
+                    || expedicion.getPeso() < 0) {
 
                 Map<String, Object> map = new HashMap<>();
                 String error = "";
@@ -187,12 +186,6 @@ public class ExpedicionController {
                         error += " - ";
                     }
                     error += "El campo 'direccion destino' es obligatorio";
-                }
-                if (expedicion.getNotas() == null || expedicion.getNotas().trim().isEmpty()) {
-                    if (!error.equals("")) {
-                        error += " - ";
-                    }
-                    error += "El campo 'email' es obligatorio";
                 }
                 if (expedicion.getPaquetes() < 0) {
                     if (!error.equals("")) {

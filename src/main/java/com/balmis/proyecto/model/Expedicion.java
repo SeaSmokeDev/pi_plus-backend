@@ -77,7 +77,7 @@ public class Expedicion implements Serializable {
     private int peso;
 
     @Schema(description = "Observaciones de la expedicion", example = "Va con cables sin especificar")
-    @Size(min = 1, max = 255, message = "Las notas no puede tener más de 255 caracteres")
+    @Size(max = 255, message = "Las notas no puede tener más de 255 caracteres")
     @Column(name = "notas", unique = false)
     private String notas;
 

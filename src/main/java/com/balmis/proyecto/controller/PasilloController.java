@@ -146,7 +146,7 @@ public class PasilloController {
                     .body(map);
         } else {
 
-            if (pasillo.getNumeroPasillo() == null){
+            if (pasillo.getNumeroPasillo() == null) {
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("error", "El campo 'numero_pasillo' es obligatorio");
@@ -154,14 +154,14 @@ public class PasilloController {
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
-            } else if(pasillo.getNumeroPasillo()<=0 ){
-                 Map<String, Object> map = new HashMap<>();
-                map.put("error", "El numero del pasillo no puede ser menor o 0" );
+            } else if (pasillo.getNumeroPasillo() <= 0) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "El numero del pasillo no puede ser menor o 0");
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
 
-            }else {
+            } else {
                 System.out.println(pasillo);
                 Pasillo pasilloPost = pasilloService.save(pasillo);
 
@@ -195,42 +195,24 @@ public class PasilloController {
     public ResponseEntity<Map<String, Object>> updatePasillo(
             @Valid @RequestBody Pasillo pasilloUpdate) {
 
-        ResponseEntity<Map<String, Object>> response;
+        int id = pasilloUpdate.getId();
+        Pasillo existingPasillo = pasilloService.findById(id);
 
-        if (pasilloUpdate == null) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("error", "El cuerpo de la solicitud no puede estar vacío");
-
-            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
-        } else {
-            int id = pasilloUpdate.getId();
-            Pasillo existingPasillo = pasilloService.findById(id);
-
-            if (existingPasillo == null) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("error", "Pasillo no encontrado");
-                map.put("id", id);
-
-                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
-            } else {
-
-                // Actualizar campos si están presentes
-                if (pasilloUpdate.getNumeroPasillo() != null) {
-                    existingPasillo.setNumeroPasillo(pasilloUpdate.getNumeroPasillo());
-                }
-               
-            }       
-                Pasillo usuPut = pasilloService.save(existingPasillo);
-
-                Map<String, Object> map = new HashMap<>();
-                map.put("mensaje", "Pasillo actualizado con éxito");
-                map.put("updatedPasillo", usuPut);
-
-                response = ResponseEntity.status(HttpStatus.OK).body(map);
-            
+        if (existingPasillo == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Pasillo no encontrado", "id", id));
         }
 
-        return response;
+        if (pasilloUpdate.getNumeroPasillo() != null) {
+            existingPasillo.setNumeroPasillo(pasilloUpdate.getNumeroPasillo());
+        }
+
+        Pasillo updated = pasilloService.save(existingPasillo);
+
+        return ResponseEntity.ok(Map.of(
+                "mensaje", "Pasillo actualizado con éxito",
+                "updatedPasillo", updated
+        ));
     }
 
     // ****************************************************************************
@@ -271,5 +253,3 @@ public class PasilloController {
     }
 
 }
-
-
