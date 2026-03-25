@@ -49,7 +49,7 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Schema(description = "Nombre del usuario/empleado", example = "Juan")
     @NotBlank(message = "El nombre es obligatorio")

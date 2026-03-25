@@ -44,7 +44,7 @@ public class UsuarioSecurity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Schema(description = "Nombre del usuario", example = "Juan")
     @NotBlank(message = "El nombre de usuario es obligatorio")

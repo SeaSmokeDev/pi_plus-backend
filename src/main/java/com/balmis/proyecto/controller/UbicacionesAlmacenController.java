@@ -105,7 +105,7 @@ public class UbicacionesAlmacenController {
 
         if (ubicacion.getReferencia() == null || ubicacion.getReferencia().trim().isEmpty()
                 || ubicacion.getEstanteria() == null
-                || ubicacion.getNivel() == null || ubicacion.getNivel() <= 0) {
+                || ubicacion.getNivel() <= 0) {
 
             Map<String, Object> map = new HashMap<>();
             map.put("error", "Los campos 'referencia', 'estanteria' y 'nivel' son obligatorios");
@@ -154,7 +154,7 @@ public class UbicacionesAlmacenController {
         if (ubicacionUpdate.getEstanteria() != null) {
             existingUbicacion.setEstanteria(ubicacionUpdate.getEstanteria());
         }
-        if (ubicacionUpdate.getNivel() != null && ubicacionUpdate.getNivel() > 0) {
+        if (ubicacionUpdate.getNivel() > 0) {
             existingUbicacion.setNivel(ubicacionUpdate.getNivel());
         }
 

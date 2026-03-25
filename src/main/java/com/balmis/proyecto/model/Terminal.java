@@ -75,18 +75,9 @@ public class Terminal implements Serializable {
     @Column(name = "fecha_creacion", nullable = false, unique = false) 
     private LocalDateTime fechaCreacion;
 
-    // @Schema(description = "ID único caja", example = "1")
-    // @Column(name = "id_caja", nullable = true)
-    // private Integer idCaja;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "caja_id") 
-    @JsonIgnoreProperties("terminales_pago")
+    @JsonIgnoreProperties("terminales")
     private Caja caja;
 
-    // @OneToMany(mappedBy = "terminal", cascade = CascadeType.ALL)
-    // private Set<Expedicion> expediciones = new HashSet<>();
-       
-    
-    
 }

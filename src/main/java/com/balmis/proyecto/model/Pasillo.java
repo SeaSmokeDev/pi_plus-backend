@@ -41,7 +41,7 @@ public class Pasillo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
     
     @Schema(description = "Numero pasillo", example = "2")
     @Min(1)
