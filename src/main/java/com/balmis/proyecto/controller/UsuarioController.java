@@ -175,7 +175,7 @@ public class UsuarioController {
                     if (!error.equals("")) {
                         error += " - ";
                     }
-                    error += "El campo 'Apeliido' es obligatorio";
+                    error += "El campo 'Apellido' es obligatorio";
                 }
                 if (usuario.getRol() == null) {
                     if (!error.equals("")) {
