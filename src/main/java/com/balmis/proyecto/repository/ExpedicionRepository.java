@@ -1,6 +1,7 @@
 package com.balmis.proyecto.repository;
 
 import com.balmis.proyecto.model.Expedicion;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -49,6 +50,17 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     // Consulta con SQL mapeado
     @Query(value = "SELECT COUNT(*) as expediciones FROM expediciones", nativeQuery = true)
     Long countSql();
+
+    @Query(value = """
+    SELECT * 
+    FROM expediciones 
+    WHERE fecha_creacion >= :startOfDay
+      AND fecha_creacion < :startOfNextDay
+    """, nativeQuery = true)
+    List<Expedicion> findSqlAllToday(
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("startOfNextDay") LocalDateTime startOfNextDay
+    );
 
     // **********************************************************
     // Actualizaciones

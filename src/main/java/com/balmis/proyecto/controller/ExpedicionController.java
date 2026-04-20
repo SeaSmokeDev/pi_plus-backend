@@ -140,6 +140,22 @@ public class ExpedicionController {
 
         return response;
     }
+    
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener todas las expediciones del dia de hoy",
+            description = "Retorna una lista con todas las expediciones con el dia de hoy")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/today")
+    public ResponseEntity<List<Expedicion>> showAllToday() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(expedicionService.findAllToday());
+    }
 
     // ***************************************************************************
     // ACTUALIZACIONES

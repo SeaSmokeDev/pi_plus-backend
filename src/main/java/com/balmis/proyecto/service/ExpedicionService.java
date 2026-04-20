@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.balmis.proyecto.repository.ExpedicionRepository;
 import com.balmis.proyecto.repository.UsuarioRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -48,13 +49,26 @@ public class ExpedicionService {
         return expedicionRepository.count();
     }
 
+    @Transactional(readOnly = true)
+    public List<Expedicion> findAllToday() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime startOfNextDay = today.plusDays(1).atStartOfDay();
+
+        return expedicionRepository.findSqlAllToday(startOfDay, startOfNextDay);
+    }
+
     // ************************
     // ACTUALIZACIONES
     // ************************  
     @Transactional
     public Expedicion save(Expedicion expedicion) {
-        if(expedicion.getEstado() == null) expedicion.setEstado(EstadoExpedicion.abierta);
-        if(expedicion.getFechaCreacion() == null) expedicion.setFechaCreacion(LocalDateTime.now());
+        if (expedicion.getEstado() == null) {
+            expedicion.setEstado(EstadoExpedicion.abierta);
+        }
+        if (expedicion.getFechaCreacion() == null) {
+            expedicion.setFechaCreacion(LocalDateTime.now());
+        }
         expedicion.setFechaModificacion(LocalDateTime.now());
         return expedicionRepository.save(expedicion);
     }
