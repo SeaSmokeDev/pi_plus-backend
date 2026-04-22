@@ -51,11 +51,7 @@ public class ExpedicionService {
 
     @Transactional(readOnly = true)
     public List<Expedicion> findAllToday() {
-        LocalDate today = LocalDate.now();
-        LocalDateTime startOfDay = today.atStartOfDay();
-        LocalDateTime startOfNextDay = today.plusDays(1).atStartOfDay();
-
-        return expedicionRepository.findSqlAllToday(startOfDay, startOfNextDay);
+        return expedicionRepository.findSqlAllToday();
     }
 
     // ************************
