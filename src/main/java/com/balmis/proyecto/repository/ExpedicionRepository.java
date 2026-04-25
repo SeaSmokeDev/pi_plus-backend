@@ -51,7 +51,7 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     @Query(value = "SELECT COUNT(*) as expediciones FROM expediciones", nativeQuery = true)
     Long countSql();
 
-    @Query(value = "SELECT * FROM expediciones WHERE DATE(fecha_creacion) = CURDATE()", nativeQuery = true)
+    @Query(value = "SELECT * FROM expediciones WHERE DATE(fecha_creacion) = CURDATE() OR DATE(fecha_modificacion) = CURDATE()", nativeQuery = true)
     List<Expedicion> findSqlAllToday();
 
     // **********************************************************

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.balmis.proyecto.repository.ExpedicionRepository;
 import com.balmis.proyecto.repository.UsuarioRepository;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -53,7 +52,7 @@ public class ExpedicionService {
     public List<Expedicion> findAllToday() {
         return expedicionRepository.findSqlAllToday();
     }
-
+    
     // ************************
     // ACTUALIZACIONES
     // ************************  
