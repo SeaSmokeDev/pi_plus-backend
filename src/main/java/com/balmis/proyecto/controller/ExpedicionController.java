@@ -109,11 +109,9 @@ public class ExpedicionController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Expediciones encontradas"),})
     // ***************************************************************************
-    @GetMapping("/direccion/{direccion}")
+    @GetMapping("/direccion")
     public ResponseEntity<List<Expedicion>> showBydireccion(@RequestParam("contiene") String direccion) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(expedicionService.findLikeDireccion(direccion));
+        return ResponseEntity.ok(expedicionService.findLikeDireccion(direccion));
     }
 
     // http://localhost:8080/bdproyecto/api/expediciones/count
