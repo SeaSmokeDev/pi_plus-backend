@@ -91,5 +91,10 @@ public class Expedicion implements Serializable {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @JsonIgnoreProperties("expediciones")
     private Usuario usuario;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "caja_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"expediciones", "terminales", "palet"})
+    private Caja caja;
 
 }

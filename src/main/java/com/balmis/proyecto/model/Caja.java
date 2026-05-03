@@ -73,5 +73,9 @@ public class Caja implements Serializable {
     @EqualsAndHashCode.Exclude
     private Set<Terminal> terminales = new HashSet<>();
 
-    
+    @OneToMany(mappedBy = "caja", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("caja")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Expedicion> expediciones = new HashSet<>();
 }
