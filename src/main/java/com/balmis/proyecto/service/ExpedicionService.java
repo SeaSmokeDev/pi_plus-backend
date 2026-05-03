@@ -52,7 +52,32 @@ public class ExpedicionService {
     public List<Expedicion> findAllToday() {
         return expedicionRepository.findSqlAllToday();
     }
-    
+
+    @Transactional(readOnly = true)
+    public List<Expedicion> search(
+            LocalDateTime fechaCreacionDesde,
+            LocalDateTime fechaCreacionHasta,
+            LocalDateTime fechaRecepcionDesde,
+            LocalDateTime fechaRecepcionHasta,
+            Integer usuarioId,
+            String destino,
+            EstadoExpedicion estado
+    ) {
+        if (destino != null && destino.trim().isEmpty()) {
+            destino = null;
+        }
+
+        return expedicionRepository.search(
+                fechaCreacionDesde,
+                fechaCreacionHasta,
+                fechaRecepcionDesde,
+                fechaRecepcionHasta,
+                usuarioId,
+                destino,
+                estado
+        );
+    }
+
     // ************************
     // ACTUALIZACIONES
     // ************************  

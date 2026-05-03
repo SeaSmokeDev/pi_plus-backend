@@ -1,5 +1,6 @@
 package com.balmis.proyecto.controller;
 
+import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.service.ExpedicionService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +140,7 @@ public class ExpedicionController {
 
         return response;
     }
-    
+
     // http://localhost:8080/bdproyecto/api/expediciones/today
     // ***************************************************************************    
     // SWAGGER
@@ -153,6 +155,38 @@ public class ExpedicionController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(expedicionService.findAllToday());
+    }
+
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener todas las expediciones con filtros",
+            description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/search")
+    public ResponseEntity<List<Expedicion>> search(
+            @RequestParam(required = false) LocalDateTime fechaCreacionDesde,
+            @RequestParam(required = false) LocalDateTime fechaCreacionHasta,
+            @RequestParam(required = false) LocalDateTime fechaRecepcionDesde,
+            @RequestParam(required = false) LocalDateTime fechaRecepcionHasta,
+            @RequestParam(required = false) Integer usuarioId,
+            @RequestParam(required = false) String destino,
+            @RequestParam(required = false) EstadoExpedicion estado
+    ) {
+        return ResponseEntity.ok(
+                expedicionService.search(
+                        fechaCreacionDesde,
+                        fechaCreacionHasta,
+                        fechaRecepcionDesde,
+                        fechaRecepcionHasta,
+                        usuarioId,
+                        destino,
+                        estado
+                )
+        );
     }
 
     // ***************************************************************************
@@ -229,7 +263,7 @@ public class ExpedicionController {
                             .body(map);
                 } else {
                     expedicion.setUsuario(user);
-                    
+
                     Expedicion objPost = expedicionService.save(expedicion);
 
                     Map<String, Object> map = new HashMap<>();

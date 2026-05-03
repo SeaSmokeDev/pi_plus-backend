@@ -1,5 +1,6 @@
 package com.balmis.proyecto.repository;
 
+import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Expedicion;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,6 +54,29 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
 
     @Query(value = "SELECT * FROM expediciones WHERE DATE(fecha_creacion) = CURDATE() OR DATE(fecha_modificacion) = CURDATE()", nativeQuery = true)
     List<Expedicion> findSqlAllToday();
+
+    @Query("""
+    SELECT e
+    FROM Expedicion e
+    LEFT JOIN e.usuario u
+    WHERE (:fechaCreacionDesde IS NULL OR e.fechaCreacion >= :fechaCreacionDesde)
+      AND (:fechaCreacionHasta IS NULL OR e.fechaCreacion < :fechaCreacionHasta)
+      AND (:fechaRecepcionDesde IS NULL OR e.fechaRecepcion >= :fechaRecepcionDesde)
+      AND (:fechaRecepcionHasta IS NULL OR e.fechaRecepcion < :fechaRecepcionHasta)
+      AND (:usuarioId IS NULL OR u.id = :usuarioId)
+      AND (:destino IS NULL OR LOWER(e.direccionDestino) LIKE LOWER(CONCAT('%', :destino, '%')))
+      AND (:estado IS NULL OR e.estado = :estado)
+    ORDER BY e.fechaCreacion DESC
+    """)
+    List<Expedicion> search(
+            @Param("fechaCreacionDesde") LocalDateTime fechaCreacionDesde,
+            @Param("fechaCreacionHasta") LocalDateTime fechaCreacionHasta,
+            @Param("fechaRecepcionDesde") LocalDateTime fechaRecepcionDesde,
+            @Param("fechaRecepcionHasta") LocalDateTime fechaRecepcionHasta,
+            @Param("usuarioId") Integer usuarioId,
+            @Param("destino") String destino,
+            @Param("estado") EstadoExpedicion estado
+    );
 
     // **********************************************************
     // Actualizaciones
