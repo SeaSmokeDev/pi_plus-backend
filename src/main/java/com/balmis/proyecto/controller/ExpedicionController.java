@@ -3,6 +3,7 @@ package com.balmis.proyecto.controller;
 import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Usuario;
+import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import com.balmis.proyecto.service.ExpedicionService;
 import com.balmis.proyecto.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -187,6 +188,34 @@ public class ExpedicionController {
                         estado
                 )
         );
+    }
+
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener todas las expediciones del dia de hoy",
+            description = "Retorna una lista con todas las expediciones con el dia de hoy")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/list")
+    public ResponseEntity<List<ExpedicionListDTO>> showAllForList() {
+        return ResponseEntity.ok(expedicionService.findAllForList());
+    }
+
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener todas las expediciones del dia de hoy",
+            description = "Retorna una lista con todas las expediciones con el dia de hoy")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/today/list")
+    public ResponseEntity<List<ExpedicionListDTO>> showTodayForList() {
+        return ResponseEntity.ok(expedicionService.findTodayForList());
     }
 
     // ***************************************************************************

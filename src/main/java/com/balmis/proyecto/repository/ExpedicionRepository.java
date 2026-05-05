@@ -2,6 +2,7 @@ package com.balmis.proyecto.repository;
 
 import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Expedicion;
+import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -76,6 +77,41 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
             @Param("usuarioId") Integer usuarioId,
             @Param("destino") String destino,
             @Param("estado") EstadoExpedicion estado
+    );
+
+    @Query("""
+    SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
+        e.id,
+        e.fechaCreacion,
+        e.direccionDestino,
+        us.username,
+        e.estado
+    )
+    FROM Expedicion e
+    LEFT JOIN e.usuario u
+    LEFT JOIN u.usuarioSecurity us
+    ORDER BY e.fechaCreacion DESC
+    """)
+    List<ExpedicionListDTO> findAllForList();
+
+    @Query("""
+    SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
+            e.id,
+            e.fechaCreacion,
+            e.direccionDestino,
+            us.username,
+            e.estado
+        )
+        FROM Expedicion e
+        LEFT JOIN e.usuario u
+        LEFT JOIN u.usuarioSecurity us
+        WHERE DATE(e.fechaCreacion) = CURRENT_DATE
+           OR DATE(e.fechaModificacion) = CURRENT_DATE
+        ORDER BY e.fechaCreacion DESC
+    """)
+    List<ExpedicionListDTO> findTodayForList(
+//            @Param("inicioDia") LocalDateTime inicioDia,
+//            @Param("finDia") LocalDateTime finDia
     );
 
     // **********************************************************
