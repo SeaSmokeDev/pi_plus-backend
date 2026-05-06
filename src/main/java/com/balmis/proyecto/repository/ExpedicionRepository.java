@@ -83,6 +83,8 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
         e.id,
         e.fechaCreacion,
+        e.fechaRecepcion,
+        e.fechaModificacion,
         e.direccionDestino,
         us.username,
         e.estado
@@ -98,6 +100,8 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
             e.id,
             e.fechaCreacion,
+            e.fechaRecepcion,
+            e.fechaModificacion,
             e.direccionDestino,
             us.username,
             e.estado

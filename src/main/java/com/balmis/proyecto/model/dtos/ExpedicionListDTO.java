@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 public class ExpedicionListDTO {
     private Integer id;
     private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaRecepcion;
+    private LocalDateTime fechaModificacion;
     private String direccionDestino;
     private String username;
     private EstadoExpedicion estado;
