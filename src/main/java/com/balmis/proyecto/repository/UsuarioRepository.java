@@ -2,6 +2,7 @@
 package com.balmis.proyecto.repository;
 
 import com.balmis.proyecto.model.Usuario;
+import com.balmis.proyecto.model.dtos.UsuarioListDTO;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,6 +43,18 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     
     @Query(value = "SELECT * FROM usuarios WHERE LOWER(nombre) LIKE LOWER(CONCAT('%',:nombre,'%'))", nativeQuery = true)
     List<Usuario> findSqlLikeNombre(@Param("nombre") String usuarioNombre);
+    
+    @Query("""
+    SELECT new com.balmis.proyecto.model.dtos.UsuarioListDTO(
+        us.username,
+        u.nombre,
+        u.apellido
+    )
+    FROM Usuario u
+    LEFT JOIN u.usuarioSecurity us
+    ORDER BY u.nombre ASC, u.apellido ASC
+    """)
+    List<UsuarioListDTO> findAllForList();
 
     
     // **********************************************************
