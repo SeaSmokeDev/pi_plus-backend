@@ -48,7 +48,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     SELECT new com.balmis.proyecto.model.dtos.UsuarioListDTO(
         us.username,
         u.nombre,
-        u.apellido
+        u.apellido,
+        u.id
     )
     FROM Usuario u
     LEFT JOIN u.usuarioSecurity us
