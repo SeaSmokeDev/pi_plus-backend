@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -161,6 +162,38 @@ public class ExpedicionController {
     // http://localhost:8080/bdproyecto/api/expediciones/today
     // ***************************************************************************    
     // SWAGGER
+//    @Operation(summary = "Obtener todas las expediciones con filtros",
+//            description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
+//    @ApiResponses(value = {
+//        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+//    })
+//    // ***************************************************************************
+//    @GetMapping("/search")
+//    public ResponseEntity<List<Expedicion>> search(
+//            @RequestParam(required = false) LocalDateTime fechaCreacionDesde,
+//            @RequestParam(required = false) LocalDateTime fechaCreacionHasta,
+//            @RequestParam(required = false) LocalDateTime fechaRecepcionDesde,
+//            @RequestParam(required = false) LocalDateTime fechaRecepcionHasta,
+//            @RequestParam(required = false) Integer usuarioId,
+//            @RequestParam(required = false) String destino,
+//            @RequestParam(required = false) EstadoExpedicion estado
+//    ) {
+//        return ResponseEntity.ok(
+//                expedicionService.search(
+//                        fechaCreacionDesde,
+//                        fechaCreacionHasta,
+//                        fechaRecepcionDesde,
+//                        fechaRecepcionHasta,
+//                        usuarioId,
+//                        destino,
+//                        estado
+//                )
+//        );
+//    }
+
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
     @Operation(summary = "Obtener todas las expediciones con filtros",
             description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
     @ApiResponses(value = {
@@ -168,21 +201,37 @@ public class ExpedicionController {
     })
     // ***************************************************************************
     @GetMapping("/search")
-    public ResponseEntity<List<Expedicion>> search(
-            @RequestParam(required = false) LocalDateTime fechaCreacionDesde,
-            @RequestParam(required = false) LocalDateTime fechaCreacionHasta,
-            @RequestParam(required = false) LocalDateTime fechaRecepcionDesde,
-            @RequestParam(required = false) LocalDateTime fechaRecepcionHasta,
+    public ResponseEntity<List<ExpedicionListDTO>> searchForList(
+            @RequestParam(required = false) LocalDate fechaCreacionDesde,
+            @RequestParam(required = false) LocalDate fechaCreacionHasta,
+            @RequestParam(required = false) LocalDate fechaRecepcionDesde,
+            @RequestParam(required = false) LocalDate fechaRecepcionHasta,
             @RequestParam(required = false) Integer usuarioId,
             @RequestParam(required = false) String destino,
             @RequestParam(required = false) EstadoExpedicion estado
     ) {
+        LocalDateTime creacionDesde = fechaCreacionDesde != null
+                ? fechaCreacionDesde.atStartOfDay()
+                : null;
+
+        LocalDateTime creacionHasta = fechaCreacionHasta != null
+                ? fechaCreacionHasta.plusDays(1).atStartOfDay()
+                : null;
+
+        LocalDateTime recepcionDesde = fechaRecepcionDesde != null
+                ? fechaRecepcionDesde.atStartOfDay()
+                : null;
+
+        LocalDateTime recepcionHasta = fechaRecepcionHasta != null
+                ? fechaRecepcionHasta.plusDays(1).atStartOfDay()
+                : null;
+
         return ResponseEntity.ok(
-                expedicionService.search(
-                        fechaCreacionDesde,
-                        fechaCreacionHasta,
-                        fechaRecepcionDesde,
-                        fechaRecepcionHasta,
+                expedicionService.searchForList(
+                        creacionDesde,
+                        creacionHasta,
+                        recepcionDesde,
+                        recepcionHasta,
                         usuarioId,
                         destino,
                         estado

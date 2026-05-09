@@ -81,6 +81,31 @@ public class ExpedicionService {
     }
 
     @Transactional(readOnly = true)
+    public List<ExpedicionListDTO> searchForList(
+            LocalDateTime fechaCreacionDesde,
+            LocalDateTime fechaCreacionHasta,
+            LocalDateTime fechaRecepcionDesde,
+            LocalDateTime fechaRecepcionHasta,
+            Integer usuarioId,
+            String destino,
+            EstadoExpedicion estado
+    ) {
+        if (destino != null && destino.trim().isEmpty()) {
+            destino = null;
+        }
+
+        return expedicionRepository.searchForList(
+                fechaCreacionDesde,
+                fechaCreacionHasta,
+                fechaRecepcionDesde,
+                fechaRecepcionHasta,
+                usuarioId,
+                destino,
+                estado
+        );
+    }
+
+    @Transactional(readOnly = true)
     public List<ExpedicionListDTO> findAllForList() {
         return expedicionRepository.findAllForList();
     }
