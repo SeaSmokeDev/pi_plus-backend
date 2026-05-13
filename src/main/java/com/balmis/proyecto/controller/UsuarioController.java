@@ -1,6 +1,7 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Usuario;
+import com.balmis.proyecto.model.dtos.UsuarioIdDTO;
 import com.balmis.proyecto.model.dtos.UsuarioListDTO;
 import com.balmis.proyecto.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -102,6 +103,30 @@ public class UsuarioController {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(usuarios);
+        }
+    }
+    
+    
+    // http://localhost:8080/bdproyecto/api/usuarios/nombre?contiene=pa
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener id usuario por username",
+            description = "Retorna el id de un usuario por el username")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario encontrado"),})
+    // ***************************************************************************
+    @GetMapping("username/{username}")
+    public ResponseEntity<UsuarioIdDTO> showByUsername(@PathVariable String username) {
+        UsuarioIdDTO usu = usuarioService.findByUsername(username);
+
+        if (usu == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(null);  // 404 Not Found
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(usu);
         }
     }
 

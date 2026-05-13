@@ -1,6 +1,7 @@
 package com.balmis.proyecto.service;
 
 import com.balmis.proyecto.model.Usuario;
+import com.balmis.proyecto.model.dtos.UsuarioIdDTO;
 import com.balmis.proyecto.model.dtos.UsuarioListDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<UsuarioListDTO> findAllForList() {
         return usuarioRepository.findAllForList();
+    }
+    
+    @Transactional(readOnly = true)
+    public UsuarioIdDTO findByUsername(String username) {
+        return usuarioRepository.findUsuarioIdByUsername(username);
     }
 
     // ************************
