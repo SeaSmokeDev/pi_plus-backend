@@ -3,12 +3,14 @@ package com.balmis.proyecto.service;
 import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.Expedicion;
+import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.balmis.proyecto.repository.ExpedicionRepository;
 import com.balmis.proyecto.repository.UsuarioRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -48,13 +50,96 @@ public class ExpedicionService {
         return expedicionRepository.count();
     }
 
+    @Transactional(readOnly = true)
+    public List<Expedicion> findAllToday() {
+        return expedicionRepository.findSqlAllToday();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Expedicion> search(
+            LocalDateTime fechaCreacionDesde,
+            LocalDateTime fechaCreacionHasta,
+            LocalDateTime fechaRecepcionDesde,
+            LocalDateTime fechaRecepcionHasta,
+            Integer usuarioId,
+            String destino,
+            EstadoExpedicion estado
+    ) {
+        if (destino != null && destino.trim().isEmpty()) {
+            destino = null;
+        }
+
+        return expedicionRepository.search(
+                fechaCreacionDesde,
+                fechaCreacionHasta,
+                fechaRecepcionDesde,
+                fechaRecepcionHasta,
+                usuarioId,
+                destino,
+                estado
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<ExpedicionListDTO> searchForList(
+            LocalDateTime fechaCreacionDesde,
+            LocalDateTime fechaCreacionHasta,
+            LocalDateTime fechaRecepcionDesde,
+            LocalDateTime fechaRecepcionHasta,
+            LocalDateTime fechaEnvioInicioDia,
+            LocalDateTime fechaEnvioFinDia,
+            Integer usuarioId,
+            String destino,
+            String referenciaExpedicion,
+            EstadoExpedicion estado
+    ) {
+        if (destino != null && destino.trim().isEmpty()) {
+            destino = null;
+        }
+
+        if (referenciaExpedicion != null && referenciaExpedicion.trim().isEmpty()) {
+            referenciaExpedicion = null;
+        }
+
+        return expedicionRepository.searchForList(
+                fechaCreacionDesde,
+                fechaCreacionHasta,
+                fechaRecepcionDesde,
+                fechaRecepcionHasta,
+                fechaEnvioInicioDia,
+                fechaEnvioFinDia,
+                usuarioId,
+                destino,
+                referenciaExpedicion,
+                estado
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<ExpedicionListDTO> findAllForList() {
+        return expedicionRepository.findAllForList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ExpedicionListDTO> findTodayForList() {
+//        LocalDate today = LocalDate.now();
+//        LocalDateTime inicioDia = today.atStartOfDay();
+//        LocalDateTime finDia = today.plusDays(1).atStartOfDay();
+
+        return expedicionRepository.findTodayForList();
+    }
+
     // ************************
     // ACTUALIZACIONES
     // ************************  
     @Transactional
     public Expedicion save(Expedicion expedicion) {
-        if(expedicion.getEstado() == null) expedicion.setEstado(EstadoExpedicion.abierta);
-        if(expedicion.getFechaCreacion() == null) expedicion.setFechaCreacion(LocalDateTime.now());
+        if (expedicion.getEstado() == null) {
+            expedicion.setEstado(EstadoExpedicion.abierta);
+        }
+        if (expedicion.getFechaCreacion() == null) {
+            expedicion.setFechaCreacion(LocalDateTime.now());
+        }
         expedicion.setFechaModificacion(LocalDateTime.now());
         return expedicionRepository.save(expedicion);
     }

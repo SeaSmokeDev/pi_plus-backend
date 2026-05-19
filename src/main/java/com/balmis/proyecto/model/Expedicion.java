@@ -32,7 +32,7 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude = "usuario")  // Excluir de equals y hashCode para evitar recursividad
 
 // SWAGGER
-@Schema(description = "Modelo de Expediciones", name="Expedicion")
+@Schema(description = "Modelo de Expediciones", name = "Expedicion")
 
 // JPA
 @Entity
@@ -83,13 +83,27 @@ public class Expedicion implements Serializable {
 
     @Schema(description = "Estado de la expedicion", example = "Abierta")
     @Enumerated(EnumType.STRING)
-    @Column(name="estado", nullable = false)
+    @Column(name = "estado", nullable = false)
     private EstadoExpedicion estado;
+
+    @Schema(description = "Referencia común para agrupar varias expediciones", example = "EXP-20260505-001")
+    @Size(max = 50, message = "La referencia no puede tener más de 50 caracteres")
+    @Column(name = "referencia_expedicion", length = 50)
+    private String referenciaExpedicion;
+
+    @Schema(description = "Fecha y hora prevista o real de envío", example = "2026-05-05T15:30:00")
+    @Column(name = "fecha_envio")
+    private LocalDateTime fechaEnvio;
 
     @Schema(description = "ID único del usuario que esta asignado a la expedicion", example = "1")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @JsonIgnoreProperties("expediciones")
     private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "caja_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"expediciones", "terminales", "palet"})
+    private Caja caja;
 
 }

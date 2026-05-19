@@ -1,6 +1,8 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Usuario;
+import com.balmis.proyecto.model.dtos.UsuarioIdDTO;
+import com.balmis.proyecto.model.dtos.UsuarioListDTO;
 import com.balmis.proyecto.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @Tag(name = "Usuarios", description = "API para gestión de usuarios")
 @RestController
@@ -88,8 +89,7 @@ public class UsuarioController {
     @Operation(summary = "Obtener usuarios por nombre",
             description = "Retorna una lista de usuarios específicos basado en su nombre")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuarios encontrados"),
-    })
+        @ApiResponse(responseCode = "200", description = "Usuarios encontrados"),})
     // ***************************************************************************
     @GetMapping("/nombre/{nombre}")
     public ResponseEntity<List<Usuario>> showByNombre(@RequestParam("contiene") String nombre) {
@@ -103,6 +103,30 @@ public class UsuarioController {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(usuarios);
+        }
+    }
+    
+    
+    // http://localhost:8080/bdproyecto/api/usuarios/nombre?contiene=pa
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener id usuario por username",
+            description = "Retorna el id de un usuario por el username")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario encontrado"),})
+    // ***************************************************************************
+    @GetMapping("username/{username}")
+    public ResponseEntity<UsuarioIdDTO> showByUsername(@PathVariable String username) {
+        UsuarioIdDTO usu = usuarioService.findByUsername(username);
+
+        if (usu == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(null);  // 404 Not Found
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(usu);
         }
     }
 
@@ -131,6 +155,17 @@ public class UsuarioController {
         return response;
     }
 
+    @Operation(summary = "Obtener todos los usuarios",
+            description = "Retorna una lista con todos los usuarios")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuarios obtenidos con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/list")
+    public ResponseEntity<List<UsuarioListDTO>> showAllForList() {
+        return ResponseEntity.ok(usuarioService.findAllForList());
+    }
+
     // ***************************************************************************
     // ACTUALIZACIONES
     // ***************************************************************************
@@ -147,7 +182,7 @@ public class UsuarioController {
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> create(
             @Valid @RequestBody Usuario usuario) {
-        
+
         ResponseEntity<Map<String, Object>> response;
 
         if (usuario == null) {
@@ -161,7 +196,7 @@ public class UsuarioController {
 
             if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()
                     || usuario.getApellido() == null || usuario.getApellido().trim().isEmpty()
-                    || usuario.getRol()== null) {
+                    || usuario.getRol() == null) {
 
                 Map<String, Object> map = new HashMap<>();
                 String error = "";
@@ -183,7 +218,7 @@ public class UsuarioController {
                     }
                     error += "El campo 'rol' es obligatorio";
                 }
-                
+
                 map.put("error", error);
 
                 response = ResponseEntity
@@ -243,13 +278,13 @@ public class UsuarioController {
                 if (usuario.getNombre() != null) {
                     existingObj.setNombre(usuario.getNombre());
                 }
-                if (usuario.getApellido()!= null) {
+                if (usuario.getApellido() != null) {
                     existingObj.setApellido(usuario.getApellido());
                 }
-                if (usuario.getRol()!= null) {
+                if (usuario.getRol() != null) {
                     existingObj.setRol(usuario.getRol());
-                }      
-                if (usuario.getLugarTrabajo()!= null) {
+                }
+                if (usuario.getLugarTrabajo() != null) {
                     existingObj.setLugarTrabajo(usuario.getLugarTrabajo());
                 }
 
