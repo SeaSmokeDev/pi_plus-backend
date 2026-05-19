@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExpedicionListDTO {
+
     private Integer id;
     private String referenciaExpedicion;
     private LocalDateTime fechaCreacion;

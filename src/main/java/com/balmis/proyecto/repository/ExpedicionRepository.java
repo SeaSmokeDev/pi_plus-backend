@@ -84,9 +84,9 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
                 e.id,
                 e.referenciaExpedicion,
                 e.fechaCreacion,
-                e.fechaEnvio,
                 e.fechaRecepcion,
                 e.fechaModificacion,
+                e.fechaEnvio,
                 e.direccionDestino,
                 us.username,
                 e.estado
@@ -124,9 +124,9 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
             e.id,
             e.referenciaExpedicion,
             e.fechaCreacion,
-            e.fechaEnvio,
             e.fechaRecepcion,
             e.fechaModificacion,
+            e.fechaEnvio,
             e.direccionDestino,
             us.username,
             e.estado
@@ -143,9 +143,9 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
                 e.id,
                 e.referenciaExpedicion,
                 e.fechaCreacion,
-                e.fechaEnvio,
                 e.fechaRecepcion,
                 e.fechaModificacion,
+                e.fechaEnvio,
                 e.direccionDestino,
                 us.username,
                 e.estado
