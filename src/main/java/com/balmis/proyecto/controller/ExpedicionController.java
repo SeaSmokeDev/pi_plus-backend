@@ -162,38 +162,6 @@ public class ExpedicionController {
     // http://localhost:8080/bdproyecto/api/expediciones/today
     // ***************************************************************************    
     // SWAGGER
-//    @Operation(summary = "Obtener todas las expediciones con filtros",
-//            description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
-//    })
-//    // ***************************************************************************
-//    @GetMapping("/search")
-//    public ResponseEntity<List<Expedicion>> search(
-//            @RequestParam(required = false) LocalDateTime fechaCreacionDesde,
-//            @RequestParam(required = false) LocalDateTime fechaCreacionHasta,
-//            @RequestParam(required = false) LocalDateTime fechaRecepcionDesde,
-//            @RequestParam(required = false) LocalDateTime fechaRecepcionHasta,
-//            @RequestParam(required = false) Integer usuarioId,
-//            @RequestParam(required = false) String destino,
-//            @RequestParam(required = false) EstadoExpedicion estado
-//    ) {
-//        return ResponseEntity.ok(
-//                expedicionService.search(
-//                        fechaCreacionDesde,
-//                        fechaCreacionHasta,
-//                        fechaRecepcionDesde,
-//                        fechaRecepcionHasta,
-//                        usuarioId,
-//                        destino,
-//                        estado
-//                )
-//        );
-//    }
-
-    // http://localhost:8080/bdproyecto/api/expediciones/today
-    // ***************************************************************************    
-    // SWAGGER
     @Operation(summary = "Obtener todas las expediciones con filtros",
             description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
     @ApiResponses(value = {
@@ -206,8 +174,10 @@ public class ExpedicionController {
             @RequestParam(required = false) LocalDate fechaCreacionHasta,
             @RequestParam(required = false) LocalDate fechaRecepcionDesde,
             @RequestParam(required = false) LocalDate fechaRecepcionHasta,
+            @RequestParam(required = false) LocalDate fechaEnvio,
             @RequestParam(required = false) Integer usuarioId,
             @RequestParam(required = false) String destino,
+            @RequestParam(required = false) String referenciaExpedicion,
             @RequestParam(required = false) EstadoExpedicion estado
     ) {
         LocalDateTime creacionDesde = fechaCreacionDesde != null
@@ -226,14 +196,25 @@ public class ExpedicionController {
                 ? fechaRecepcionHasta.plusDays(1).atStartOfDay()
                 : null;
 
+        LocalDateTime envioInicioDia = fechaEnvio != null
+                ? fechaEnvio.atStartOfDay()
+                : null;
+
+        LocalDateTime envioFinDia = fechaEnvio != null
+                ? fechaEnvio.plusDays(1).atStartOfDay()
+                : null;
+
         return ResponseEntity.ok(
                 expedicionService.searchForList(
                         creacionDesde,
                         creacionHasta,
                         recepcionDesde,
                         recepcionHasta,
+                        envioInicioDia,
+                        envioFinDia,
                         usuarioId,
                         destino,
+                        referenciaExpedicion,
                         estado
                 )
         );
@@ -242,7 +223,7 @@ public class ExpedicionController {
     // http://localhost:8080/bdproyecto/api/expediciones/today
     // ***************************************************************************    
     // SWAGGER
-    @Operation(summary = "Obtener todas las expediciones del dia de hoy",
+    @Operation(summary = "Obtener todas las expediciones",
             description = "Retorna una lista con todas las expediciones con el dia de hoy")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")

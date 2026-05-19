@@ -81,57 +81,50 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
 
     @Query("""
     SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
-        e.id,
-        e.fechaCreacion,
-        e.fechaRecepcion,
-        e.fechaModificacion,
-        e.direccionDestino,
-        us.username,
-        e.estado
-    )
-    FROM Expedicion e
-    LEFT JOIN e.usuario u
-    LEFT JOIN u.usuarioSecurity us
-    WHERE (:fechaCreacionDesde IS NULL OR e.fechaCreacion >= :fechaCreacionDesde)
-      AND (:fechaCreacionHasta IS NULL OR e.fechaCreacion < :fechaCreacionHasta)
-      AND (:fechaRecepcionDesde IS NULL OR e.fechaRecepcion >= :fechaRecepcionDesde)
-      AND (:fechaRecepcionHasta IS NULL OR e.fechaRecepcion < :fechaRecepcionHasta)
-      AND (:usuarioId IS NULL OR u.id = :usuarioId)
-      AND (:destino IS NULL OR LOWER(e.direccionDestino) LIKE LOWER(CONCAT('%', :destino, '%')))
-      AND (:estado IS NULL OR e.estado = :estado)
-    ORDER BY e.fechaCreacion DESC
+                e.id,
+                e.referenciaExpedicion,
+                e.fechaCreacion,
+                e.fechaEnvio,
+                e.fechaRecepcion,
+                e.fechaModificacion,
+                e.direccionDestino,
+                us.username,
+                e.estado
+            )
+            FROM Expedicion e
+            LEFT JOIN e.usuario u
+            LEFT JOIN u.usuarioSecurity us
+            WHERE (:fechaCreacionDesde IS NULL OR e.fechaCreacion >= :fechaCreacionDesde)
+              AND (:fechaCreacionHasta IS NULL OR e.fechaCreacion < :fechaCreacionHasta)
+              AND (:fechaRecepcionDesde IS NULL OR e.fechaRecepcion >= :fechaRecepcionDesde)
+              AND (:fechaRecepcionHasta IS NULL OR e.fechaRecepcion < :fechaRecepcionHasta)
+              AND (:fechaEnvioInicioDia IS NULL OR e.fechaEnvio >= :fechaEnvioInicioDia)
+              AND (:fechaEnvioFinDia IS NULL OR e.fechaEnvio < :fechaEnvioFinDia)
+              AND (:usuarioId IS NULL OR u.id = :usuarioId)
+              AND (:destino IS NULL OR LOWER(e.direccionDestino) LIKE LOWER(CONCAT('%', :destino, '%')))
+              AND (:referenciaExpedicion IS NULL OR LOWER(e.referenciaExpedicion) LIKE LOWER(CONCAT('%', :referenciaExpedicion, '%')))
+              AND (:estado IS NULL OR e.estado = :estado)
+            ORDER BY e.fechaEnvio DESC, e.fechaCreacion DESC
     """)
     List<ExpedicionListDTO> searchForList(
             @Param("fechaCreacionDesde") LocalDateTime fechaCreacionDesde,
             @Param("fechaCreacionHasta") LocalDateTime fechaCreacionHasta,
             @Param("fechaRecepcionDesde") LocalDateTime fechaRecepcionDesde,
             @Param("fechaRecepcionHasta") LocalDateTime fechaRecepcionHasta,
+            @Param("fechaEnvioInicioDia") LocalDateTime fechaEnvioInicioDia,
+            @Param("fechaEnvioFinDia") LocalDateTime fechaEnvioFinDia,
             @Param("usuarioId") Integer usuarioId,
             @Param("destino") String destino,
+            @Param("referenciaExpedicion") String referenciaExpedicion,
             @Param("estado") EstadoExpedicion estado
     );
 
     @Query("""
     SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
-        e.id,
-        e.fechaCreacion,
-        e.fechaRecepcion,
-        e.fechaModificacion,
-        e.direccionDestino,
-        us.username,
-        e.estado
-    )
-    FROM Expedicion e
-    LEFT JOIN e.usuario u
-    LEFT JOIN u.usuarioSecurity us
-    ORDER BY e.fechaCreacion DESC
-    """)
-    List<ExpedicionListDTO> findAllForList();
-
-    @Query("""
-    SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
             e.id,
+            e.referenciaExpedicion,
             e.fechaCreacion,
+            e.fechaEnvio,
             e.fechaRecepcion,
             e.fechaModificacion,
             e.direccionDestino,
@@ -141,9 +134,28 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
         FROM Expedicion e
         LEFT JOIN e.usuario u
         LEFT JOIN u.usuarioSecurity us
-        WHERE DATE(e.fechaCreacion) = CURRENT_DATE
-           OR DATE(e.fechaModificacion) = CURRENT_DATE
         ORDER BY e.fechaCreacion DESC
+    """)
+    List<ExpedicionListDTO> findAllForList();
+
+    @Query("""
+    SELECT new com.balmis.proyecto.model.dtos.ExpedicionListDTO(
+                e.id,
+                e.referenciaExpedicion,
+                e.fechaCreacion,
+                e.fechaEnvio,
+                e.fechaRecepcion,
+                e.fechaModificacion,
+                e.direccionDestino,
+                us.username,
+                e.estado
+            )
+            FROM Expedicion e
+            LEFT JOIN e.usuario u
+            LEFT JOIN u.usuarioSecurity us
+            WHERE DATE(e.fechaCreacion) = CURRENT_DATE
+               OR DATE(e.fechaModificacion) = CURRENT_DATE
+            ORDER BY e.fechaCreacion DESC
     """)
     List<ExpedicionListDTO> findTodayForList( //            @Param("inicioDia") LocalDateTime inicioDia,
             //            @Param("finDia") LocalDateTime finDia

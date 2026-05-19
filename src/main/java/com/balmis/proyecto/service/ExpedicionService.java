@@ -86,12 +86,19 @@ public class ExpedicionService {
             LocalDateTime fechaCreacionHasta,
             LocalDateTime fechaRecepcionDesde,
             LocalDateTime fechaRecepcionHasta,
+            LocalDateTime fechaEnvioInicioDia,
+            LocalDateTime fechaEnvioFinDia,
             Integer usuarioId,
             String destino,
+            String referenciaExpedicion,
             EstadoExpedicion estado
     ) {
         if (destino != null && destino.trim().isEmpty()) {
             destino = null;
+        }
+
+        if (referenciaExpedicion != null && referenciaExpedicion.trim().isEmpty()) {
+            referenciaExpedicion = null;
         }
 
         return expedicionRepository.searchForList(
@@ -99,8 +106,11 @@ public class ExpedicionService {
                 fechaCreacionHasta,
                 fechaRecepcionDesde,
                 fechaRecepcionHasta,
+                fechaEnvioInicioDia,
+                fechaEnvioFinDia,
                 usuarioId,
                 destino,
+                referenciaExpedicion,
                 estado
         );
     }
