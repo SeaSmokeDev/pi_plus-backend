@@ -2,6 +2,8 @@
 package com.balmis.proyecto.service;
 
 import com.balmis.proyecto.model.Caja;
+import com.balmis.proyecto.model.dtos.CajaExpedicionDetailDTO;
+import com.balmis.proyecto.model.dtos.TerminalCajaDTO;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,33 @@ public class CajaService {
     public List<Caja> findByIdGrThan(int cajaId) {
         return cajaRepository.findSqlByIdGreaterThan(cajaId);
     }
+    
+    @Transactional(readOnly = true)
+    public CajaExpedicionDetailDTO findCajaExpedicionDetailByEtiqueta(String etiqueta) {
+    Caja caja = cajaRepository.findByEtiquetaWithTerminales(etiqueta);
+
+    if (caja == null) {
+        return null;
+    }
+
+    List<TerminalCajaDTO> terminales = caja.getTerminales()
+            .stream()
+            .map(t -> new TerminalCajaDTO(
+                    t.getModelo(),
+                    t.getMarca(),
+                    t.getEstado(),
+                    t.getNumeroSerie()
+            ))
+            .toList();
+
+    return new CajaExpedicionDetailDTO(
+            caja.getId(),
+            caja.getEtiqueta(),
+            caja.getModeloProducto(),
+            (long) terminales.size(),
+            terminales
+    );
+}
     
     // ************************
     // ACTUALIZACIONES

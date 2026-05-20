@@ -1,4 +1,3 @@
-
 package com.balmis.proyecto.repository;
 
 import com.balmis.proyecto.model.Caja;
@@ -7,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 
 public interface CajaRepository extends JpaRepository<Caja, Integer> {
 
@@ -27,14 +25,12 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
         exist(User)
         existById(id)
      */
-    
     // **********************************************************
     // Obtener datos (find y count)
     // **********************************************************
-
     // Consulta con DQM 
     Optional<Caja> findByEtiqueta(String etiqueta);
-    
+
     // Consulta con SQL 
     @Query(value = "SELECT * FROM cajas", nativeQuery = true)
     List<Caja> findSqlAll();
@@ -47,13 +43,18 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
 
     @Query(value = "SELECT * FROM cajas WHERE id > :id", nativeQuery = true)
     List<Caja> findSqlByIdGreaterThan(@Param("id") int id);
-    
-    
-    
+
+    @Query("""
+        SELECT c
+        FROM Caja c
+        LEFT JOIN FETCH c.terminales
+        WHERE LOWER(c.etiqueta) = LOWER(:etiqueta)
+    """)
+    Caja findByEtiquetaWithTerminales(@Param("etiqueta") String etiqueta);
+
     // **********************************************************
     // Actualizaciones
     // **********************************************************
-    
     // ****************************
     // Métodos HEREDADOS
     // ****************************
@@ -63,5 +64,5 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
         deleteAll()
 
         save(User)
-     */    
+     */
 }
