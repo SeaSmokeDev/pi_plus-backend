@@ -2,6 +2,7 @@ package com.balmis.proyecto.repository;
 
 import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Expedicion;
+import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -160,6 +161,85 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     List<ExpedicionListDTO> findTodayForList( //            @Param("inicioDia") LocalDateTime inicioDia,
             //            @Param("finDia") LocalDateTime finDia
             );
+
+    @Query("""
+    SELECT new com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO(
+        e.referenciaExpedicion,
+        e.fechaCreacion,
+        e.fechaRecepcion,
+        e.fechaModificacion,
+        e.fechaEnvio,
+        e.direccionDestino,
+        us.username,
+        e.estado,
+        COUNT(e.id)
+    )
+    FROM Expedicion e
+    LEFT JOIN e.usuario u
+    LEFT JOIN u.usuarioSecurity us
+    WHERE DATE(e.fechaCreacion) = CURRENT_DATE
+       OR DATE(e.fechaModificacion) = CURRENT_DATE
+    GROUP BY
+        e.referenciaExpedicion,
+        e.fechaCreacion,
+        e.fechaRecepcion,
+        e.fechaModificacion,
+        e.fechaEnvio,
+        e.direccionDestino,
+        us.username,
+        e.estado
+    ORDER BY e.fechaCreacion DESC
+    """)
+    List<ExpedicionGroupListDTO> findTodayGroupedForList();
+
+    @Query("""
+    SELECT new com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO(
+        e.referenciaExpedicion,
+        e.fechaCreacion,
+        e.fechaRecepcion,
+        e.fechaModificacion,
+        e.fechaEnvio,
+        e.direccionDestino,
+        us.username,
+        e.estado,
+        COUNT(e.id)
+    )
+    FROM Expedicion e
+    LEFT JOIN e.usuario u
+    LEFT JOIN u.usuarioSecurity us
+    WHERE (:fechaCreacionDesde IS NULL OR e.fechaCreacion >= :fechaCreacionDesde)
+      AND (:fechaCreacionHasta IS NULL OR e.fechaCreacion < :fechaCreacionHasta)
+      AND (:fechaRecepcionDesde IS NULL OR e.fechaRecepcion >= :fechaRecepcionDesde)
+      AND (:fechaRecepcionHasta IS NULL OR e.fechaRecepcion < :fechaRecepcionHasta)
+      AND (:fechaEnvioInicioDia IS NULL OR e.fechaEnvio >= :fechaEnvioInicioDia)
+      AND (:fechaEnvioFinDia IS NULL OR e.fechaEnvio < :fechaEnvioFinDia)
+      AND (:usuarioId IS NULL OR u.id = :usuarioId)
+      AND (:destino IS NULL OR LOWER(e.direccionDestino) LIKE LOWER(CONCAT('%', :destino, '%')))
+      AND (:referenciaExpedicion IS NULL OR LOWER(e.referenciaExpedicion) LIKE LOWER(CONCAT('%', :referenciaExpedicion, '%')))
+      AND (:estado IS NULL OR e.estado = :estado)
+    GROUP BY
+        e.referenciaExpedicion,
+        e.fechaCreacion,
+        e.fechaRecepcion,
+        e.fechaModificacion,
+        e.fechaEnvio,
+        e.direccionDestino,
+        us.username,
+        e.estado
+    ORDER BY e.fechaEnvio DESC, e.fechaCreacion DESC
+    """)
+    List<ExpedicionGroupListDTO> searchGroupedForList(
+            @Param("fechaCreacionDesde") LocalDateTime fechaCreacionDesde,
+            @Param("fechaCreacionHasta") LocalDateTime fechaCreacionHasta,
+            @Param("fechaRecepcionDesde") LocalDateTime fechaRecepcionDesde,
+            @Param("fechaRecepcionHasta") LocalDateTime fechaRecepcionHasta,
+            @Param("fechaEnvioInicioDia") LocalDateTime fechaEnvioInicioDia,
+            @Param("fechaEnvioFinDia") LocalDateTime fechaEnvioFinDia,
+            @Param("usuarioId") Integer usuarioId,
+            @Param("destino") String destino,
+            @Param("referenciaExpedicion") String referenciaExpedicion,
+            @Param("estado") EstadoExpedicion estado
+    );
 
     // **********************************************************
     // Actualizaciones

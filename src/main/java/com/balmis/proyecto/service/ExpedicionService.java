@@ -3,6 +3,7 @@ package com.balmis.proyecto.service;
 import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.Expedicion;
+import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,46 @@ public class ExpedicionService {
 //        LocalDateTime finDia = today.plusDays(1).atStartOfDay();
 
         return expedicionRepository.findTodayForList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ExpedicionGroupListDTO> findTodayGroupedForList() {
+        return expedicionRepository.findTodayGroupedForList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ExpedicionGroupListDTO> searchGroupedForList(
+            LocalDateTime fechaCreacionDesde,
+            LocalDateTime fechaCreacionHasta,
+            LocalDateTime fechaRecepcionDesde,
+            LocalDateTime fechaRecepcionHasta,
+            LocalDateTime fechaEnvioInicioDia,
+            LocalDateTime fechaEnvioFinDia,
+            Integer usuarioId,
+            String destino,
+            String referenciaExpedicion,
+            EstadoExpedicion estado
+    ) {
+        if (destino != null && destino.trim().isEmpty()) {
+            destino = null;
+        }
+
+        if (referenciaExpedicion != null && referenciaExpedicion.trim().isEmpty()) {
+            referenciaExpedicion = null;
+        }
+
+        return expedicionRepository.searchGroupedForList(
+                fechaCreacionDesde,
+                fechaCreacionHasta,
+                fechaRecepcionDesde,
+                fechaRecepcionHasta,
+                fechaEnvioInicioDia,
+                fechaEnvioFinDia,
+                usuarioId,
+                destino,
+                referenciaExpedicion,
+                estado
+        );
     }
 
     // ************************
