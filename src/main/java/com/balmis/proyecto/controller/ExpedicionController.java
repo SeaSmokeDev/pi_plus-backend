@@ -3,6 +3,7 @@ package com.balmis.proyecto.controller;
 import com.balmis.proyecto.model.EstadoExpedicion;
 import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Usuario;
+import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import com.balmis.proyecto.service.ExpedicionService;
 import com.balmis.proyecto.service.UsuarioService;
@@ -246,6 +247,82 @@ public class ExpedicionController {
     @GetMapping("/today/list")
     public ResponseEntity<List<ExpedicionListDTO>> showTodayForList() {
         return ResponseEntity.ok(expedicionService.findTodayForList());
+    }
+
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener todas las expediciones del dia de hoy (formato grupo, expedicion de expediciones)",
+            description = "Retorna una lista con todas las expediciones con el dia de hoy")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/grouped/today")
+    public ResponseEntity<List<ExpedicionGroupListDTO>> showTodayGroupedForList() {
+        return ResponseEntity.ok(expedicionService.findTodayGroupedForList());
+    }
+
+    
+    // http://localhost:8080/bdproyecto/api/expediciones/today
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener todas las expediciones (formato grupo, expedicion de expediciones) con los filtros aplicados",
+            description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/grouped/search")
+    public ResponseEntity<List<ExpedicionGroupListDTO>> searchGroupedForList(
+            @RequestParam(required = false) LocalDate fechaCreacionDesde,
+            @RequestParam(required = false) LocalDate fechaCreacionHasta,
+            @RequestParam(required = false) LocalDate fechaRecepcionDesde,
+            @RequestParam(required = false) LocalDate fechaRecepcionHasta,
+            @RequestParam(required = false) LocalDate fechaEnvio,
+            @RequestParam(required = false) Integer usuarioId,
+            @RequestParam(required = false) String destino,
+            @RequestParam(required = false) String referenciaExpedicion,
+            @RequestParam(required = false) EstadoExpedicion estado
+    ) {
+        LocalDateTime creacionDesde = fechaCreacionDesde != null
+                ? fechaCreacionDesde.atStartOfDay()
+                : null;
+
+        LocalDateTime creacionHasta = fechaCreacionHasta != null
+                ? fechaCreacionHasta.plusDays(1).atStartOfDay()
+                : null;
+
+        LocalDateTime recepcionDesde = fechaRecepcionDesde != null
+                ? fechaRecepcionDesde.atStartOfDay()
+                : null;
+
+        LocalDateTime recepcionHasta = fechaRecepcionHasta != null
+                ? fechaRecepcionHasta.plusDays(1).atStartOfDay()
+                : null;
+
+        LocalDateTime envioInicioDia = fechaEnvio != null
+                ? fechaEnvio.atStartOfDay()
+                : null;
+
+        LocalDateTime envioFinDia = fechaEnvio != null
+                ? fechaEnvio.plusDays(1).atStartOfDay()
+                : null;
+
+        return ResponseEntity.ok(
+                expedicionService.searchGroupedForList(
+                        creacionDesde,
+                        creacionHasta,
+                        recepcionDesde,
+                        recepcionHasta,
+                        envioInicioDia,
+                        envioFinDia,
+                        usuarioId,
+                        destino,
+                        referenciaExpedicion,
+                        estado
+                )
+        );
     }
 
     // ***************************************************************************

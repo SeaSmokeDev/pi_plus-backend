@@ -17,9 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpedicionListDTO {
-
-    private Integer id;
+public class ExpedicionGroupListDTO {
     private String referenciaExpedicion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaRecepcion;
@@ -28,4 +26,5 @@ public class ExpedicionListDTO {
     private String direccionDestino;
     private String username;
     private EstadoExpedicion estado;
+    private Long totalExpediciones;
 }

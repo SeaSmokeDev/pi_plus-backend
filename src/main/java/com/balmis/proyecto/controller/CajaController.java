@@ -1,6 +1,7 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Caja;
+import com.balmis.proyecto.model.dtos.CajaExpedicionDetailDTO;
 import com.balmis.proyecto.service.CajaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Cajas", description = "API para gestión de cajas")
@@ -115,6 +117,30 @@ public class CajaController {
         return response;
     }
 
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Obtener caja para detalle de expediciones",
+            description = "Retorna una caja con detalle de la misma junto con detalle de los terminales que lleva dentro ")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Caja obtenida con éxito", content = @Content())
+    })
+    // ***************************************************************************
+    @GetMapping("/expedicion-detail/{etiqueta}")
+    public ResponseEntity<CajaExpedicionDetailDTO> getCajaForExpedicionDetail(
+            @PathVariable String etiqueta
+    ) {
+        CajaExpedicionDetailDTO dto = cajaService.findCajaExpedicionDetailByEtiqueta(etiqueta);
+
+        if (dto == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+        return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(dto);
+    }
+
     // ***************************************************************************
     // ACTUALIZACIONES
     // ***************************************************************************
@@ -147,8 +173,7 @@ public class CajaController {
         } else {
 
             if (caja.getEtiqueta() == null || caja.getEtiqueta().trim().isEmpty()
-                    || ( caja.getModeloProducto() == null) 
-                    ) {
+                    || (caja.getModeloProducto() == null)) {
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("error", "Los campos 'etiqueta' , 'modelo producto' son obligatorios");
@@ -213,7 +238,7 @@ public class CajaController {
                 if (caja.getEtiqueta() != null) {
                     existingCaja.setEtiqueta(caja.getEtiqueta());
                 }
-                 if (caja.getModeloProducto() != null) {
+                if (caja.getModeloProducto() != null) {
                     existingCaja.setModeloProducto(caja.getModeloProducto());
                 }
                 if (caja.getPalet() != null) {
