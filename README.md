@@ -19,7 +19,7 @@ Prefijos principales de la API:
 - `http://localhost:8080/bdproyecto/api/auth`
 - `http://localhost:8080/bdproyecto/api/usuarios`
 - `http://localhost:8080/bdproyecto/api/security/usuarios`
-- `http://localhost:8080/bdproyecto/api/cajas/cajas`
+- `http://localhost:8080/bdproyecto/api/cajas`
 - `http://localhost:8080/bdproyecto/api/palets`
 - `http://localhost:8080/bdproyecto/api/expediciones`
 - `http://localhost:8080/bdproyecto/api/estanterias`
