@@ -1,10 +1,18 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Caja;
+import com.balmis.proyecto.model.dtos.AsociarTerminalesRequest;
+import com.balmis.proyecto.model.dtos.AsociarTerminalesResponse;
 import com.balmis.proyecto.model.dtos.CajaExpedicionDetailDTO;
+import com.balmis.proyecto.model.dtos.MotivoValidacionTerminal;
+import com.balmis.proyecto.model.dtos.ValidarTerminalRequest;
+import com.balmis.proyecto.model.dtos.ValidarTerminalResponse;
+import com.balmis.proyecto.service.CajaTerminalService;
 import com.balmis.proyecto.service.CajaService;
+import com.balmis.proyecto.service.CatalogoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +20,7 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +31,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Cajas", description = "API para gestión de cajas")
@@ -32,6 +40,12 @@ public class CajaController {
 
     @Autowired
     private CajaService cajaService;
+    
+    @Autowired
+    private CatalogoService catalogoService;
+    
+    @Autowired
+    private CajaTerminalService cajaTerminalService;
 
     // ***************************************************************************
     // CONSULTAS
@@ -159,6 +173,23 @@ public class CajaController {
 
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> createCaja(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos para crear una caja",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "CajaCreateRequest",
+                                    value = """
+                                            {
+                                              "etiqueta": "P2E4N4C3",
+                                              "modeloProducto": "V240",
+                                              "maxCapacity": 300
+                                            }
+                                            """
+                            )
+                    )
+            )
             @Valid @RequestBody Caja caja) {
 
         ResponseEntity<Map<String, Object>> response;
@@ -173,15 +204,31 @@ public class CajaController {
         } else {
 
             if (caja.getEtiqueta() == null || caja.getEtiqueta().trim().isEmpty()
-                    || (caja.getModeloProducto() == null)) {
+                    || caja.getModeloProducto() == null
+                    || caja.getMaxCapacity() == null) {
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("error", "Los campos 'etiqueta' , 'modelo producto' son obligatorios");
+                map.put("error", "Los campos 'etiqueta', 'modelo producto' y 'max_capacity' son obligatorios");
 
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
+            } else if (caja.getMaxCapacity() <= 0) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "El campo 'max_capacity' debe ser mayor que 0");
+                response = ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(map);
+            } else if (!catalogoService.existeModeloProducto(caja.getModeloProducto())) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "El 'modelo_producto' no existe en el catálogo real de terminales");
+                response = ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(map);
             } else {
+                Optional<String> modeloCanonico = catalogoService.resolverModeloProductoCanonico(caja.getModeloProducto());
+                modeloCanonico.ifPresent(caja::setModeloProducto);
+
                 System.out.println(caja);
                 Caja cajaPost = cajaService.save(caja);
 
@@ -239,7 +286,21 @@ public class CajaController {
                     existingCaja.setEtiqueta(caja.getEtiqueta());
                 }
                 if (caja.getModeloProducto() != null) {
-                    existingCaja.setModeloProducto(caja.getModeloProducto());
+                    Optional<String> modeloCanonico = catalogoService.resolverModeloProductoCanonico(caja.getModeloProducto());
+                    if (modeloCanonico.isEmpty()) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("error", "El 'modelo_producto' no existe en el catálogo real de terminales");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+                    }
+                    existingCaja.setModeloProducto(modeloCanonico.get());
+                }
+                if (caja.getMaxCapacity() != null) {
+                    if (caja.getMaxCapacity() <= 0) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("error", "El campo 'max_capacity' debe ser mayor que 0");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+                    }
+                    existingCaja.setMaxCapacity(caja.getMaxCapacity());
                 }
                 if (caja.getPalet() != null) {
                     existingCaja.setPalet(caja.getPalet());
@@ -293,6 +354,86 @@ public class CajaController {
             response = ResponseEntity.status(HttpStatus.OK).body(map);
         }
         return response;
+    }
+    
+    @Operation(summary = "Validar un terminal para asociarlo a una caja",
+            description = "Valida SN, existencia de caja/terminal, compatibilidad de modelo, estado y asociación previa")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Validación ejecutada con éxito"),
+        @ApiResponse(responseCode = "400", description = "JSON inválido", content = @Content())
+    })
+    @PostMapping("/{id}/validar-terminal")
+    public ResponseEntity<ValidarTerminalResponse> validarTerminalParaCaja(
+            @PathVariable int id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "SN del terminal a validar",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "sn": "SN10001"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            @RequestBody ValidarTerminalRequest request) {
+        ValidarTerminalResponse response = cajaTerminalService.validarTerminalParaCaja(id, request != null ? request.getSn() : null);
+        return ResponseEntity.ok(response);
+    }
+    
+    @Operation(summary = "Asociar terminales a una caja (operación final)",
+            description = "Revalida todos los SN y asocia en una operación transaccional de todo o nada")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Terminales asociados con éxito"),
+        @ApiResponse(responseCode = "400", description = "Errores de validación de negocio")
+    })
+    @PostMapping("/{id}/terminales")
+    public ResponseEntity<AsociarTerminalesResponse> asociarTerminalesACaja(
+            @PathVariable int id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Lista de números de serie a asociar",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "sns": ["SN10001", "SN10002", "SN10003"]
+                                            }
+                                            """
+                            )
+                    )
+            )
+            @RequestBody AsociarTerminalesRequest request) {
+        AsociarTerminalesResponse response = cajaTerminalService.asociarTerminalesACaja(id, request != null ? request.getSns() : null);
+        if (!response.isSuccess() && response.getMotivo() == MotivoValidacionTerminal.ALGUNOS_TERMINALES_INVALIDOS) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        if (!response.isSuccess() && response.getMotivo() != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Desasignar terminal de una caja",
+            description = "Elimina la asociación entre una caja y un terminal por su número de serie")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Terminal desasignado con éxito"),
+        @ApiResponse(responseCode = "400", description = "Error de validación de negocio")
+    })
+    @DeleteMapping("/{id}/terminales/{sn}")
+    public ResponseEntity<Map<String, Object>> desasignarTerminalDeCaja(
+            @PathVariable int id,
+            @PathVariable String sn) {
+        Map<String, Object> result = cajaTerminalService.desasignarTerminalDeCaja(id, sn);
+        Object success = result.get("success");
+        if (Boolean.TRUE.equals(success)) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 
 }

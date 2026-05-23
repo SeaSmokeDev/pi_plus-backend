@@ -20,6 +20,7 @@ public class CajaExpedicionDetailDTO {
     private Integer id;
     private String etiqueta;
     private String modeloProducto;
+    private Integer maxCapacity;
     private Long cantidadTerminales;
     private List<TerminalCajaDTO> terminales;
 }

@@ -52,6 +52,14 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
     """)
     Caja findByEtiquetaWithTerminales(@Param("etiqueta") String etiqueta);
 
+    @Query(value = """
+        SELECT MAX(max_capacity)
+        FROM cajas
+        WHERE UPPER(TRIM(modelo_producto)) = UPPER(TRIM(:modelo))
+           OR UPPER(TRIM(modelo_producto)) LIKE CONCAT('% ', UPPER(TRIM(:modelo)))
+    """, nativeQuery = true)
+    Integer findMaxCapacityByModelo(@Param("modelo") String modelo);
+
     // **********************************************************
     // Actualizaciones
     // **********************************************************

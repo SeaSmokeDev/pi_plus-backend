@@ -62,6 +62,7 @@ public class CajaService {
             caja.getId(),
             caja.getEtiqueta(),
             caja.getModeloProducto(),
+            caja.getMaxCapacity(),
             (long) terminales.size(),
             terminales
     );
@@ -86,6 +87,9 @@ public class CajaService {
         }
         if (cajaUpdate.getModeloProducto() != null) {
             caja.setModeloProducto(cajaUpdate.getModeloProducto());
+        }
+        if (cajaUpdate.getMaxCapacity() != null && cajaUpdate.getMaxCapacity() > 0) {
+            caja.setMaxCapacity(cajaUpdate.getMaxCapacity());
         }
         
         if (cajaUpdate.getPalet() != null) {

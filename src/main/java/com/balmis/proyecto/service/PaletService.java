@@ -36,6 +36,11 @@ public class PaletService {
         return paletRepository.findSqlByIdGreaterThan(paletId);
     }
 
+    @Transactional(readOnly = true)
+    public List<Palet> findFree() {
+        return paletRepository.findSqlFree();
+    }
+
     // ************************
     // ACTUALIZACIONES
     // ************************

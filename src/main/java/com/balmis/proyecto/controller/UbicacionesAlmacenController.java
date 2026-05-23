@@ -1,7 +1,9 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.UbicacionAlmacen;
+import com.balmis.proyecto.model.dtos.UbicacionMapaDto;
 import com.balmis.proyecto.service.UbicacionAlmacenService;
+import com.balmis.proyecto.service.UbicacionMapaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Ubicaciones", description = "API para gestión de ubicaciones en almacen")
@@ -30,6 +33,9 @@ public class UbicacionesAlmacenController {
     
     @Autowired
     private UbicacionAlmacenService ubicacionAlmacenService;
+
+    @Autowired
+    private UbicacionMapaService ubicacionMapaService;
 
     @Operation(summary = "Obtener todas las ubicaciones",
             description = "Retorna una lista con todas las ubicaciones de almacén")
@@ -41,6 +47,25 @@ public class UbicacionesAlmacenController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ubicacionAlmacenService.findAll());
+    }
+
+    @Operation(summary = "Obtener mapa de ubicaciones para frontend",
+            description = "Retorna huecos listos para pintar en frontend, con pasillo, estantería, palé principal, cajas y ocupación actual")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Mapa de ubicaciones obtenido con éxito"),
+        @ApiResponse(responseCode = "400", description = "Parámetro pasilloId inválido", content = @Content())
+    })
+    @GetMapping("/mapa")
+    public ResponseEntity<?> obtenerMapaUbicaciones(
+            @RequestParam(required = false) Integer pasilloId) {
+        if (pasilloId != null && pasilloId <= 0) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "El parámetro 'pasilloId' debe ser mayor que 0");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        }
+
+        List<UbicacionMapaDto> data = ubicacionMapaService.obtenerMapa(pasilloId);
+        return ResponseEntity.status(HttpStatus.OK).body(data);
     }
 
     @Operation(summary = "Obtener ubicación por ID",

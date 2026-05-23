@@ -26,5 +26,22 @@ public interface EstanteriaRepository extends JpaRepository<Estanteria, Integer>
 
     @Query(value = "SELECT * FROM estanterias WHERE id > :id", nativeQuery = true)
     List<Estanteria> findSqlByIdGreaterThan(@Param("id") int id);
+
+    @Query("""
+        SELECT e
+        FROM Estanteria e
+        JOIN FETCH e.pasillo p
+        ORDER BY p.numeroPasillo ASC, e.codigo ASC
+    """)
+    List<Estanteria> findAllWithPasilloForMapa();
+
+    @Query("""
+        SELECT e
+        FROM Estanteria e
+        JOIN FETCH e.pasillo p
+        WHERE p.id = :pasilloId
+        ORDER BY p.numeroPasillo ASC, e.codigo ASC
+    """)
+    List<Estanteria> findAllWithPasilloForMapaByPasillo(@Param("pasilloId") Integer pasilloId);
     
 }
