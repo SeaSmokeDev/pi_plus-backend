@@ -60,6 +60,12 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
     """, nativeQuery = true)
     Integer findMaxCapacityByModelo(@Param("modelo") String modelo);
 
+    @Query(value = "SELECT COUNT(*) FROM terminales_pago WHERE caja_id = :cajaId", nativeQuery = true)
+    Long countTerminalesByCajaId(@Param("cajaId") int cajaId);
+
+    @Query(value = "SELECT * FROM cajas WHERE palet_id IS NULL ORDER BY id", nativeQuery = true)
+    List<Caja> findCajasSinPalet();
+
     // **********************************************************
     // Actualizaciones
     // **********************************************************

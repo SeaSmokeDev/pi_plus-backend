@@ -275,5 +275,22 @@ public class PaletController {
 
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
+
+    @Operation(summary = "Desasignar una caja de un palé",
+            description = "Elimina la asociación entre una caja concreta y un palé concreto")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Caja desasignada del palé con éxito"),
+        @ApiResponse(responseCode = "400", description = "Error de validación de negocio", content = @Content())
+    })
+    @DeleteMapping("/{paletId}/cajas/{cajaId}")
+    public ResponseEntity<Map<String, Object>> desasignarCajaDePalet(
+            @PathVariable int paletId,
+            @PathVariable int cajaId) {
+        Map<String, Object> result = paletService.desasignarCajaDePalet(paletId, cajaId);
+        if (Boolean.TRUE.equals(result.get("success"))) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
     
 }

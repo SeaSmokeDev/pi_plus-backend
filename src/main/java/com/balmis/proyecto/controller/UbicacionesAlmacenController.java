@@ -2,6 +2,7 @@ package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.UbicacionAlmacen;
 import com.balmis.proyecto.model.dtos.UbicacionMapaDto;
+import com.balmis.proyecto.service.PaletService;
 import com.balmis.proyecto.service.UbicacionAlmacenService;
 import com.balmis.proyecto.service.UbicacionMapaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +37,9 @@ public class UbicacionesAlmacenController {
 
     @Autowired
     private UbicacionMapaService ubicacionMapaService;
+
+    @Autowired
+    private PaletService paletService;
 
     @Operation(summary = "Obtener todas las ubicaciones",
             description = "Retorna una lista con todas las ubicaciones de almacén")
@@ -216,5 +220,22 @@ public class UbicacionesAlmacenController {
         map.put("deletedUbicacion", existingUbicacion);
 
         return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
+
+    @Operation(summary = "Desasignar palet de un habitáculo",
+            description = "Elimina la asociación entre un palet concreto y un habitáculo concreto")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Palet desasignado del habitáculo con éxito"),
+        @ApiResponse(responseCode = "400", description = "Error de validación de negocio", content = @Content())
+    })
+    @DeleteMapping("/{ubicacionId}/palets/{paletId}")
+    public ResponseEntity<Map<String, Object>> desasignarPaletDeUbicacion(
+            @PathVariable int ubicacionId,
+            @PathVariable int paletId) {
+        Map<String, Object> result = paletService.desasignarPaletDeUbicacion(ubicacionId, paletId);
+        if (Boolean.TRUE.equals(result.get("success"))) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 }

@@ -1,8 +1,12 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Caja;
+import com.balmis.proyecto.model.Palet;
+import com.balmis.proyecto.model.dtos.AsignarPaletCajaRequestDto;
 import com.balmis.proyecto.model.dtos.AsociarTerminalesRequest;
 import com.balmis.proyecto.model.dtos.AsociarTerminalesResponse;
+import com.balmis.proyecto.model.dtos.CajaCapacidadDto;
+import com.balmis.proyecto.model.dtos.CajaCreateRequestDto;
 import com.balmis.proyecto.model.dtos.CajaExpedicionDetailDTO;
 import com.balmis.proyecto.model.dtos.MotivoValidacionTerminal;
 import com.balmis.proyecto.model.dtos.ValidarTerminalRequest;
@@ -10,6 +14,7 @@ import com.balmis.proyecto.model.dtos.ValidarTerminalResponse;
 import com.balmis.proyecto.service.CajaTerminalService;
 import com.balmis.proyecto.service.CajaService;
 import com.balmis.proyecto.service.CatalogoService;
+import com.balmis.proyecto.service.PaletService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -27,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +53,9 @@ public class CajaController {
     @Autowired
     private CajaTerminalService cajaTerminalService;
 
+    @Autowired
+    private PaletService paletService;
+
     // ***************************************************************************
     // CONSULTAS
     // ***************************************************************************
@@ -64,6 +73,18 @@ public class CajaController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(cajaService.findAll());
+    }
+
+    @Operation(summary = "Obtener cajas sin palé asignado",
+            description = "Retorna únicamente las cajas cuyo palet_id es NULL")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cajas libres obtenidas con éxito")
+    })
+    @GetMapping("/free")
+    public ResponseEntity<List<Caja>> showCajasFree() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(cajaService.findSinPalet());
     }
 
     // http://localhost:8080/apirest/cajas/2
@@ -131,6 +152,21 @@ public class CajaController {
         return response;
     }
 
+    @Operation(summary = "Obtener ocupación y capacidad máxima de una caja",
+            description = "Retorna la cantidad de terminales actuales y la capacidad máxima para mostrar formato tipo 3/90")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Resumen de capacidad obtenido con éxito"),
+        @ApiResponse(responseCode = "404", description = "Caja no encontrada", content = @Content())
+    })
+    @GetMapping("/{id}/capacidad")
+    public ResponseEntity<CajaCapacidadDto> getCapacidadCaja(@PathVariable int id) {
+        CajaCapacidadDto dto = cajaService.getCapacidadCajaById(id);
+        if (dto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
     // ***************************************************************************    
     // SWAGGER
     @Operation(summary = "Obtener caja para detalle de expediciones",
@@ -184,17 +220,18 @@ public class CajaController {
                                             {
                                               "etiqueta": "P2E4N4C3",
                                               "modeloProducto": "V240",
-                                              "maxCapacity": 300
+                                              "maxCapacity": 300,
+                                              "paletId": 5
                                             }
                                             """
                             )
                     )
             )
-            @Valid @RequestBody Caja caja) {
+            @Valid @RequestBody CajaCreateRequestDto request) {
 
         ResponseEntity<Map<String, Object>> response;
 
-        if (caja == null) {
+        if (request == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("error", "El cuerpo de la solicitud no puede estar vacío");
 
@@ -203,9 +240,9 @@ public class CajaController {
                     .body(map);
         } else {
 
-            if (caja.getEtiqueta() == null || caja.getEtiqueta().trim().isEmpty()
-                    || caja.getModeloProducto() == null
-                    || caja.getMaxCapacity() == null) {
+            if (request.getEtiqueta() == null || request.getEtiqueta().trim().isEmpty()
+                    || request.getModeloProducto() == null
+                    || request.getMaxCapacity() == null) {
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("error", "Los campos 'etiqueta', 'modelo producto' y 'max_capacity' son obligatorios");
@@ -213,28 +250,43 @@ public class CajaController {
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
-            } else if (caja.getMaxCapacity() <= 0) {
+            } else if (request.getMaxCapacity() <= 0) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("error", "El campo 'max_capacity' debe ser mayor que 0");
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
-            } else if (!catalogoService.existeModeloProducto(caja.getModeloProducto())) {
+            } else if (!catalogoService.existeModeloProducto(request.getModeloProducto())) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("error", "El 'modelo_producto' no existe en el catálogo real de terminales");
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
             } else {
-                Optional<String> modeloCanonico = catalogoService.resolverModeloProductoCanonico(caja.getModeloProducto());
+                Palet palet = null;
+                if (request.getPaletId() != null) {
+                    palet = paletService.findById(request.getPaletId());
+                    if (palet == null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("error", "El 'paletId' no existe");
+                        response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+                        return response;
+                    }
+                }
+
+                Caja caja = new Caja();
+                caja.setEtiqueta(request.getEtiqueta());
+                caja.setMaxCapacity(request.getMaxCapacity());
+                caja.setPalet(palet);
+                Optional<String> modeloCanonico = catalogoService.resolverModeloProductoCanonico(request.getModeloProducto());
                 modeloCanonico.ifPresent(caja::setModeloProducto);
 
-                System.out.println(caja);
                 Caja cajaPost = cajaService.save(caja);
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("mensaje", "Caja creado con éxito");
                 map.put("insertCaja", cajaPost);
+                map.put("paletId", cajaPost.getPalet() != null ? cajaPost.getPalet().getId() : null);
 
                 response = ResponseEntity
                         .status(HttpStatus.CREATED)
@@ -434,6 +486,61 @@ public class CajaController {
             return ResponseEntity.ok(result);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    @Operation(summary = "Asignar una caja existente a un palé",
+            description = "Asigna palet_id a una caja ya creada, evitando recrear la caja")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Caja asignada al palé con éxito"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "404", description = "Caja o palé no encontrado")
+    })
+    @PatchMapping("/{id}/palet")
+    public ResponseEntity<Map<String, Object>> asignarPaletACaja(
+            @PathVariable int id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "ID del palé a asignar",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "paletId": 4
+                                            }
+                                            """
+                            )
+                    )
+            )
+            @RequestBody AsignarPaletCajaRequestDto request) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        if (request == null || request.getPaletId() == null) {
+            map.put("error", "El campo 'paletId' es obligatorio");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        }
+
+        Caja caja = cajaService.findById(id);
+        if (caja == null) {
+            map.put("error", "Caja no encontrada");
+            map.put("cajaId", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        }
+
+        Palet palet = paletService.findById(request.getPaletId());
+        if (palet == null) {
+            map.put("error", "El 'paletId' no existe");
+            map.put("paletId", request.getPaletId());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+        }
+
+        Caja updated = cajaService.asignarPalet(id, palet);
+        map.put("mensaje", "Caja asignada al palé con éxito");
+        map.put("cajaId", updated.getId());
+        map.put("paletId", updated.getPalet() != null ? updated.getPalet().getId() : null);
+        map.put("updatedCaja", updated);
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
 }

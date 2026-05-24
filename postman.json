@@ -506,6 +506,20 @@
           }
         },
         {
+          "name": "Mapa",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/mapa"
+          }
+        },
+        {
+          "name": "Mapa By Pasillo",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/mapa?pasilloId=1"
+          }
+        },
+        {
           "name": "Get By Id",
           "request": {
             "method": "GET",
@@ -566,6 +580,13 @@
             "method": "DELETE",
             "url": "{{baseUrl}}/api/ubicaciones/1"
           }
+        },
+        {
+          "name": "Desasignar Palet De Ubicacion",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/ubicaciones/1/palets/1"
+          }
         }
       ]
     },
@@ -601,6 +622,13 @@
           }
         },
         {
+          "name": "Get Free",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/palets/free"
+          }
+        },
+        {
           "name": "Create",
           "request": {
             "method": "POST",
@@ -612,7 +640,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"descripcion\": \"Palet test\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8,\n  \"codigoMarca\": \"PAL-TST-001\",\n  \"ubicacionAlmacen\": { \"id\": 1 }\n}"
+              "raw": "{\n  \"descripcion\": \"Palet recepción Verifone\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8,\n  \"codigoMarca\": \"PAL-VER-010\",\n  \"ubicacionAlmacenId\": 2,\n  \"cajas\": []\n}"
             },
             "url": "{{baseUrl}}/api/palets"
           }
@@ -640,6 +668,13 @@
             "method": "DELETE",
             "url": "{{baseUrl}}/api/palets/1"
           }
+        },
+        {
+          "name": "Desasignar Caja De Palet",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/palets/1/cajas/1"
+          }
         }
       ]
     },
@@ -651,6 +686,13 @@
           "request": {
             "method": "GET",
             "url": "{{baseUrl}}/api/cajas"
+          }
+        },
+        {
+          "name": "Get Free",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/free"
           }
         },
         {
@@ -675,6 +717,20 @@
           }
         },
         {
+          "name": "Capacidad",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/1/capacidad"
+          }
+        },
+        {
+          "name": "Expedicion Detail By Etiqueta",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/expedicion-detail/CAJA-A1"
+          }
+        },
+        {
           "name": "Create",
           "request": {
             "method": "POST",
@@ -686,7 +742,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"etiqueta\": \"CAJA-TST\",\n  \"modeloProducto\": \"V240\",\n  \"palet\": { \"id\": 1 }\n}"
+              "raw": "{\n  \"etiqueta\": \"P2E4N4C3\",\n  \"modeloProducto\": \"V240\",\n  \"maxCapacity\": 300,\n  \"paletId\": 5\n}"
             },
             "url": "{{baseUrl}}/api/cajas"
           }
@@ -703,7 +759,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": 1,\n  \"etiqueta\": \"CAJA-A1\",\n  \"modeloProducto\": \"V240\",\n  \"palet\": { \"id\": 1 }\n}"
+              "raw": "{\n  \"id\": 1,\n  \"etiqueta\": \"CAJA-A1\",\n  \"modeloProducto\": \"V240\",\n  \"maxCapacity\": 120,\n  \"palet\": { \"id\": 1 }\n}"
             },
             "url": "{{baseUrl}}/api/cajas"
           }
@@ -748,6 +804,30 @@
             },
             "url": "{{baseUrl}}/api/cajas/1/terminales"
           }
+        },
+        {
+          "name": "Asignar Palet A Caja",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paletId\": 4\n}"
+            },
+            "url": "{{baseUrl}}/api/cajas/7/palet"
+          }
+        },
+        {
+          "name": "Desasignar Terminal De Caja",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cajas/1/terminales/SN10001"
+          }
         }
       ]
     },
@@ -779,7 +859,7 @@
           "name": "Get By Direccion",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/api/expediciones/direccion?direccion=Madrid"
+            "url": "{{baseUrl}}/api/expediciones/direccion?contiene=Madrid"
           }
         },
         {
@@ -907,7 +987,28 @@
           "name": "Modelos Producto",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/catalogo/modelos-producto"
+            "url": "{{baseUrl}}/api/catalogo/modelos-producto"
+          }
+        },
+        {
+          "name": "Marcas Terminales",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/terminales/marcas"
+          }
+        },
+        {
+          "name": "Modelos Por Marca",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/terminales/marcas/Ingenico/modelos"
+          }
+        },
+        {
+          "name": "Max Capacity Por Modelo",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/cajas/modelos/Move5000/max-capacity"
           }
         }
       ]
