@@ -6,6 +6,7 @@ import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionLoteRequestDTO;
+import com.balmis.proyecto.model.dtos.ExpeditionQuickViewDTO;
 import com.balmis.proyecto.service.ExpedicionService;
 import com.balmis.proyecto.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -264,7 +265,6 @@ public class ExpedicionController {
         return ResponseEntity.ok(expedicionService.findTodayGroupedForList());
     }
 
-    
     // http://localhost:8080/bdproyecto/api/expediciones/today
     // ***************************************************************************    
     // SWAGGER
@@ -324,6 +324,29 @@ public class ExpedicionController {
                         estado
                 )
         );
+    }
+
+    // *****************************************************************************************
+    // http://localhost:8080/bdproyecto/api/expediciones/referencia/EXP-20260505-001/resumen
+    // ***************************************************************************************** 
+    // SWAGGER
+    @Operation(summary = "Obtener vista rapida de una expedicion",
+            description = "Retorna una expedicion para hacer una vista rapida sobre los detalles de la expedicion")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expedicion obtenida con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/referencia/{referenciaExpedicion}/resumen")
+    public ResponseEntity<ExpeditionQuickViewDTO> getQuickViewByReferencia(
+            @PathVariable String referenciaExpedicion
+    ) {
+        ExpeditionQuickViewDTO dto = expedicionService.findQuickViewByReferencia(referenciaExpedicion);
+
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(dto);
     }
 
     // ***************************************************************************

@@ -9,6 +9,8 @@ import com.balmis.proyecto.model.Terminal;
 import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionLoteRequestDTO;
+import com.balmis.proyecto.model.dtos.ExpeditionQuickViewDTO;
+import com.balmis.proyecto.model.dtos.ExpeditionQuickViewPaymentDTO;
 import com.balmis.proyecto.repository.CajaRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -315,6 +317,47 @@ public class ExpedicionService {
 
         terminalRepository.saveAll(caja.getTerminales());
         cajaRepository.save(caja);
+    }
+
+    @Transactional(readOnly = true)
+    public ExpeditionQuickViewDTO findQuickViewByReferencia(String referenciaExpedicion) {
+        List<Expedicion> expediciones = expedicionRepository.findByReferenciaWithQuickViewData(referenciaExpedicion);
+
+        if (expediciones == null || expediciones.isEmpty()) {
+            return null;
+        }
+
+        Expedicion primera = expediciones.get(0);
+
+        List<ExpeditionQuickViewPaymentDTO> terminales = expediciones.stream()
+                .filter(expedicion -> expedicion.getCaja() != null)
+                .flatMap(expedicion -> expedicion.getCaja().getTerminales().stream())
+                .map(terminal -> new ExpeditionQuickViewPaymentDTO(
+                terminal.getModelo(),
+                terminal.getMarca(),
+                terminal.getEstado(),
+                terminal.getNumeroSerie()
+        ))
+                .toList();
+
+        String username = null;
+
+        if (primera.getUsuario() != null && primera.getUsuario().getUsuarioSecurity() != null) {
+            username = primera.getUsuario().getUsuarioSecurity().getUsername();
+        }
+
+        return new ExpeditionQuickViewDTO(
+                primera.getReferenciaExpedicion(),
+                username,
+                primera.getFechaEnvio(),
+                primera.getDireccionDestino(),
+                primera.getPaquetes(),
+                primera.getPeso(),
+                primera.getNotas(),
+                (long) expediciones.size(),
+                (long) terminales.size(),
+                terminales
+        );
     }
 
     @Transactional

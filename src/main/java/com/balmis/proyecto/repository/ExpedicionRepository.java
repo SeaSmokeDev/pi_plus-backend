@@ -250,6 +250,19 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     """, nativeQuery = true)
     String findLastReferenciaByPrefijo(@Param("prefijo") String prefijo);
 
+    @Query("""
+        SELECT DISTINCT e
+        FROM Expedicion e
+        LEFT JOIN FETCH e.usuario u
+        LEFT JOIN FETCH u.usuarioSecurity us
+        LEFT JOIN FETCH e.caja c
+        LEFT JOIN FETCH c.terminales t
+        WHERE e.referenciaExpedicion = :referenciaExpedicion
+    """)
+    List<Expedicion> findByReferenciaWithQuickViewData(
+            @Param("referenciaExpedicion") String referenciaExpedicion
+    );
+
     // **********************************************************
     // Actualizaciones
     // **********************************************************
