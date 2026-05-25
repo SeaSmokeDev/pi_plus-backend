@@ -65,6 +65,8 @@ INSERT INTO pasillos (id, numero_pasillo) VALUES
 (9, 9),
 (10, 10);
 
+ALTER TABLE pasillos AUTO_INCREMENT = 11;
+
 -- =========================
 -- ESTANTERÍAS
 -- =========================
@@ -179,7 +181,7 @@ INSERT INTO estanterias (id, codigo, niveles_maximos, capacidad_nivel, pasillo_i
 (99, 'I', 4, 8, 10),
 (100, 'J', 3, 8, 10);
 
-ALTER TABLE estanterias AUTO_INCREMENT = 5;
+ALTER TABLE estanterias AUTO_INCREMENT = 101;
 
 -- =========================
 -- UBICACIONES EN ALMACÉN
@@ -207,55 +209,71 @@ ALTER TABLE palets AUTO_INCREMENT = 5;
 -- =========================
 -- CAJAS
 -- =========================
+-- Criterio:
+-- - Las cajas usadas por expediciones en tránsito/recibidas NO tienen palet_id.
+-- - Las cajas que siguen en almacén sí tienen palet_id.
+-- - Cada caja contiene terminales de un único estado.
 INSERT INTO cajas (id, etiqueta, modelo_producto, max_capacity, palet_id) VALUES
-(1, 'CAJA-A1', 'Verifone V240', 120, 1),
-(2, 'CAJA-B2', 'Ingenico Move5000', 100, 2),
-(3, 'CAJA-C3', 'PAX A920',90, 3),
-(4, 'CAJA-D4', 'Verifone V240', 80, 4),
-(5, 'CAJA-E5', 'Ingenico Move5000', 70, 4);
+(1,  'CAJA-EXP-VER-001',  'Verifone V240 - En tránsito',              120, NULL),
+(2,  'CAJA-EXP-ING-001',  'Ingenico Move5000 - En tránsito',          100, NULL),
+(3,  'CAJA-EXP-PAX-001',  'PAX A920 - En tránsito',                    90, NULL),
+(4,  'CAJA-EXP-MOV-002',  'Ingenico Move5000 - En tránsito',          100, NULL),
+(5,  'CAJA-REC-VER-001',  'Verifone V240 - Expedición recibida',      120, NULL),
+(6,  'CAJA-REC-ING-001',  'Ingenico Move5000 - Expedición recibida',  100, NULL),
+(7,  'CAJA-OP-PAX-001',   'PAX A920 - Operativos',                     90, 3),
+(8,  'CAJA-OP-MOV-001',   'Ingenico Move5000 - Operativos',           100, 1),
+(9,  'CAJA-REV-VER-001',  'Verifone V240 - Pendiente revisión',       120, 2),
+(10, 'CAJA-N1-PAX-001',   'PAX A920 - Nivel 1',                        90, 2);
 
-ALTER TABLE cajas AUTO_INCREMENT = 6;
+ALTER TABLE cajas AUTO_INCREMENT = 11;
 
 -- =========================
 -- TERMINALES DE PAGO
 -- =========================
+-- Criterio:
+-- - Todos los terminales de una misma caja tienen el mismo estado.
+-- - Los terminales de cajas expedidas están en_transito y siguen asociados a su caja.
+-- - La caja expedida queda fuera del almacén porque su palet_id es NULL.
 INSERT INTO terminales_pago (id, numero_serie, modelo, marca, estado, notas, fecha_ingreso, fecha_creacion, caja_id) VALUES
-(1, 'SN10001', 'V240', 'Verifone', 'operativo', 'Terminal en caja para salida Madrid', '2025-01-10 00:00:00', '2024-12-15 00:00:00', 1),
-(2, 'SN10002', 'V240', 'Verifone', 'operativo', 'Terminal en caja para salida Madrid', '2025-01-11 00:00:00', '2024-12-16 00:00:00', 1),
-(3, 'SN10003', 'Move5000', 'Ingenico', 'operativo', 'Terminal en caja para salida Madrid', '2025-01-20 00:00:00', '2024-11-10 00:00:00', 2),
-(4, 'SN10004', 'A920', 'PAX', 'operativo', 'Terminal en caja para salida Madrid', '2025-02-01 00:00:00', '2025-01-25 00:00:00', 3),
-(5, 'SN10005', 'V240', 'Verifone', 'en_transito', 'Terminal enviado a Sevilla', '2025-02-15 00:00:00', '2025-02-10 00:00:00', 4),
-(6, 'SN10006', 'Move5000', 'Ingenico', 'en_transito', 'Terminal enviado a Sevilla', '2025-02-16 00:00:00', '2025-02-11 00:00:00', 5),
-(7, 'SN10007', 'A920', 'PAX', 'nivel_1', 'Configuración inicial pendiente', '2025-03-01 00:00:00', '2025-02-20 00:00:00', 3),
-(8, 'SN10008', 'V240', 'Verifone', 'pendiente_revision', 'Error en lector de tarjetas', '2025-03-05 00:00:00', '2025-02-25 00:00:00', 1);
+(1,  'SN10001', 'V240',     'Verifone', 'en_transito', 'Terminal incluido en expedición activa', '2025-01-10 00:00:00', '2024-12-15 00:00:00', 1),
+(2,  'SN10002', 'V240',     'Verifone', 'en_transito', 'Terminal incluido en expedición activa', '2025-01-11 00:00:00', '2024-12-16 00:00:00', 1),
+(3,  'SN10003', 'Move5000', 'Ingenico', 'en_transito', 'Terminal incluido en expedición activa', '2025-01-20 00:00:00', '2024-11-10 00:00:00', 2),
+(4,  'SN10004', 'Move5000', 'Ingenico', 'en_transito', 'Terminal incluido en expedición activa', '2025-01-21 00:00:00', '2024-11-11 00:00:00', 2),
+(5,  'SN10005', 'A920',     'PAX',      'en_transito', 'Terminal incluido en expedición activa', '2025-02-01 00:00:00', '2025-01-25 00:00:00', 3),
+(6,  'SN10006', 'A920',     'PAX',      'en_transito', 'Terminal incluido en expedición activa', '2025-02-02 00:00:00', '2025-01-26 00:00:00', 3),
+(7,  'SN10007', 'Move5000', 'Ingenico', 'en_transito', 'Terminal incluido en expedición activa', '2025-02-10 00:00:00', '2025-02-01 00:00:00', 4),
+(8,  'SN10008', 'Move5000', 'Ingenico', 'en_transito', 'Terminal incluido en expedición activa', '2025-02-11 00:00:00', '2025-02-02 00:00:00', 4),
+(9,  'SN10009', 'V240',     'Verifone', 'en_transito', 'Terminal perteneciente a expedición recibida', '2025-02-15 00:00:00', '2025-02-10 00:00:00', 5),
+(10, 'SN10010', 'V240',     'Verifone', 'en_transito', 'Terminal perteneciente a expedición recibida', '2025-02-16 00:00:00', '2025-02-11 00:00:00', 5),
+(11, 'SN10011', 'Move5000', 'Ingenico', 'en_transito', 'Terminal perteneciente a expedición recibida', '2025-02-17 00:00:00', '2025-02-12 00:00:00', 6),
+(12, 'SN10012', 'Move5000', 'Ingenico', 'en_transito', 'Terminal perteneciente a expedición recibida', '2025-02-18 00:00:00', '2025-02-13 00:00:00', 6),
+(13, 'SN10013', 'A920',     'PAX',      'operativo', 'Terminal operativo en almacén', '2025-03-01 00:00:00', '2025-02-20 00:00:00', 7),
+(14, 'SN10014', 'A920',     'PAX',      'operativo', 'Terminal operativo en almacén', '2025-03-02 00:00:00', '2025-02-21 00:00:00', 7),
+(15, 'SN10015', 'Move5000', 'Ingenico', 'operativo', 'Terminal operativo en almacén', '2025-03-05 00:00:00', '2025-02-25 00:00:00', 8),
+(16, 'SN10016', 'Move5000', 'Ingenico', 'operativo', 'Terminal operativo en almacén', '2025-03-06 00:00:00', '2025-02-26 00:00:00', 8),
+(17, 'SN10017', 'V240',     'Verifone', 'pendiente_revision', 'Error en lector de tarjetas', '2025-03-10 00:00:00', '2025-03-01 00:00:00', 9),
+(18, 'SN10018', 'V240',     'Verifone', 'pendiente_revision', 'Pantalla con fallo intermitente', '2025-03-11 00:00:00', '2025-03-02 00:00:00', 9),
+(19, 'SN10019', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-15 00:00:00', '2025-03-05 00:00:00', 10),
+(20, 'SN10020', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-16 00:00:00', '2025-03-06 00:00:00', 10);
 
-ALTER TABLE terminales_pago AUTO_INCREMENT = 9;
+ALTER TABLE terminales_pago AUTO_INCREMENT = 21;
 
 -- =========================
 -- EXPEDICIONES
--- Cada referencia agrupa varias líneas de expedición.
--- Una línea de expedición está asociada a una caja concreta.
 -- =========================
+-- Criterio:
+-- - No hay expediciones abiertas.
+-- - Las expediciones creadas hoy están en_transito y usan cajas sin palet.
+-- - fecha_envio = fecha_creacion para reflejar envío inmediato.
+-- - Las expediciones recibidas tienen fecha_recepcion informada.
 INSERT INTO expediciones
 (id, referencia_expedicion, fecha_creacion, fecha_envio, fecha_recepcion, fecha_modificacion, direccion_destino, paquetes, peso, notas, estado, usuario_id, caja_id)
 VALUES
--- Grupo abierto creado hoy: mismo destino, varias cajas/modelos
-(1, 'EXP-20260505-001', CURRENT_TIMESTAMP, '2026-05-06 09:30:00', NULL, CURRENT_TIMESTAMP, 'Calle Mayor 10, Madrid', 2, 30, 'Salida Verifone V240 para cliente Madrid', 'abierta', 2, 1),
-(2, 'EXP-20260505-001', CURRENT_TIMESTAMP, '2026-05-06 09:30:00', NULL, CURRENT_TIMESTAMP, 'Calle Mayor 10, Madrid', 1, 18, 'Salida Ingenico Move5000 para cliente Madrid', 'abierta', 2, 2),
-(3, 'EXP-20260505-001', CURRENT_TIMESTAMP, '2026-05-06 09:30:00', NULL, CURRENT_TIMESTAMP, 'Calle Mayor 10, Madrid', 1, 15, 'Salida PAX A920 para cliente Madrid', 'abierta', 2, 3),
+(1, CONCAT('EXP-', DATE_FORMAT(CURDATE(), '%Y%m%d'), '-001'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 'Calle Mayor 10, Madrid', 2, 30, 'Salida Verifone V240 para cliente Madrid', 'en_transito', 2, 1),
+(2, CONCAT('EXP-', DATE_FORMAT(CURDATE(), '%Y%m%d'), '-001'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 'Calle Mayor 10, Madrid', 1, 18, 'Salida Ingenico Move5000 para cliente Madrid', 'en_transito', 2, 2),
+(3, CONCAT('EXP-', DATE_FORMAT(CURDATE(), '%Y%m%d'), '-002'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 'Av. Maisonnave 20, Alicante', 1, 15, 'Salida PAX A920 para cliente Alicante', 'en_transito', 2, 3),
+(4, CONCAT('EXP-', DATE_FORMAT(CURDATE(), '%Y%m%d'), '-002'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 'Av. Maisonnave 20, Alicante', 1, 16, 'Salida Ingenico Move5000 para cliente Alicante', 'en_transito', 2, 4),
+(5, 'EXP-20260420-001', '2026-04-20 10:15:00', '2026-04-20 10:15:00', '2026-04-22 17:45:00', '2026-04-22 17:45:00', 'Av. Andalucía 25, Sevilla', 2, 28, 'Entrega recibida correctamente', 'recibida', 3, 5),
+(6, 'EXP-20260420-001', '2026-04-20 10:15:00', '2026-04-20 10:15:00', '2026-04-22 17:45:00', '2026-04-22 17:45:00', 'Av. Andalucía 25, Sevilla', 1, 16, 'Entrega recibida correctamente', 'recibida', 3, 6);
 
--- Grupo en tránsito: mismo envío, varias líneas
-(4, 'EXP-20260420-001', '2026-04-20 10:15:00', '2026-04-21 08:00:00', NULL, '2026-04-21 08:05:00', 'Av. Andalucía 25, Sevilla', 2, 28, 'Envío Verifone V240 en tránsito', 'en_transito', 2, 4),
-(5, 'EXP-20260420-001', '2026-04-20 10:15:00', '2026-04-21 08:00:00', NULL, '2026-04-21 08:05:00', 'Av. Andalucía 25, Sevilla', 1, 16, 'Envío Ingenico Move5000 en tránsito', 'en_transito', 2, 5),
-
--- Grupo recibido histórico
-(6, 'EXP-20260310-001', '2026-03-10 12:30:00', '2026-03-11 09:00:00', '2026-03-12 17:45:00', '2026-03-12 17:45:00', 'C/ Valencia 45, Barcelona', 2, 32, 'Entrega recibida correctamente', 'recibida', 3, 1),
-(7, 'EXP-20260310-001', '2026-03-10 12:30:00', '2026-03-11 09:00:00', '2026-03-12 17:45:00', '2026-03-12 17:45:00', 'C/ Valencia 45, Barcelona', 1, 14, 'Entrega recibida correctamente', 'recibida', 3, 3),
-
--- Expedición individual sin grupo múltiple
-(8, 'EXP-20260215-001', '2026-02-15 09:00:00', '2026-02-16 11:30:00', NULL, '2026-02-15 09:00:00', 'Polígono Industrial Sur, Valencia', 1, 12, 'Expedición individual pendiente de recepción', 'en_transito', 1, 2),
-
--- Expedición abierta histórica para probar filtros por estado y fecha
-(9, 'EXP-20260125-001', '2026-01-25 16:20:00', '2026-01-27 10:00:00', NULL, '2026-01-25 16:20:00', 'Ronda Norte 8, Alicante', 1, 10, 'Pendiente de preparar documentación', 'abierta', 4, 5);
-
-ALTER TABLE expediciones AUTO_INCREMENT = 10;
+ALTER TABLE expediciones AUTO_INCREMENT = 7;
