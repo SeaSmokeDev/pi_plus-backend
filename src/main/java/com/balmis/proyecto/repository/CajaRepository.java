@@ -52,6 +52,15 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
     """)
     Caja findByEtiquetaWithTerminales(@Param("etiqueta") String etiqueta);
 
+
+    @Query("""
+        SELECT c
+        FROM Caja c
+        LEFT JOIN FETCH c.terminales
+        WHERE c.id = :id
+    """)
+    Caja findByIdWithTerminales(@Param("id") Integer id);
+
     @Query(value = """
         SELECT MAX(max_capacity)
         FROM cajas

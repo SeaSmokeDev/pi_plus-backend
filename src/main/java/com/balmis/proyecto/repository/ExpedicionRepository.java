@@ -241,6 +241,28 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
             @Param("estado") EstadoExpedicion estado
     );
 
+    @Query(value = """
+    SELECT referencia_expedicion
+    FROM expediciones
+    WHERE referencia_expedicion LIKE CONCAT(:prefijo, '%')
+    ORDER BY referencia_expedicion DESC
+    LIMIT 1
+    """, nativeQuery = true)
+    String findLastReferenciaByPrefijo(@Param("prefijo") String prefijo);
+
+    @Query("""
+        SELECT DISTINCT e
+        FROM Expedicion e
+        LEFT JOIN FETCH e.usuario u
+        LEFT JOIN FETCH u.usuarioSecurity us
+        LEFT JOIN FETCH e.caja c
+        LEFT JOIN FETCH c.terminales t
+        WHERE e.referenciaExpedicion = :referenciaExpedicion
+    """)
+    List<Expedicion> findByReferenciaWithQuickViewData(
+            @Param("referenciaExpedicion") String referenciaExpedicion
+    );
+
     // **********************************************************
     // Actualizaciones
     // **********************************************************

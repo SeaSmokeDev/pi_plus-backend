@@ -5,6 +5,8 @@ import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
+import com.balmis.proyecto.model.dtos.ExpedicionLoteRequestDTO;
+import com.balmis.proyecto.model.dtos.ExpeditionQuickViewDTO;
 import com.balmis.proyecto.service.ExpedicionService;
 import com.balmis.proyecto.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -263,7 +265,6 @@ public class ExpedicionController {
         return ResponseEntity.ok(expedicionService.findTodayGroupedForList());
     }
 
-    
     // http://localhost:8080/bdproyecto/api/expediciones/today
     // ***************************************************************************    
     // SWAGGER
@@ -325,6 +326,29 @@ public class ExpedicionController {
         );
     }
 
+    // *****************************************************************************************
+    // http://localhost:8080/bdproyecto/api/expediciones/referencia/EXP-20260505-001/resumen
+    // ***************************************************************************************** 
+    // SWAGGER
+    @Operation(summary = "Obtener vista rapida de una expedicion",
+            description = "Retorna una expedicion para hacer una vista rapida sobre los detalles de la expedicion")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Expedicion obtenida con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/referencia/{referenciaExpedicion}/resumen")
+    public ResponseEntity<ExpeditionQuickViewDTO> getQuickViewByReferencia(
+            @PathVariable String referenciaExpedicion
+    ) {
+        ExpeditionQuickViewDTO dto = expedicionService.findQuickViewByReferencia(referenciaExpedicion);
+
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(dto);
+    }
+
     // ***************************************************************************
     // ACTUALIZACIONES
     // ***************************************************************************
@@ -341,14 +365,14 @@ public class ExpedicionController {
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content())
     })
     // ***************************************************************************
-    @PostMapping("/{idUser}")
+    @PostMapping("/lote")
     public ResponseEntity<Map<String, Object>> create(
-            @Valid @RequestBody Expedicion expedicion, @PathVariable int idUser) {
+            @Valid @RequestBody ExpedicionLoteRequestDTO expedicionDTO) {
 
-        //System.out.println(expedicion);
+        System.out.println(expedicionDTO);
         ResponseEntity<Map<String, Object>> response;
 
-        if (expedicion == null) {
+        if (expedicionDTO == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("error", "El cuerpo de la solicitud no puede estar vacío");
 
@@ -357,27 +381,27 @@ public class ExpedicionController {
                     .body(map);
         } else {
 
-            Usuario user = userService.findById(idUser);
+            Usuario user = userService.findById(expedicionDTO.getUsuarioId());
 
-            if (expedicion.getDireccionDestino() == null || expedicion.getDireccionDestino().trim().isEmpty()
-                    || expedicion.getPaquetes() < 0
-                    || expedicion.getPeso() < 0) {
+            if (expedicionDTO.getDireccionDestino() == null || expedicionDTO.getDireccionDestino().trim().isEmpty()
+                    || expedicionDTO.getPaquetes() < 0
+                    || expedicionDTO.getPeso() < 0) {
 
                 Map<String, Object> map = new HashMap<>();
                 String error = "";
-                if (expedicion.getDireccionDestino() == null || expedicion.getDireccionDestino().trim().isEmpty()) {
+                if (expedicionDTO.getDireccionDestino() == null || expedicionDTO.getDireccionDestino().trim().isEmpty()) {
                     if (!error.equals("")) {
                         error += " - ";
                     }
                     error += "El campo 'direccion destino' es obligatorio";
                 }
-                if (expedicion.getPaquetes() < 0) {
+                if (expedicionDTO.getPaquetes() < 0) {
                     if (!error.equals("")) {
                         error += " - ";
                     }
                     error += "El campo 'paquetes' debe ser positivo";
                 }
-                if (expedicion.getPeso() < 0) {
+                if (expedicionDTO.getPeso() < 0) {
                     if (!error.equals("")) {
                         error += " - ";
                     }
@@ -398,13 +422,13 @@ public class ExpedicionController {
                             .status(HttpStatus.NOT_FOUND)
                             .body(map);
                 } else {
-                    expedicion.setUsuario(user);
+                    //expedicionDTO.setUsuario(user);
 
-                    Expedicion objPost = expedicionService.save(expedicion);
+                    ExpedicionGroupListDTO expedicionesGroup = expedicionService.createLote(expedicionDTO);
 
                     Map<String, Object> map = new HashMap<>();
-                    map.put("mensaje", "Expedicion creado con éxito");
-                    map.put("insertRealizado", objPost);
+                    map.put("mensaje", "Expediciones creadas con éxito");
+                    map.put("insertRealizado", expedicionesGroup);
 
                     response = ResponseEntity
                             .status(HttpStatus.CREATED)
