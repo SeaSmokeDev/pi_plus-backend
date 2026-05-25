@@ -5,8 +5,14 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080/bdproyecto" },
-    { "key": "sessionCookie", "value": "" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/bdproyecto"
+    },
+    {
+      "key": "sessionCookie",
+      "value": ""
+    }
   ],
   "item": [
     {
@@ -16,8 +22,16 @@
           "name": "Login",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"username\": \"cmartinez\",\n  \"password\": \"1234\"\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"cmartinez\",\n  \"password\": \"1234\"\n}"
+            },
             "url": "{{baseUrl}}/api/auth/login"
           }
         },
@@ -25,7 +39,12 @@
           "name": "Logout",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Cookie", "value": "{{sessionCookie}}" }],
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{sessionCookie}}"
+              }
+            ],
             "url": "{{baseUrl}}/api/auth/logout"
           }
         },
@@ -33,7 +52,12 @@
           "name": "User Session",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Cookie", "value": "{{sessionCookie}}" }],
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{sessionCookie}}"
+              }
+            ],
             "url": "{{baseUrl}}/api/auth/user"
           }
         }
@@ -42,18 +66,62 @@
     {
       "name": "Usuarios",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/usuarios" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/usuarios/1" } },
-        { "name": "Get By Nombre (contiene)", "request": { "method": "GET", "url": "{{baseUrl}}/api/usuarios/nombre/test?contiene=ca" } },
-        { "name": "Get Id By Username", "request": { "method": "GET", "url": "{{baseUrl}}/api/usuarios/username/cmartinez" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/usuarios/count" } },
-        { "name": "List DTO", "request": { "method": "GET", "url": "{{baseUrl}}/api/usuarios/list" } },
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/1"
+          }
+        },
+        {
+          "name": "Get By Nombre (contiene)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/nombre/test?contiene=ca"
+          }
+        },
+        {
+          "name": "Get Id By Username",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/username/cmartinez"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/count"
+          }
+        },
+        {
+          "name": "List DTO",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/usuarios/list"
+          }
+        },
         {
           "name": "Create",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Laura\",\n  \"apellido\": \"Sanchez\",\n  \"lugarTrabajo\": \"Central\",\n  \"rol\": \"tecnico\"\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Laura\",\n  \"apellido\": \"Sanchez\",\n  \"lugarTrabajo\": \"Central\",\n  \"rol\": \"tecnico\"\n}"
+            },
             "url": "{{baseUrl}}/api/usuarios"
           }
         },
@@ -61,27 +129,73 @@
           "name": "Update",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Martinez\",\n  \"lugarTrabajo\": \"Central\",\n  \"rol\": \"administrador\"\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Martinez\",\n  \"lugarTrabajo\": \"Central\",\n  \"rol\": \"administrador\"\n}"
+            },
             "url": "{{baseUrl}}/api/usuarios"
           }
         },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/usuarios/1" } }
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/usuarios/1"
+          }
+        }
       ]
     },
     {
       "name": "Usuarios Security",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/security/usuarios" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/security/usuarios/1" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/security/usuarios/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/security/usuarios/count" } },
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/security/usuarios"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/security/usuarios/1"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/security/usuarios/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/security/usuarios/count"
+          }
+        },
         {
           "name": "Create",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"username\": \"nuevo_user\",\n  \"email\": \"nuevo@empresa.com\",\n  \"password\": \"1234\",\n  \"rol\": \"tecnico\",\n  \"activado\": true\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nuevo_user\",\n  \"email\": \"nuevo@empresa.com\",\n  \"password\": \"1234\",\n  \"rol\": \"tecnico\",\n  \"activado\": true\n}"
+            },
             "url": "{{baseUrl}}/api/security/usuarios/1"
           }
         },
@@ -89,28 +203,80 @@
           "name": "Update",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"username\": \"cmartinez\",\n  \"email\": \"cmartinez@empresa.com\",\n  \"password\": \"1234\",\n  \"rol\": \"administrador\",\n  \"activado\": true\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"username\": \"cmartinez\",\n  \"email\": \"cmartinez@empresa.com\",\n  \"password\": \"1234\",\n  \"rol\": \"administrador\",\n  \"activado\": true\n}"
+            },
             "url": "{{baseUrl}}/api/security/usuarios"
           }
         },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/security/usuarios/1" } }
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/security/usuarios/1"
+          }
+        }
       ]
     },
     {
       "name": "Terminales",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/terminales" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/terminales/1" } },
-        { "name": "Get By SN", "request": { "method": "GET", "url": "{{baseUrl}}/api/terminales/sn/SN10001" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/terminales/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/terminales/count" } },
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/terminales"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/terminales/1"
+          }
+        },
+        {
+          "name": "Get By SN",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/terminales/sn/SN10001"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/terminales/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/terminales/count"
+          }
+        },
         {
           "name": "Create",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"numeroSerie\": \"SN99999\",\n  \"modelo\": \"V240\",\n  \"marca\": \"Verifone\",\n  \"estado\": \"operativo\",\n  \"notas\": \"Alta manual\",\n  \"fechaIngreso\": \"2026-05-20T00:00:00\",\n  \"fechaCreacion\": \"2026-05-20T00:00:00\",\n  \"caja\": { \"id\": 1 }\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroSerie\": \"SN99999\",\n  \"modelo\": \"V240\",\n  \"marca\": \"Verifone\",\n  \"estado\": \"operativo\",\n  \"notas\": \"Alta manual\",\n  \"fechaIngreso\": \"2026-05-20T00:00:00\",\n  \"fechaCreacion\": \"2026-05-20T00:00:00\",\n  \"caja\": { \"id\": 1 }\n}"
+            },
             "url": "{{baseUrl}}/api/terminales"
           }
         },
@@ -118,8 +284,16 @@
           "name": "Update By SN",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"numeroSerie\": \"SN10001\",\n  \"modelo\": \"V240\",\n  \"marca\": \"Verifone\",\n  \"estado\": \"operativo\",\n  \"notas\": \"Actualizado\",\n  \"fechaIngreso\": \"2026-05-20T00:00:00\",\n  \"fechaCreacion\": \"2026-05-20T00:00:00\",\n  \"caja\": { \"id\": 1 }\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroSerie\": \"SN10001\",\n  \"modelo\": \"V240\",\n  \"marca\": \"Verifone\",\n  \"estado\": \"operativo\",\n  \"notas\": \"Actualizado\",\n  \"fechaIngreso\": \"2026-05-20T00:00:00\",\n  \"fechaCreacion\": \"2026-05-20T00:00:00\",\n  \"caja\": { \"id\": 1 }\n}"
+            },
             "url": "{{baseUrl}}/api/terminales/sn/SN10001"
           }
         },
@@ -127,8 +301,16 @@
           "name": "Patch By Id",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"notas\": \"Patch por id\"\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notas\": \"Patch por id\"\n}"
+            },
             "url": "{{baseUrl}}/api/terminales/1"
           }
         },
@@ -136,93 +318,599 @@
           "name": "Patch By SN",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"estado\": \"pendiente_revision\"\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"pendiente_revision\"\n}"
+            },
             "url": "{{baseUrl}}/api/terminales/sn/SN10001"
           }
         },
-        { "name": "Delete By Id", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/terminales/1" } },
-        { "name": "Delete By SN", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/terminales/sn/SN10001" } }
+        {
+          "name": "Delete By Id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/terminales/1"
+          }
+        },
+        {
+          "name": "Delete By SN",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/terminales/sn/SN10001"
+          }
+        }
       ]
     },
     {
       "name": "Pasillos",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/pasillos" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/pasillos/1" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/pasillos/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/pasillos/count" } },
-        { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"numeroPasillo\": 10\n}" }, "url": "{{baseUrl}}/api/pasillos" } },
-        { "name": "Update", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"numeroPasillo\": 11\n}" }, "url": "{{baseUrl}}/api/pasillos" } },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/pasillos/1" } }
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pasillos"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pasillos/1"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pasillos/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/pasillos/count"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroPasillo\": 10\n}"
+            },
+            "url": "{{baseUrl}}/api/pasillos"
+          }
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"numeroPasillo\": 11\n}"
+            },
+            "url": "{{baseUrl}}/api/pasillos"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/pasillos/1"
+          }
+        }
       ]
     },
     {
       "name": "Estanterias",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/estanterias" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/estanterias/1" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/estanterias/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/estanterias/count" } },
-        { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codigo\": \"Z\",\n  \"nivelesMaximos\": 4,\n  \"capacidadNivel\": 8,\n  \"pasillo\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/estanterias" } },
-        { "name": "Update", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"codigo\": \"A\",\n  \"nivelesMaximos\": 4,\n  \"capacidadNivel\": 8,\n  \"pasillo\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/estanterias" } },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/estanterias/1" } }
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/estanterias"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/estanterias/1"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/estanterias/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/estanterias/count"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"Z\",\n  \"nivelesMaximos\": 4,\n  \"capacidadNivel\": 8,\n  \"pasillo\": { \"id\": 1 }\n}"
+            },
+            "url": "{{baseUrl}}/api/estanterias"
+          }
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"codigo\": \"A\",\n  \"nivelesMaximos\": 4,\n  \"capacidadNivel\": 8,\n  \"pasillo\": { \"id\": 1 }\n}"
+            },
+            "url": "{{baseUrl}}/api/estanterias"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/estanterias/1"
+          }
+        }
       ]
     },
     {
       "name": "Ubicaciones",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/ubicaciones" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/ubicaciones/1" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/ubicaciones/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/ubicaciones/count" } },
-        { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"referencia\": \"9Z1\",\n  \"nivel\": 1,\n  \"estanteria\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/ubicaciones" } },
-        { "name": "Update", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"referencia\": \"1A1\",\n  \"nivel\": 1,\n  \"estanteria\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/ubicaciones" } },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/ubicaciones/1" } }
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones"
+          }
+        },
+        {
+          "name": "Mapa",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/mapa"
+          }
+        },
+        {
+          "name": "Mapa By Pasillo",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/mapa?pasilloId=1"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/1"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ubicaciones/count"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referencia\": \"9Z1\",\n  \"nivel\": 1,\n  \"estanteria\": { \"id\": 1 }\n}"
+            },
+            "url": "{{baseUrl}}/api/ubicaciones"
+          }
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"referencia\": \"1A1\",\n  \"nivel\": 1,\n  \"estanteria\": { \"id\": 1 }\n}"
+            },
+            "url": "{{baseUrl}}/api/ubicaciones"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/ubicaciones/1"
+          }
+        },
+        {
+          "name": "Desasignar Palet De Ubicacion",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/ubicaciones/1/palets/1"
+          }
+        }
       ]
     },
     {
       "name": "Palets",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/palets" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/palets/1" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/palets/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/palets/count" } },
-        { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"descripcion\": \"Palet test\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8,\n  \"codigoMarca\": \"PAL-TST-001\",\n  \"ubicacionAlmacen\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/palets" } },
-        { "name": "Update", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Palet actualizado\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8\n}" }, "url": "{{baseUrl}}/api/palets" } },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/palets/1" } }
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/palets"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/palets/1"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/palets/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/palets/count"
+          }
+        },
+        {
+          "name": "Get Free",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/palets/free"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Palet recepción Verifone\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8,\n  \"codigoMarca\": \"PAL-VER-010\",\n  \"ubicacionAlmacenId\": 2,\n  \"cajas\": []\n}"
+            },
+            "url": "{{baseUrl}}/api/palets"
+          }
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"descripcion\": \"Palet actualizado\",\n  \"material\": \"madera\",\n  \"tipo\": \"europeo\",\n  \"capacidadMaxCajas\": 8\n}"
+            },
+            "url": "{{baseUrl}}/api/palets"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/palets/1"
+          }
+        },
+        {
+          "name": "Desasignar Caja De Palet",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/palets/1/cajas/1"
+          }
+        }
       ]
     },
     {
       "name": "Cajas",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/cajas" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/cajas/1" } },
-        { "name": "Get Mayor", "request": { "method": "GET", "url": "{{baseUrl}}/api/cajas/mayor/1" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/cajas/count" } },
-        { "name": "Create", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"etiqueta\": \"CAJA-TST\",\n  \"modeloProducto\": \"V240\",\n  \"palet\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/cajas" } },
-        { "name": "Update", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"etiqueta\": \"CAJA-A1\",\n  \"modeloProducto\": \"V240\",\n  \"palet\": { \"id\": 1 }\n}" }, "url": "{{baseUrl}}/api/cajas" } },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/cajas/1" } }
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas"
+          }
+        },
+        {
+          "name": "Get Free",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/free"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/1"
+          }
+        },
+        {
+          "name": "Get Mayor",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/mayor/1"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/count"
+          }
+        },
+        {
+          "name": "Capacidad",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/1/capacidad"
+          }
+        },
+        {
+          "name": "Expedicion Detail By Etiqueta",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cajas/expedicion-detail/CAJA-A1"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"etiqueta\": \"P2E4N4C3\",\n  \"modeloProducto\": \"V240\",\n  \"maxCapacity\": 300,\n  \"paletId\": 5\n}"
+            },
+            "url": "{{baseUrl}}/api/cajas"
+          }
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"etiqueta\": \"CAJA-A1\",\n  \"modeloProducto\": \"V240\",\n  \"maxCapacity\": 120,\n  \"palet\": { \"id\": 1 }\n}"
+            },
+            "url": "{{baseUrl}}/api/cajas"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cajas/1"
+          }
+        },
+        {
+          "name": "Validar Terminal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sn\": \"SN10001\"\n}"
+            },
+            "url": "{{baseUrl}}/api/cajas/1/validar-terminal"
+          }
+        },
+        {
+          "name": "Asociar Terminales",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sns\": [\"SN10001\", \"SN10002\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/cajas/1/terminales"
+          }
+        },
+        {
+          "name": "Asignar Palet A Caja",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paletId\": 4\n}"
+            },
+            "url": "{{baseUrl}}/api/cajas/7/palet"
+          }
+        },
+        {
+          "name": "Desasignar Terminal De Caja",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cajas/1/terminales/SN10001"
+          }
+        }
       ]
     },
     {
       "name": "Expediciones",
       "item": [
-        { "name": "Get All", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones" } },
-        { "name": "Get By Id", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/1" } },
-        { "name": "Get By Usuario Name", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/nombre/usuario/Carlos" } },
-        { "name": "Get By Direccion", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/direccion?direccion=Madrid" } },
-        { "name": "Count", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/count" } },
-        { "name": "Today", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/today" } },
-        { "name": "Search", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/search?creacionDesde=2026-01-01&creacionHasta=2026-12-31&estado=abierta" } },
-        { "name": "List DTO", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/list" } },
-        { "name": "Today List DTO", "request": { "method": "GET", "url": "{{baseUrl}}/api/expediciones/today/list" } },
+        {
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones"
+          }
+        },
+        {
+          "name": "Get By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/1"
+          }
+        },
+        {
+          "name": "Get By Usuario Name",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/nombre/usuario/Carlos"
+          }
+        },
+        {
+          "name": "Get By Direccion",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/direccion?contiene=Madrid"
+          }
+        },
+        {
+          "name": "Count",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/count"
+          }
+        },
+        {
+          "name": "Today",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/today"
+          }
+        },
+        {
+          "name": "Search",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/search?creacionDesde=2026-01-01&creacionHasta=2026-12-31&estado=abierta"
+          }
+        },
+        {
+          "name": "List DTO",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/list"
+          }
+        },
+        {
+          "name": "Today List DTO",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/expediciones/today/list"
+          }
+        },
         {
           "name": "Create",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"referenciaExpedicion\": \"EXP-TEST-001\",\n  \"fechaCreacion\": \"2026-05-20T10:00:00\",\n  \"fechaEnvio\": \"2026-05-21T10:00:00\",\n  \"direccionDestino\": \"Calle Test 123\",\n  \"paquetes\": 1,\n  \"peso\": 10,\n  \"notas\": \"Alta desde Postman\",\n  \"estado\": \"abierta\",\n  \"caja\": { \"id\": 1 }\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referenciaExpedicion\": \"EXP-TEST-001\",\n  \"fechaCreacion\": \"2026-05-20T10:00:00\",\n  \"fechaEnvio\": \"2026-05-21T10:00:00\",\n  \"direccionDestino\": \"Calle Test 123\",\n  \"paquetes\": 1,\n  \"peso\": 10,\n  \"notas\": \"Alta desde Postman\",\n  \"estado\": \"abierta\",\n  \"caja\": { \"id\": 1 }\n}"
+            },
             "url": "{{baseUrl}}/api/expediciones/1"
           }
         },
@@ -230,22 +918,99 @@
           "name": "Update",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"id\": 1,\n  \"referenciaExpedicion\": \"EXP-20260505-001\",\n  \"direccionDestino\": \"Madrid\",\n  \"paquetes\": 2,\n  \"peso\": 30,\n  \"estado\": \"abierta\",\n  \"usuario\": { \"id\": 2 },\n  \"caja\": { \"id\": 1 }\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"referenciaExpedicion\": \"EXP-20260505-001\",\n  \"direccionDestino\": \"Madrid\",\n  \"paquetes\": 2,\n  \"peso\": 30,\n  \"estado\": \"abierta\",\n  \"usuario\": { \"id\": 2 },\n  \"caja\": { \"id\": 1 }\n}"
+            },
             "url": "{{baseUrl}}/api/expediciones"
           }
         },
-        { "name": "Set En Transito", "request": { "method": "PUT", "url": "{{baseUrl}}/api/expediciones/1/en-transito" } },
-        { "name": "Set Recibida", "request": { "method": "PUT", "url": "{{baseUrl}}/api/expediciones/1/recibida" } },
-        { "name": "Delete", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/expediciones/1" } },
-        { "name": "Reasignar Usuario", "request": { "method": "PUT", "url": "{{baseUrl}}/api/expediciones/1/reasignar/usuario/2" } },
-        { "name": "Desasignar Departamento", "request": { "method": "PUT", "url": "{{baseUrl}}/api/expediciones/empleados/1/desasignar/departamento" } }
+        {
+          "name": "Set En Transito",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/expediciones/1/en-transito"
+          }
+        },
+        {
+          "name": "Set Recibida",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/expediciones/1/recibida"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/expediciones/1"
+          }
+        },
+        {
+          "name": "Reasignar Usuario",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/expediciones/1/reasignar/usuario/2"
+          }
+        },
+        {
+          "name": "Desasignar Departamento",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/expediciones/empleados/1/desasignar/departamento"
+          }
+        }
       ]
     },
     {
       "name": "Swagger Redirect",
       "item": [
-        { "name": "Root Redirect", "request": { "method": "GET", "url": "{{baseUrl}}/" } }
+        {
+          "name": "Root Redirect",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalogo",
+      "item": [
+        {
+          "name": "Modelos Producto",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/modelos-producto"
+          }
+        },
+        {
+          "name": "Marcas Terminales",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/terminales/marcas"
+          }
+        },
+        {
+          "name": "Modelos Por Marca",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/terminales/marcas/Ingenico/modelos"
+          }
+        },
+        {
+          "name": "Max Capacity Por Modelo",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/catalogo/cajas/modelos/Move5000/max-capacity"
+          }
+        }
       ]
     }
   ]

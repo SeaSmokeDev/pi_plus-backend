@@ -22,4 +22,7 @@ public interface PaletRepository extends JpaRepository<Palet, Integer> {
 
     @Query(value = "SELECT * FROM palets WHERE id > :id", nativeQuery = true)
     List<Palet> findSqlByIdGreaterThan(@Param("id") int id);
+
+    @Query(value = "SELECT * FROM palets WHERE ubicacion_almacen_id IS NULL", nativeQuery = true)
+    List<Palet> findSqlFree();
 }

@@ -55,18 +55,129 @@ ALTER TABLE users_security AUTO_INCREMENT = 5;
 -- =========================
 INSERT INTO pasillos (id, numero_pasillo) VALUES
 (1, 1),
-(2, 2);
-
-ALTER TABLE pasillos AUTO_INCREMENT = 3;
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
 
 -- =========================
 -- ESTANTERÍAS
 -- =========================
 INSERT INTO estanterias (id, codigo, niveles_maximos, capacidad_nivel, pasillo_id) VALUES
 (1, 'A', 4, 8, 1),
-(2, 'B', 4, 8, 1),
-(3, 'C', 4, 8, 2),
-(4, 'D', 4, 8, 2);
+(2, 'B', 3, 8, 1),
+(3, 'C', 2, 8, 1),
+(4, 'D', 4, 8, 1),
+(5, 'E', 1, 8, 1),
+(6, 'F', 3, 8, 1),
+(7, 'G', 2, 8, 1),
+(8, 'H', 4, 8, 1),
+(9, 'I', 3, 8, 1),
+(10, 'J', 2, 8, 1),
+
+(11, 'A', 3, 8, 2),
+(12, 'B', 4, 8, 2),
+(13, 'C', 2, 8, 2),
+(14, 'D', 1, 8, 2),
+(15, 'E', 4, 8, 2),
+(16, 'F', 3, 8, 2),
+(17, 'G', 2, 8, 2),
+(18, 'H', 4, 8, 2),
+(19, 'I', 1, 8, 2),
+(20, 'J', 3, 8, 2),
+
+(21, 'A', 2, 8, 3),
+(22, 'B', 3, 8, 3),
+(23, 'C', 4, 8, 3),
+(24, 'D', 2, 8, 3),
+(25, 'E', 1, 8, 3),
+(26, 'F', 4, 8, 3),
+(27, 'G', 3, 8, 3),
+(28, 'H', 2, 8, 3),
+(29, 'I', 4, 8, 3),
+(30, 'J', 1, 8, 3),
+
+(31, 'A', 4, 8, 4),
+(32, 'B', 2, 8, 4),
+(33, 'C', 3, 8, 4),
+(34, 'D', 1, 8, 4),
+(35, 'E', 4, 8, 4),
+(36, 'F', 2, 8, 4),
+(37, 'G', 3, 8, 4),
+(38, 'H', 4, 8, 4),
+(39, 'I', 1, 8, 4),
+(40, 'J', 2, 8, 4),
+
+(41, 'A', 1, 8, 5),
+(42, 'B', 4, 8, 5),
+(43, 'C', 3, 8, 5),
+(44, 'D', 2, 8, 5),
+(45, 'E', 4, 8, 5),
+(46, 'F', 1, 8, 5),
+(47, 'G', 3, 8, 5),
+(48, 'H', 2, 8, 5),
+(49, 'I', 4, 8, 5),
+(50, 'J', 3, 8, 5),
+
+(51, 'A', 3, 8, 6),
+(52, 'B', 2, 8, 6),
+(53, 'C', 4, 8, 6),
+(54, 'D', 1, 8, 6),
+(55, 'E', 3, 8, 6),
+(56, 'F', 4, 8, 6),
+(57, 'G', 2, 8, 6),
+(58, 'H', 1, 8, 6),
+(59, 'I', 4, 8, 6),
+(60, 'J', 3, 8, 6),
+
+(61, 'A', 4, 8, 7),
+(62, 'B', 1, 8, 7),
+(63, 'C', 2, 8, 7),
+(64, 'D', 3, 8, 7),
+(65, 'E', 4, 8, 7),
+(66, 'F', 2, 8, 7),
+(67, 'G', 1, 8, 7),
+(68, 'H', 3, 8, 7),
+(69, 'I', 4, 8, 7),
+(70, 'J', 2, 8, 7),
+
+(71, 'A', 2, 8, 8),
+(72, 'B', 4, 8, 8),
+(73, 'C', 1, 8, 8),
+(74, 'D', 3, 8, 8),
+(75, 'E', 2, 8, 8),
+(76, 'F', 4, 8, 8),
+(77, 'G', 1, 8, 8),
+(78, 'H', 3, 8, 8),
+(79, 'I', 2, 8, 8),
+(80, 'J', 4, 8, 8),
+
+(81, 'A', 3, 8, 9),
+(82, 'B', 1, 8, 9),
+(83, 'C', 4, 8, 9),
+(84, 'D', 2, 8, 9),
+(85, 'E', 3, 8, 9),
+(86, 'F', 1, 8, 9),
+(87, 'G', 4, 8, 9),
+(88, 'H', 2, 8, 9),
+(89, 'I', 3, 8, 9),
+(90, 'J', 4, 8, 9),
+
+(91, 'A', 4, 8, 10),
+(92, 'B', 3, 8, 10),
+(93, 'C', 2, 8, 10),
+(94, 'D', 1, 8, 10),
+(95, 'E', 4, 8, 10),
+(96, 'F', 3, 8, 10),
+(97, 'G', 2, 8, 10),
+(98, 'H', 1, 8, 10),
+(99, 'I', 4, 8, 10),
+(100, 'J', 3, 8, 10);
 
 ALTER TABLE estanterias AUTO_INCREMENT = 5;
 
@@ -85,23 +196,23 @@ ALTER TABLE ubicaciones_almacen AUTO_INCREMENT = 6;
 -- =========================
 -- PALETS
 -- =========================
-INSERT INTO palets (id, descripcion, material, tipo, capacidad_max_cajas, ubicacion_almacen_id, codigo_marca) VALUES
-(1, 'Palet recepción Verifone', 'madera', 'europeo', 8, 1, 'PAL-VER-001'),
-(2, 'Palet recepción Ingenico', 'plastico', 'americano', 8, 2, 'PAL-ING-001'),
-(3, 'Palet recepción PAX', 'madera', 'europeo', 8, 3, 'PAL-PAX-001'),
-(4, 'Palet mixto de tránsito', 'madera', 'europeo', 6, NULL, 'PAL-MIX-001');
+INSERT INTO palets (id, material, tipo, capacidad_max_cajas, ubicacion_almacen_id, codigo_marca, descripcion) VALUES
+(1, 'madera', 'europeo', 8, 1, 'PAL-VER-001', ''),
+(2, 'plastico', 'americano', 8, 2, 'PAL-ING-001', ''),
+(3, 'madera', 'europeo', 8, 3, 'PAL-PAX-001', ''),
+(4, 'madera', 'europeo', 6, NULL, 'PAL-MIX-001', '');
 
 ALTER TABLE palets AUTO_INCREMENT = 5;
 
 -- =========================
 -- CAJAS
 -- =========================
-INSERT INTO cajas (id, etiqueta, modelo_producto, palet_id) VALUES
-(1, 'CAJA-A1', 'Verifone V240', 1),
-(2, 'CAJA-B2', 'Ingenico Move5000', 2),
-(3, 'CAJA-C3', 'PAX A920', 3),
-(4, 'CAJA-D4', 'Verifone V240', 4),
-(5, 'CAJA-E5', 'Ingenico Move5000', 4);
+INSERT INTO cajas (id, etiqueta, modelo_producto, max_capacity, palet_id) VALUES
+(1, 'CAJA-A1', 'Verifone V240', 120, 1),
+(2, 'CAJA-B2', 'Ingenico Move5000', 100, 2),
+(3, 'CAJA-C3', 'PAX A920',90, 3),
+(4, 'CAJA-D4', 'Verifone V240', 80, 4),
+(5, 'CAJA-E5', 'Ingenico Move5000', 70, 4);
 
 ALTER TABLE cajas AUTO_INCREMENT = 6;
 

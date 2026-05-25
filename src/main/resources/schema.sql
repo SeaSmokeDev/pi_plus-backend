@@ -114,12 +114,12 @@ CREATE TABLE IF NOT EXISTS ubicaciones_almacen (
 -- =========================
 CREATE TABLE IF NOT EXISTS palets (
     id INT NOT NULL AUTO_INCREMENT,
-    descripcion VARCHAR(255) NOT NULL,
     material ENUM('plastico', 'madera') NOT NULL,
     tipo ENUM('americano', 'europeo') NOT NULL,
     capacidad_max_cajas INT NOT NULL DEFAULT 8,
     ubicacion_almacen_id INT DEFAULT NULL,
     codigo_marca VARCHAR(255),
+    descripcion VARCHAR(255) NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_palets_ubicaciones
         FOREIGN KEY (ubicacion_almacen_id) REFERENCES ubicaciones_almacen(id)
@@ -132,6 +132,7 @@ CREATE TABLE IF NOT EXISTS cajas (
     id INT NOT NULL AUTO_INCREMENT,
     etiqueta VARCHAR(255) NOT NULL UNIQUE COMMENT 'Etiqueta de ubicación/referencia',
     modelo_producto VARCHAR(255),
+    max_capacity INT NOT NULL DEFAULT 100 COMMENT 'Capacidad maxima de terminales en caja',
     palet_id INT DEFAULT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_cajas_palets

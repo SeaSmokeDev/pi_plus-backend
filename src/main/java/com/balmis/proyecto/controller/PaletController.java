@@ -1,9 +1,15 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Palet;
+import com.balmis.proyecto.model.MaterialPalet;
+import com.balmis.proyecto.model.TipoPalet;
+import com.balmis.proyecto.model.UbicacionAlmacen;
+import com.balmis.proyecto.model.dtos.PaletCreateRequestDto;
 import com.balmis.proyecto.service.PaletService;
+import com.balmis.proyecto.service.UbicacionAlmacenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +36,9 @@ public class PaletController {
     
      @Autowired
     private PaletService paletService;
+
+    @Autowired
+    private UbicacionAlmacenService ubicacionAlmacenService;
 
     @Operation(summary = "Obtener todos los palets",
             description = "Retorna una lista con todos los palets disponibles")
@@ -91,6 +100,18 @@ public class PaletController {
                 .body(map);
     }
 
+    @Operation(summary = "Obtener palets libres",
+            description = "Retorna palets sin ubicación asignada (ubicacion_almacen_id IS NULL)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Palets libres obtenidos con éxito")
+    })
+    @GetMapping("/free")
+    public ResponseEntity<List<Palet>> showPaletsFree() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(paletService.findFree());
+    }
+
     @Operation(summary = "Crear un nuevo palet",
             description = "Registra un nuevo palet en el sistema con los datos proporcionados")
     @ApiResponses(value = {
@@ -98,22 +119,72 @@ public class PaletController {
         @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content())
     })
     @PostMapping("")
-    public ResponseEntity<Map<String, Object>> createPalet(@Valid @RequestBody Palet palet) {
+    public ResponseEntity<Map<String, Object>> createPalet(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos para crear un palet",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "PaletCreateRequest",
+                                    value = """
+                                            {
+                                              "descripcion": "Palet recepción Verifone",
+                                              "material": "madera",
+                                              "tipo": "europeo",
+                                              "capacidadMaxCajas": 8,
+                                              "codigoMarca": "PAL-VER-010",
+                                              "ubicacionAlmacenId": 2
+                                            }
+                                            """
+                            )
+                    )
+            )
+            @Valid @RequestBody PaletCreateRequestDto request) {
 
-        if (palet == null) {
+        if (request == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("error", "El cuerpo de la solicitud no puede estar vacío");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
         }
 
-        if (palet.getDescripcion() == null || palet.getDescripcion().trim().isEmpty()
-                || palet.getMaterial() == null
-                || palet.getTipo() == null) {
+        if (request.getDescripcion() == null || request.getDescripcion().trim().isEmpty()
+                || request.getMaterial() == null || request.getMaterial().trim().isEmpty()
+                || request.getTipo() == null || request.getTipo().trim().isEmpty()) {
 
             Map<String, Object> map = new HashMap<>();
             map.put("error", "Los campos 'descripcion', 'material' y 'tipo' son obligatorios");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
         }
+
+        MaterialPalet material;
+        TipoPalet tipo;
+        try {
+            material = MaterialPalet.valueOf(request.getMaterial().trim().toLowerCase());
+            tipo = TipoPalet.valueOf(request.getTipo().trim().toLowerCase());
+        } catch (IllegalArgumentException ex) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "Valores inválidos para 'material' o 'tipo'. Valores permitidos: material[plastico,madera], tipo[americano,europeo]");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        }
+
+        UbicacionAlmacen ubicacionAlmacen = null;
+        if (request.getUbicacionAlmacenId() != null) {
+            ubicacionAlmacen = ubicacionAlmacenService.findById(request.getUbicacionAlmacenId());
+            if (ubicacionAlmacen == null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "La 'ubicacionAlmacenId' no existe");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+            }
+        }
+
+        Palet palet = new Palet();
+        palet.setDescripcion(request.getDescripcion());
+        palet.setMaterial(material);
+        palet.setTipo(tipo);
+        palet.setCapacidadMaxCajas(request.getCapacidadMaxCajas() == null ? 8 : request.getCapacidadMaxCajas());
+        palet.setCodigoMarca(request.getCodigoMarca());
+        palet.setUbicacionAlmacen(ubicacionAlmacen);
 
         Palet paletPost = paletService.save(palet);
 
@@ -203,6 +274,23 @@ public class PaletController {
         map.put("deletedPalet", existingPalet);
 
         return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
+
+    @Operation(summary = "Desasignar una caja de un palé",
+            description = "Elimina la asociación entre una caja concreta y un palé concreto")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Caja desasignada del palé con éxito"),
+        @ApiResponse(responseCode = "400", description = "Error de validación de negocio", content = @Content())
+    })
+    @DeleteMapping("/{paletId}/cajas/{cajaId}")
+    public ResponseEntity<Map<String, Object>> desasignarCajaDePalet(
+            @PathVariable int paletId,
+            @PathVariable int cajaId) {
+        Map<String, Object> result = paletService.desasignarCajaDePalet(paletId, cajaId);
+        if (Boolean.TRUE.equals(result.get("success"))) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
     
 }

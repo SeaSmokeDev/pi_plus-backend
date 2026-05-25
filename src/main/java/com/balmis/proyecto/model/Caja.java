@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -60,6 +61,11 @@ public class Caja implements Serializable {
     @Size(min=1, max=100, message = "La descripción no puede tener más de 100 caracteres")
     @Column(name = "modelo_producto", nullable = false, unique = false) 
     private String modeloProducto;
+
+    @Schema(description = "Capacidad maxima de terminales que admite la caja", example = "8")
+    @NotNull(message = "La capacidad maxima es obligatoria")
+    @Column(name = "max_capacity", nullable = false, unique = false)
+    private Integer maxCapacity;
     
     @Schema(description = "Palé asignado a la caja")
     @ManyToOne(fetch = FetchType.LAZY)
