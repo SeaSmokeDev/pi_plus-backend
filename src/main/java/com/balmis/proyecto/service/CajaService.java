@@ -2,6 +2,8 @@
 package com.balmis.proyecto.service;
 
 import com.balmis.proyecto.model.Caja;
+import com.balmis.proyecto.model.Palet;
+import com.balmis.proyecto.model.dtos.CajaCapacidadDto;
 import com.balmis.proyecto.model.dtos.CajaExpedicionDetailDTO;
 import com.balmis.proyecto.model.dtos.TerminalCajaDTO;
 import java.util.List;
@@ -39,6 +41,11 @@ public class CajaService {
     public List<Caja> findByIdGrThan(int cajaId) {
         return cajaRepository.findSqlByIdGreaterThan(cajaId);
     }
+
+    @Transactional(readOnly = true)
+    public List<Caja> findSinPalet() {
+        return cajaRepository.findCajasSinPalet();
+    }
     
     @Transactional(readOnly = true)
     public CajaExpedicionDetailDTO findCajaExpedicionDetailByEtiqueta(String etiqueta) {
@@ -62,10 +69,25 @@ public class CajaService {
             caja.getId(),
             caja.getEtiqueta(),
             caja.getModeloProducto(),
+            caja.getMaxCapacity(),
             (long) terminales.size(),
             terminales
     );
 }
+
+    @Transactional(readOnly = true)
+    public CajaCapacidadDto getCapacidadCajaById(int cajaId) {
+        Caja caja = cajaRepository.findSqlById(cajaId);
+        if (caja == null) {
+            return null;
+        }
+        Long totalTerminales = cajaRepository.countTerminalesByCajaId(cajaId);
+        return new CajaCapacidadDto(
+                caja.getId(),
+                totalTerminales == null ? 0 : totalTerminales.intValue(),
+                caja.getMaxCapacity()
+        );
+    }
     
     // ************************
     // ACTUALIZACIONES
@@ -73,6 +95,14 @@ public class CajaService {
 
     @Transactional
     public Caja save(Caja caja) {
+        return cajaRepository.save(caja);
+    }
+
+    @Transactional
+    public Caja asignarPalet(int cajaId, Palet palet) {
+        Caja caja = cajaRepository.findById(cajaId)
+                .orElseThrow(() -> new RuntimeException("Caja no encontrada"));
+        caja.setPalet(palet);
         return cajaRepository.save(caja);
     }
     
@@ -86,6 +116,9 @@ public class CajaService {
         }
         if (cajaUpdate.getModeloProducto() != null) {
             caja.setModeloProducto(cajaUpdate.getModeloProducto());
+        }
+        if (cajaUpdate.getMaxCapacity() != null && cajaUpdate.getMaxCapacity() > 0) {
+            caja.setMaxCapacity(cajaUpdate.getMaxCapacity());
         }
         
         if (cajaUpdate.getPalet() != null) {

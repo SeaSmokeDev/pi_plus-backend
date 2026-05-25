@@ -26,6 +26,7 @@ Prefijos principales de la API:
 - `http://localhost:8080/bdproyecto/api/terminales`
 - `http://localhost:8080/bdproyecto/api/pasillos`
 - `http://localhost:8080/bdproyecto/api/ubicaciones`
+- `http://localhost:8080/bdproyecto/api/catalogo`
 
 ## Rutas de terminales (incluye búsqueda por SN)
 
@@ -69,3 +70,93 @@ curl -X POST "http://localhost:8080/bdproyecto/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"username":"cmartinez","password":"1234"}'
 ```
+
+## Endpoints principales para frontend (actualizados)
+
+### Auth
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/user`
+
+### Catálogo
+- `GET /api/catalogo/modelos-producto`
+- `GET /api/catalogo/terminales/marcas`
+- `GET /api/catalogo/terminales/marcas/{marca}/modelos`
+- `GET /api/catalogo/cajas/modelos/{modelo}/max-capacity`
+
+### Cajas
+- `GET /api/cajas`
+- `GET /api/cajas/free` (cajas sin palé asignado)
+- `GET /api/cajas/{id}`
+- `GET /api/cajas/{id}/capacidad`
+- `GET /api/cajas/expedicion-detail/{etiqueta}`
+- `POST /api/cajas`
+- `PUT /api/cajas`
+- `PATCH /api/cajas/{id}/palet` (asignar caja existente a un palé)
+- `POST /api/cajas/{id}/validar-terminal`
+- `POST /api/cajas/{id}/terminales`
+- `DELETE /api/cajas/{id}/terminales/{sn}` (desasignar terminal de caja)
+- `DELETE /api/cajas/{id}`
+
+Body recomendado para crear caja:
+
+```json
+{
+  "etiqueta": "1-B-2-2",
+  "modeloProducto": "A920",
+  "maxCapacity": 213,
+  "paletId": 4
+}
+```
+
+Body recomendado para asignar caja existente a palé:
+
+```json
+{
+  "paletId": 4
+}
+```
+
+### Palets
+- `GET /api/palets`
+- `GET /api/palets/free` (palets sin ubicación)
+- `GET /api/palets/{id}`
+- `POST /api/palets`
+- `PUT /api/palets`
+- `DELETE /api/palets/{paletId}/cajas/{cajaId}` (desasignar caja de palé)
+- `DELETE /api/palets/{id}`
+
+Body recomendado para crear palé:
+
+```json
+{
+  "descripcion": "Palet recepción Verifone",
+  "material": "madera",
+  "tipo": "europeo",
+  "capacidadMaxCajas": 8,
+  "codigoMarca": "PAL-VER-010",
+  "ubicacionAlmacenId": 2,
+  "cajas": []
+}
+```
+
+### Ubicaciones / Mapa
+- `GET /api/ubicaciones`
+- `GET /api/ubicaciones/mapa`
+- `GET /api/ubicaciones/mapa?pasilloId={id}`
+- `DELETE /api/ubicaciones/{ubicacionId}/palets/{paletId}` (desasignar palé de ubicación)
+
+### Terminales (SN)
+- `GET /api/terminales/sn/{numeroSerie}`
+- `DELETE /api/terminales/sn/{numeroSerie}`
+
+### Expediciones
+- `GET /api/expediciones`
+- `GET /api/expediciones/today`
+- `GET /api/expediciones/{id}`
+- `GET /api/expediciones/nombre/usuario/{name}`
+- `GET /api/expediciones/direccion?contiene={texto}`
+- `GET /api/expediciones/today/list`
+- `GET /api/expediciones/search?...`
+- `PUT /api/expediciones`
+- `DELETE /api/expediciones/{id}`

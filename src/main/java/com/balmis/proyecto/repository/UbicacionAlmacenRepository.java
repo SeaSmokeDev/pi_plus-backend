@@ -26,4 +26,27 @@ public interface UbicacionAlmacenRepository extends JpaRepository<UbicacionAlmac
 
     @Query(value = "SELECT * FROM ubicaciones_almacen WHERE id > :id", nativeQuery = true)
     List<UbicacionAlmacen> findSqlByIdGreaterThan(@Param("id") int id);
+
+    @Query("""
+        SELECT DISTINCT u
+        FROM UbicacionAlmacen u
+        JOIN FETCH u.estanteria e
+        JOIN FETCH e.pasillo p
+        LEFT JOIN FETCH u.palets pa
+        LEFT JOIN FETCH pa.cajas c
+        ORDER BY p.numeroPasillo ASC, e.codigo ASC, u.nivel ASC, u.referencia ASC
+    """)
+    List<UbicacionAlmacen> findAllForMapa();
+
+    @Query("""
+        SELECT DISTINCT u
+        FROM UbicacionAlmacen u
+        JOIN FETCH u.estanteria e
+        JOIN FETCH e.pasillo p
+        LEFT JOIN FETCH u.palets pa
+        LEFT JOIN FETCH pa.cajas c
+        WHERE p.id = :pasilloId
+        ORDER BY p.numeroPasillo ASC, e.codigo ASC, u.nivel ASC, u.referencia ASC
+    """)
+    List<UbicacionAlmacen> findAllForMapaByPasilloId(@Param("pasilloId") Integer pasilloId);
 }

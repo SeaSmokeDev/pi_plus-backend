@@ -47,6 +47,8 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/api/expediciones/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/usuarios/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/security/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/catalogo/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/palets/free").permitAll()
                     .requestMatchers("/api/expediciones/**").hasAnyRole("ADMIN","LOGISTICA","ALMACEN")    // Acceso identificado productos
                     .requestMatchers("/api/usuarios/**").hasRole("ADMIN")                  // Acceso identificado usuarios
                     .requestMatchers("/api/security/**").hasRole("ADMIN")
