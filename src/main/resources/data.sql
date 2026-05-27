@@ -190,8 +190,8 @@ INSERT INTO ubicaciones_almacen (id, referencia, estanteria_id, nivel) VALUES
 (1, '1A1', 1, 1),
 (2, '1A2', 1, 2),
 (3, '1B1', 2, 1),
-(4, '2C1', 3, 1),
-(5, '2D1', 4, 1);
+(4, '1C1', 3, 1),
+(5, '1D1', 4, 1);
 
 ALTER TABLE ubicaciones_almacen AUTO_INCREMENT = 6;
 
