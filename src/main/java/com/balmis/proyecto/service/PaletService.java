@@ -6,6 +6,7 @@ import com.balmis.proyecto.model.UbicacionAlmacen;
 import com.balmis.proyecto.repository.CajaRepository;
 import com.balmis.proyecto.repository.PaletRepository;
 import com.balmis.proyecto.repository.UbicacionAlmacenRepository;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,12 +153,12 @@ public class PaletService {
 
         if (ubicacionAlmacenId == null) {
             paletRepository.updateUbicacionAlmacenId(paletId, null);
-            return Map.of(
-                    "success", true,
-                    "mensaje", "Ubicación del palet desasignada con éxito",
-                    "paletId", paletId,
-                    "ubicacionAlmacenId", null
-            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("mensaje", "Ubicación del palet desasignada con éxito");
+            response.put("paletId", paletId);
+            response.put("ubicacionAlmacenId", null);
+            return response;
         }
 
         UbicacionAlmacen ubicacion = ubicacionAlmacenRepository.findSqlById(ubicacionAlmacenId);
