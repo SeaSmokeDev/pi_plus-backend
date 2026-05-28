@@ -2,8 +2,10 @@ package com.balmis.proyecto.service;
 
 import com.balmis.proyecto.model.Caja;
 import com.balmis.proyecto.model.Palet;
+import com.balmis.proyecto.model.UbicacionAlmacen;
 import com.balmis.proyecto.repository.CajaRepository;
 import com.balmis.proyecto.repository.PaletRepository;
+import com.balmis.proyecto.repository.UbicacionAlmacenRepository;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class PaletService {
 
     @Autowired
     public CajaRepository cajaRepository;
+
+    @Autowired
+    public UbicacionAlmacenRepository ubicacionAlmacenRepository;
 
     // ************************
     // CONSULTAS
@@ -131,6 +136,47 @@ public class PaletService {
                 "mensaje", "Palet desasignado del habitáculo con éxito",
                 "paletId", paletId,
                 "ubicacionAlmacenId", ubicacionId
+        );
+    }
+
+    @Transactional
+    public Map<String, Object> actualizarUbicacionPalet(int paletId, Integer ubicacionAlmacenId) {
+        Palet palet = paletRepository.findSqlById(paletId);
+        if (palet == null) {
+            return Map.of(
+                    "success", false,
+                    "error", "Palet no encontrado",
+                    "paletId", paletId
+            );
+        }
+
+        if (ubicacionAlmacenId == null) {
+            paletRepository.updateUbicacionAlmacenId(paletId, null);
+            return Map.of(
+                    "success", true,
+                    "mensaje", "Ubicación del palet desasignada con éxito",
+                    "paletId", paletId,
+                    "ubicacionAlmacenId", null
+            );
+        }
+
+        UbicacionAlmacen ubicacion = ubicacionAlmacenRepository.findSqlById(ubicacionAlmacenId);
+        if (ubicacion == null) {
+            return Map.of(
+                    "success", false,
+                    "error", "La 'ubicacionAlmacenId' no existe",
+                    "paletId", paletId,
+                    "ubicacionAlmacenId", ubicacionAlmacenId
+            );
+        }
+
+        paletRepository.updateUbicacionAlmacenId(paletId, ubicacionAlmacenId);
+
+        return Map.of(
+                "success", true,
+                "mensaje", "Ubicación del palet actualizada con éxito",
+                "paletId", paletId,
+                "ubicacionAlmacenId", ubicacionAlmacenId
         );
     }
 
