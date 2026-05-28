@@ -86,7 +86,8 @@ curl -X POST "http://localhost:8080/bdproyecto/api/auth/login" \
 
 ### Cajas
 - `GET /api/cajas`
-- `GET /api/cajas/free` (cajas sin palé asignado)
+- `GET /api/cajas/free` (cajas sin palé y sin expedición asociada)
+- `GET /api/cajas/free/marca/{marca}` (cajas sin palé, sin expedición, filtradas por marca)
 - `GET /api/cajas/{id}`
 - `GET /api/cajas/{id}/capacidad`
 - `GET /api/cajas/expedicion-detail/{etiqueta}`
@@ -123,6 +124,7 @@ Body recomendado para asignar caja existente a palé:
 - `GET /api/palets/{id}`
 - `POST /api/palets`
 - `PUT /api/palets`
+- `PATCH /api/palets/{id}/ubicacion` (asignar o desasignar ubicación)
 - `DELETE /api/palets/{paletId}/cajas/{cajaId}` (desasignar caja de palé)
 - `DELETE /api/palets/{id}`
 
@@ -137,6 +139,22 @@ Body recomendado para crear palé:
   "codigoMarca": "PAL-VER-010",
   "ubicacionAlmacenId": 2,
   "cajas": []
+}
+```
+
+Body para mover/desasignar ubicación de palé:
+
+```json
+{
+  "ubicacionAlmacenId": 4
+}
+```
+
+Para desasignar:
+
+```json
+{
+  "ubicacionAlmacenId": null
 }
 ```
 
