@@ -23,6 +23,5 @@ public class ExpedicionLoteRequestDTO {
     private int peso;
     private String notas;
     private Integer usuarioId;
-    private LocalDateTime fechaEnvio;
     private List<Integer> cajaIds;
 }
