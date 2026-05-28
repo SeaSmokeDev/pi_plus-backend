@@ -93,34 +93,6 @@ public class ExpedicionController {
         }
     }
 
-    // http://localhost:8080/bdproyecto/api/expediciones/dep/Ventas
-    // ***************************************************************************    
-    // SWAGGER
-    @Operation(summary = "Obtener expediciones por nombre de usuario",
-            description = "Retorna una lista de expediciones específicas basado en el nombre de usuario")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Expediciones encontradas"),})
-    // ***************************************************************************
-    @GetMapping("/nombre/usuario/{name}")
-    public ResponseEntity<List<Expedicion>> showByNombreUsuario(@PathVariable String name) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(expedicionService.findLikeNombre(name));
-    }
-
-    // http://localhost:8080/bdproyecto/api/expediciones/nombre?contiene=pe
-    // ***************************************************************************    
-    // SWAGGER
-    @Operation(summary = "Obtener expediciones por direccion",
-            description = "Retorna una lista de expediciones específicas basado en la direccion")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Expediciones encontradas"),})
-    // ***************************************************************************
-    @GetMapping("/direccion")
-    public ResponseEntity<List<Expedicion>> showBydireccion(@RequestParam("contiene") String direccion) {
-        return ResponseEntity.ok(expedicionService.findLikeDireccion(direccion));
-    }
-
     // http://localhost:8080/bdproyecto/api/expediciones/count
     // ***************************************************************************    
     // SWAGGER
@@ -531,7 +503,7 @@ public class ExpedicionController {
     // http://localhost:8080/bdproyecto/api/expediciones
     // ***************************************************************************    
     // SWAGGER
-    @Operation(summary = "Actualizar una expedicion existente",
+    @Operation(summary = "Confirma una expedicion existente",
             description = "Confirma una expedicion existente y se pone en transito")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Expedicion actualizada con éxito", content = @Content()),
@@ -559,6 +531,54 @@ public class ExpedicionController {
             map.put("updateRealizado", dto);
 
             response = ResponseEntity.status(HttpStatus.OK).body(map);
+        }
+
+        return response;
+    }
+
+    // ****************************************************************************
+    // UPDATE (PUT)
+    // http://localhost:8080/bdproyecto/api/expediciones
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Actualizar una expedicion existente",
+            description = "Actualizar una expedicion existente y sigue estando abierta")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Expedicion actualizada con éxito", content = @Content()),
+        @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Expedicion no encontrada", content = @Content())
+    })
+    // ***************************************************************************
+    @PutMapping("referencia/{referenciaExpedicion}/guardar")
+    public ResponseEntity<Map<String, Object>> guardarLoteExistente(
+            @PathVariable String referenciaExpedicion,
+            @Valid @RequestBody ExpedicionLoteRequestDTO request) {
+
+        ResponseEntity<Map<String, Object>> response;
+
+        if (referenciaExpedicion == null || referenciaExpedicion.isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "La referencia no puede estar nula");
+
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        } else {
+
+            ExpedicionGroupListDTO dto = expedicionService.guardarExpedicionAbierta(
+                    referenciaExpedicion,
+                    request
+            );
+
+            if (dto == null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "La expedicion es nula");
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+            } else {
+                Map<String, Object> map = new HashMap<>();
+                map.put("mensaje", "Expedicion actualizada con éxito");
+                map.put("updateRealizado", dto);
+                response = ResponseEntity.status(HttpStatus.OK).body(map);
+            }
+
         }
 
         return response;

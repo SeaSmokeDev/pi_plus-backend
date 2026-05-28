@@ -52,16 +52,6 @@ public class ExpedicionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Expedicion> findLikeNombre(String nombreUsuario) {
-        return expedicionRepository.findSqlByNombreUsuario(nombreUsuario);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Expedicion> findLikeDireccion(String direccion) {
-        return expedicionRepository.findSqlLikeDireccion(direccion);
-    }
-
-    @Transactional(readOnly = true)
     public Long count() {
         return expedicionRepository.count();
     }
@@ -214,7 +204,7 @@ public class ExpedicionService {
         List<Expedicion> expediciones = new ArrayList<>();
 
         for (Integer cajaId : request.getCajaIds()) {
-            Caja caja = buscarCajaConTerminalesObligatoria(cajaId);
+            Caja caja = buscarCajaConTerminales(cajaId);
 
             validarCajaDisponibleParaExpedicion(caja);
 
@@ -261,7 +251,7 @@ public class ExpedicionService {
         return usuario;
     }
 
-    private Caja buscarCajaConTerminalesObligatoria(Integer cajaId) {
+    private Caja buscarCajaConTerminales(Integer cajaId) {
         Caja caja = cajaRepository.findByIdWithTerminales(cajaId);
 
         if (caja == null) {
@@ -414,6 +404,141 @@ public class ExpedicionService {
                     "La caja " + caja.getEtiqueta() + " no está pendiente de tránsito"
             );
         }
+    }
+
+    @Transactional
+    public ExpedicionGroupListDTO guardarExpedicionAbierta(
+            String referenciaExpedicion,
+            ExpedicionLoteRequestDTO request
+    ) {
+        if (referenciaExpedicion == null || referenciaExpedicion.trim().isEmpty()) {
+            throw new RuntimeException("La referencia de expedición es obligatoria");
+        }
+
+        validarSolicitudRequest(request);
+
+        String referencia = referenciaExpedicion.trim();
+
+        List<Expedicion> expedicionesActuales = expedicionRepository
+                .findByReferenciaWithCajasAndTerminales(referencia);
+
+        if (expedicionesActuales == null || expedicionesActuales.isEmpty()) {
+            return null;
+        }
+
+        validarExpedicionAbierta(expedicionesActuales);
+
+        Usuario usuario = buscarUsuarioObligatorio(request.getUsuarioId());
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Integer> cajaIdsNuevas = request.getCajaIds();
+
+        List<Expedicion> expedicionesAEliminar = new ArrayList<>();
+
+
+        for (Expedicion expedicion : expedicionesActuales) {
+            Caja cajaActual = expedicion.getCaja();
+
+            if (cajaActual == null) {
+                throw new RuntimeException("Hay una línea de expedición sin caja asociada");
+            }
+
+            boolean cajaSigueEnLaExpedicion = cajaIdsNuevas.contains(cajaActual.getId());
+
+            if (!cajaSigueEnLaExpedicion) {
+                liberarCajaPendienteTransito(cajaActual);
+                expedicionesAEliminar.add(expedicion);
+            }
+        }
+
+        if (!expedicionesAEliminar.isEmpty()) {
+            expedicionRepository.deleteAll(expedicionesAEliminar);
+            expedicionesActuales.removeAll(expedicionesAEliminar);
+        }
+
+
+        for (Expedicion expedicion : expedicionesActuales) {
+            actualizarDatosExpedicionAbierta(expedicion, request, usuario, now);
+        }
+
+
+        List<Integer> cajaIdsActuales = expedicionesActuales.stream()
+                .map(expedicion -> expedicion.getCaja().getId())
+                .toList();
+
+        List<Expedicion> expedicionesNuevas = new ArrayList<>();
+
+        for (Integer cajaId : cajaIdsNuevas) {
+            boolean cajaYaExisteEnExpedicion = cajaIdsActuales.contains(cajaId);
+
+            if (!cajaYaExisteEnExpedicion) {
+                Caja cajaNueva = buscarCajaConTerminales(cajaId);
+
+                validarCajaDisponibleParaExpedicion(cajaNueva);
+
+                Expedicion nuevaExpedicion = crearExpedicionDesdeLote(
+                        request,
+                        usuario,
+                        cajaNueva,
+                        referencia,
+                        expedicionesActuales.get(0).getFechaCreacion(),
+                        null,
+                        EstadoExpedicion.abierta
+                );
+
+                nuevaExpedicion.setFechaModificacion(now);
+
+                expedicionesNuevas.add(nuevaExpedicion);
+
+                marcarCajaPendienteTransito(cajaNueva);
+            }
+        }
+
+        expedicionRepository.saveAll(expedicionesActuales);
+
+        if (!expedicionesNuevas.isEmpty()) {
+            expedicionRepository.saveAll(expedicionesNuevas);
+        }
+
+        return expedicionRepository.findGroupByReferencia(referencia);
+    }
+
+    private void validarExpedicionAbierta(List<Expedicion> expediciones) {
+        for (Expedicion expedicion : expediciones) {
+            if (expedicion.getEstado() != EstadoExpedicion.abierta) {
+                throw new RuntimeException("Solo se pueden guardar cambios en expediciones abiertas");
+            }
+        }
+    }
+
+    private void liberarCajaPendienteTransito(Caja caja) {
+        validarCajaPendienteTransito(caja);
+
+        for (Terminal terminal : caja.getTerminales()) {
+            terminal.setEstado(EstadoTerminal.operativo);
+        }
+
+        terminalRepository.saveAll(caja.getTerminales());
+    }
+
+    private void actualizarDatosExpedicionAbierta(
+            Expedicion expedicion,
+            ExpedicionLoteRequestDTO request,
+            Usuario usuario,
+            LocalDateTime fechaModificacion
+    ) {
+        expedicion.setDireccionDestino(request.getDireccionDestino().trim());
+        expedicion.setPaquetes(request.getPaquetes() >= 0 ? request.getPaquetes() : 0);
+        expedicion.setPeso(request.getPeso() >= 0 ? request.getPeso() : 0);
+        expedicion.setNotas(request.getNotas());
+
+        expedicion.setUsuario(usuario);
+        expedicion.setFechaModificacion(fechaModificacion);
+
+        expedicion.setEstado(EstadoExpedicion.abierta);
+        expedicion.setFechaEnvio(null);
+        expedicion.setFechaRecepcion(null);
     }
 
     @Transactional(readOnly = true)

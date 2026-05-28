@@ -37,20 +37,6 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     Expedicion findSqlById(@Param("id") int empleadoId);
 
     // Consulta con SQL mapeado
-    @Query(value = """
-    SELECT e.*
-    FROM expediciones e
-    JOIN usuarios u ON e.usuario_id = u.id
-    JOIN users_security s ON s.usuario_id = u.id
-    WHERE LOWER(s.username) = LOWER(:username)
-    """, nativeQuery = true)
-    List<Expedicion> findSqlByNombreUsuario(@Param("username") String username);
-
-    // Consulta con SQL mapeado
-    @Query(value = " SELECT * FROM expediciones WHERE LOWER(direccion_destino) LIKE LOWER(CONCAT('%', :contiene, '%'))", nativeQuery = true)
-    List<Expedicion> findSqlLikeDireccion(@Param("contiene") String contiene);
-
-    // Consulta con SQL mapeado
     @Query(value = "SELECT COUNT(*) as expediciones FROM expediciones", nativeQuery = true)
     Long countSql();
 
