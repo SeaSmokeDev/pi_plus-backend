@@ -73,17 +73,32 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
     @Query(value = "SELECT COUNT(*) FROM terminales_pago WHERE caja_id = :cajaId", nativeQuery = true)
     Long countTerminalesByCajaId(@Param("cajaId") int cajaId);
 
-    @Query(value = "SELECT * FROM cajas WHERE palet_id IS NULL ORDER BY id", nativeQuery = true)
+    @Query(value = """
+        SELECT *
+        FROM cajas c
+        WHERE c.palet_id IS NULL
+          AND NOT EXISTS (
+              SELECT 1
+              FROM expediciones e
+              WHERE e.caja_id = c.id
+          )
+        ORDER BY c.id
+    """, nativeQuery = true)
     List<Caja> findCajasSinPalet();
 
     @Query(value = """
         SELECT *
-        FROM cajas
-        WHERE palet_id IS NULL
-          AND modelo_producto IS NOT NULL
-          AND TRIM(modelo_producto) <> ''
-          AND UPPER(TRIM(modelo_producto)) LIKE CONCAT(UPPER(TRIM(:marca)), '%')
-        ORDER BY id
+        FROM cajas c
+        WHERE c.palet_id IS NULL
+          AND c.modelo_producto IS NOT NULL
+          AND TRIM(c.modelo_producto) <> ''
+          AND UPPER(TRIM(c.modelo_producto)) LIKE CONCAT(UPPER(TRIM(:marca)), '%')
+          AND NOT EXISTS (
+              SELECT 1
+              FROM expediciones e
+              WHERE e.caja_id = c.id
+          )
+        ORDER BY c.id
     """, nativeQuery = true)
     List<Caja> findCajasSinPaletByMarca(@Param("marca") String marca);
 
