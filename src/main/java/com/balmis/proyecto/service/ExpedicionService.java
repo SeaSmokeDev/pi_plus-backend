@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.balmis.proyecto.repository.ExpedicionRepository;
 import com.balmis.proyecto.repository.TerminalRepository;
 import com.balmis.proyecto.repository.UsuarioRepository;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -139,10 +138,6 @@ public class ExpedicionService {
 
     @Transactional(readOnly = true)
     public List<ExpedicionListDTO> findTodayForList() {
-//        LocalDate today = LocalDate.now();
-//        LocalDateTime inicioDia = today.atStartOfDay();
-//        LocalDateTime finDia = today.plusDays(1).atStartOfDay();
-
         return expedicionRepository.findTodayForList();
     }
 
@@ -202,7 +197,44 @@ public class ExpedicionService {
     }
 
     @Transactional
-    public ExpedicionGroupListDTO createLote(ExpedicionLoteRequestDTO request) {
+    public ExpedicionGroupListDTO createLote(ExpedicionLoteRequestDTO request, boolean confirmar) {
+
+        validarSolicitudRequest(request);
+
+        Usuario usu = buscarUsuarioObligatorio(request.getUsuarioId());
+
+        LocalDateTime now = LocalDateTime.now();
+
+        String referencia = generarReferenciaExpedicion(now);
+
+        EstadoExpedicion estadoInicial = confirmar ? EstadoExpedicion.en_transito : EstadoExpedicion.abierta;
+
+        LocalDateTime fechaEnvio = confirmar ? now : null;
+
+        List<Expedicion> expediciones = new ArrayList<>();
+
+        for (Integer cajaId : request.getCajaIds()) {
+            Caja caja = buscarCajaConTerminalesObligatoria(cajaId);
+
+            validarCajaDisponibleParaExpedicion(caja);
+
+            Expedicion expedicion = crearExpedicionDesdeLote(request, usu, caja, referencia, now, fechaEnvio, estadoInicial);
+
+            expediciones.add(expedicion);
+
+            if (confirmar) {
+                marcarCajaEnTransito(caja);
+            } else {
+                marcarCajaPendienteTransito(caja);
+            }
+        }
+
+        expedicionRepository.saveAll(expediciones);
+
+        return expedicionRepository.findGroupByReferencia(referencia);
+    }
+
+    private void validarSolicitudRequest(ExpedicionLoteRequestDTO request) {
         if (request == null) {
             throw new RuntimeException("La solicitud no puede estar vacía");
         }
@@ -218,82 +250,74 @@ public class ExpedicionService {
         if (request.getCajaIds() == null || request.getCajaIds().isEmpty()) {
             throw new RuntimeException("Debe indicarse al menos una caja");
         }
-
-        Usuario usu = usuarioRepository.findSqlById(request.getUsuarioId());
-
-        if (usu == null) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-
-        LocalDateTime date = LocalDateTime.now();
-
-//        LocalDateTime fechaEnvio = request.getFechaEnvio();
-//
-//        if (fechaEnvio != null && fechaEnvio.isBefore(date)) {
-//            throw new RuntimeException("La fecha de envío no puede ser anterior a la fecha actual");
-//        }
-//        if (fechaEnvio == null) {
-//            fechaEnvio = date;
-//        }
-//        EstadoExpedicion estadoInicial = fechaEnvio.isAfter(date)
-//                ? EstadoExpedicion.abierta
-//                : EstadoExpedicion.en_transito;
-        String referencia = generarReferenciaExpedicion();
-
-        List<Expedicion> expediciones = new ArrayList<>();
-
-        for (Integer cajaId : request.getCajaIds()) {
-            Caja caja = cajaRepository.findByIdWithTerminales(cajaId);
-
-            if (caja == null) {
-                throw new RuntimeException("Caja no encontrada con ID: " + cajaId);
-            }
-
-            Expedicion expedicion = new Expedicion();
-
-            expedicion.setReferenciaExpedicion(referencia);
-            expedicion.setFechaCreacion(date);
-            expedicion.setFechaModificacion(date);
-            expedicion.setFechaEnvio(date);
-            expedicion.setFechaRecepcion(null);
-
-            expedicion.setDireccionDestino(request.getDireccionDestino().trim());
-            expedicion.setPaquetes(request.getPaquetes() >= 0 ? request.getPaquetes() : 0);
-            expedicion.setPeso(request.getPeso() >= 0 ? request.getPeso() : 0);
-            expedicion.setNotas(request.getNotas());
-
-            expedicion.setEstado(EstadoExpedicion.en_transito);
-            expedicion.setUsuario(usu);
-            expedicion.setCaja(caja);
-
-            expediciones.add(expedicion);
-
-            marcarCajaEnTransito(caja);
-
-        }
-
-        List<Expedicion> expedicionesGuardadas = expedicionRepository.saveAll(expediciones);
-
-        return new ExpedicionGroupListDTO(
-                referencia,
-                date,
-                null,
-                date,
-                date,
-                request.getDireccionDestino().trim(),
-                usu.getUsuarioSecurity() != null ? usu.getUsuarioSecurity().getUsername() : null,
-                EstadoExpedicion.en_transito,
-                (long) expedicionesGuardadas.size()
-        );
-
-//        return expedicionRepository.saveAll(expediciones);
     }
 
-    private String generarReferenciaExpedicion() {
+    private Usuario buscarUsuarioObligatorio(Integer usuarioId) {
+        Usuario usuario = usuarioRepository.findSqlById(usuarioId);
 
-        String fecha = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        return usuario;
+    }
 
-        String prefijo = "EXP-" + fecha;
+    private Caja buscarCajaConTerminalesObligatoria(Integer cajaId) {
+        Caja caja = cajaRepository.findByIdWithTerminales(cajaId);
+
+        if (caja == null) {
+            throw new RuntimeException("Caja no encontrada con ID: " + cajaId);
+        }
+
+        return caja;
+    }
+
+    private void validarCajaDisponibleParaExpedicion(Caja caja) {
+        if (caja.getTerminales() == null || caja.getTerminales().isEmpty()) {
+            throw new RuntimeException("La caja " + caja.getEtiqueta() + " no tiene terminales asignados");
+        }
+
+        boolean todosOperativos = caja.getTerminales()
+                .stream()
+                .allMatch(terminal -> terminal.getEstado() == EstadoTerminal.operativo);
+
+        if (!todosOperativos) {
+            throw new RuntimeException("La caja " + caja.getEtiqueta() + " no está disponible para expedición");
+        }
+    }
+
+    private Expedicion crearExpedicionDesdeLote(
+            ExpedicionLoteRequestDTO request,
+            Usuario usuario,
+            Caja caja,
+            String referencia,
+            LocalDateTime fechaCreacion,
+            LocalDateTime fechaEnvio,
+            EstadoExpedicion estado) {
+        Expedicion expedicion = new Expedicion();
+
+        expedicion.setReferenciaExpedicion(referencia);
+        expedicion.setFechaCreacion(fechaCreacion);
+        expedicion.setFechaModificacion(fechaCreacion);
+        expedicion.setFechaEnvio(fechaEnvio);
+        expedicion.setFechaRecepcion(null);
+
+        expedicion.setDireccionDestino(request.getDireccionDestino().trim());
+        expedicion.setPaquetes(request.getPaquetes() >= 0 ? request.getPaquetes() : 0);
+        expedicion.setPeso(request.getPeso() >= 0 ? request.getPeso() : 0);
+        expedicion.setNotas(request.getNotas());
+
+        expedicion.setEstado(estado);
+        expedicion.setUsuario(usuario);
+        expedicion.setCaja(caja);
+
+        return expedicion;
+    }
+
+    private String generarReferenciaExpedicion(LocalDateTime fechaCreacion) {
+
+        String fecha = fechaCreacion.toLocalDate().format(DateTimeFormatter.BASIC_ISO_DATE);
+
+        String prefijo = "EXP-" + fecha + "-";
 
         String ultimaReferencia = expedicionRepository.findLastReferenciaByPrefijo(prefijo);
 
@@ -305,7 +329,7 @@ public class ExpedicionService {
             siguienteNumero = ultimoNumero + 1;
         }
 
-        return prefijo + "-" + String.format("%03d", siguienteNumero);
+        return prefijo + String.format("%03d", siguienteNumero);
     }
 
     private void marcarCajaEnTransito(Caja caja) {
@@ -317,6 +341,79 @@ public class ExpedicionService {
 
         terminalRepository.saveAll(caja.getTerminales());
         cajaRepository.save(caja);
+    }
+
+    private void marcarCajaPendienteTransito(Caja caja) {
+        for (Terminal terminal : caja.getTerminales()) {
+            terminal.setEstado(EstadoTerminal.pendiente_transito);
+        }
+
+        terminalRepository.saveAll(caja.getTerminales());
+    }
+
+    @Transactional
+    public ExpedicionGroupListDTO confirmarExpedicion(String referenciaExpedicion) {
+        List<Expedicion> expediciones = expedicionRepository.findByReferenciaWithCajasAndTerminales(referenciaExpedicion.trim());
+
+        if (expediciones == null || expediciones.isEmpty()) {
+            return null;
+        }
+
+        validarExpedicionesConfirmables(expediciones);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Expedicion expedicion : expediciones) {
+            expedicion.setEstado(EstadoExpedicion.en_transito);
+            expedicion.setFechaEnvio(now);
+            expedicion.setFechaModificacion(now);
+
+            Caja caja = expedicion.getCaja();
+
+            if (caja != null) {
+                marcarCajaEnTransito(caja);
+            }
+        }
+
+        expedicionRepository.saveAll(expediciones);
+
+        return expedicionRepository.findGroupByReferencia(referenciaExpedicion.trim());
+    }
+
+    private void validarExpedicionesConfirmables(List<Expedicion> expediciones) {
+        for (Expedicion expedicion : expediciones) {
+            if (expedicion.getEstado() != EstadoExpedicion.abierta) {
+                throw new RuntimeException(
+                        "Solo se pueden confirmar expediciones en estado abierta"
+                );
+            }
+
+            if (expedicion.getCaja() == null) {
+                throw new RuntimeException(
+                        "La expedición con referencia "
+                        + expedicion.getReferenciaExpedicion()
+                        + " no tiene cajas asignadas"
+                );
+            }
+
+            validarCajaPendienteTransito(expedicion.getCaja());
+        }
+    }
+
+    private void validarCajaPendienteTransito(Caja caja) {
+        if (caja.getTerminales() == null || caja.getTerminales().isEmpty()) {
+            throw new RuntimeException("La caja " + caja.getEtiqueta() + " no tiene terminales asignados");
+        }
+
+        boolean todosPendientesTransito = caja.getTerminales()
+                .stream()
+                .allMatch(terminal -> terminal.getEstado() == EstadoTerminal.pendiente_transito);
+
+        if (!todosPendientesTransito) {
+            throw new RuntimeException(
+                    "La caja " + caja.getEtiqueta() + " no está pendiente de tránsito"
+            );
+        }
     }
 
     @Transactional(readOnly = true)
@@ -450,15 +547,4 @@ public class ExpedicionService {
         return expedicionRepository.save(exp);
     }
 
-    /*@Transactional
-    public Expedicion desasignarUsuario(int expId) {
-        Expedicion exp = expedicionRepository.findSqlById(expId);
-
-        if (exp!=null) {
-            exp.setUsuario(null);
-            return expedicionRepository.save(exp);
-        } else{
-            return null;
-        }
-    } */
 }

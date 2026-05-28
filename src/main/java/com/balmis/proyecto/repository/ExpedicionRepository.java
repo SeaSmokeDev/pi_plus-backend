@@ -242,11 +242,11 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
     );
 
     @Query(value = """
-    SELECT referencia_expedicion
-    FROM expediciones
-    WHERE referencia_expedicion LIKE CONCAT(:prefijo, '%')
-    ORDER BY referencia_expedicion DESC
-    LIMIT 1
+        SELECT referencia_expedicion
+        FROM expediciones
+        WHERE referencia_expedicion LIKE CONCAT(:prefijo, '%')
+        ORDER BY referencia_expedicion DESC
+        LIMIT 1
     """, nativeQuery = true)
     String findLastReferenciaByPrefijo(@Param("prefijo") String prefijo);
 
@@ -260,6 +260,47 @@ public interface ExpedicionRepository extends JpaRepository<Expedicion, Integer>
         WHERE e.referenciaExpedicion = :referenciaExpedicion
     """)
     List<Expedicion> findByReferenciaWithQuickViewData(
+            @Param("referenciaExpedicion") String referenciaExpedicion
+    );
+
+    @Query("""
+        SELECT DISTINCT e
+        FROM Expedicion e
+        LEFT JOIN FETCH e.caja c
+        LEFT JOIN FETCH c.terminales t
+        WHERE e.referenciaExpedicion = :referenciaExpedicion
+    """)
+    List<Expedicion> findByReferenciaWithCajasAndTerminales(
+            @Param("referenciaExpedicion") String referenciaExpedicion
+    );
+
+    @Query("""
+        SELECT new com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO(
+            e.referenciaExpedicion,
+            e.fechaCreacion,
+            e.fechaRecepcion,
+            e.fechaModificacion,
+            e.fechaEnvio,
+            e.direccionDestino,
+            us.username,
+            e.estado,
+            COUNT(e.id)
+        )
+        FROM Expedicion e
+        LEFT JOIN e.usuario u
+        LEFT JOIN u.usuarioSecurity us
+        WHERE e.referenciaExpedicion = :referenciaExpedicion
+        GROUP BY
+            e.referenciaExpedicion,
+            e.fechaCreacion,
+            e.fechaRecepcion,
+            e.fechaModificacion,
+            e.fechaEnvio,
+            e.direccionDestino,
+            us.username,
+            e.estado
+    """)
+    ExpedicionGroupListDTO findGroupByReferencia(
             @Param("referenciaExpedicion") String referenciaExpedicion
     );
 
