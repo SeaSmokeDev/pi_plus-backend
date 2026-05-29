@@ -87,6 +87,25 @@ public class CajaController {
                 .body(cajaService.findSinPalet());
     }
 
+    @Operation(summary = "Obtener cajas sin palé por marca",
+            description = "Retorna cajas con palet_id NULL filtradas por marca (prefijo de modeloProducto, ej: 'Verifone V240')")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cajas libres por marca obtenidas con éxito"),
+        @ApiResponse(responseCode = "400", description = "Marca inválida", content = @Content())
+    })
+    @GetMapping("/free/marca/{marca}")
+    public ResponseEntity<?> showCajasFreeByMarca(@PathVariable String marca) {
+        if (marca == null || marca.trim().isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "El parámetro 'marca' es obligatorio");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(cajaService.findSinPaletByMarca(marca.trim()));
+    }
+
     // http://localhost:8080/apirest/cajas/2
     // ***************************************************************************    
     // SWAGGER

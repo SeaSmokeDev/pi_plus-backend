@@ -190,8 +190,8 @@ INSERT INTO ubicaciones_almacen (id, referencia, estanteria_id, nivel) VALUES
 (1, '1A1', 1, 1),
 (2, '1A2', 1, 2),
 (3, '1B1', 2, 1),
-(4, '2C1', 3, 1),
-(5, '2D1', 4, 1);
+(4, '1C1', 3, 1),
+(5, '1D1', 4, 1);
 
 ALTER TABLE ubicaciones_almacen AUTO_INCREMENT = 6;
 
@@ -199,10 +199,10 @@ ALTER TABLE ubicaciones_almacen AUTO_INCREMENT = 6;
 -- PALETS
 -- =========================
 INSERT INTO palets (id, material, tipo, capacidad_max_cajas, ubicacion_almacen_id, codigo_marca, descripcion) VALUES
-(1, 'madera', 'europeo', 8, 1, 'PAL-VER-001', ''),
-(2, 'plastico', 'americano', 8, 2, 'PAL-ING-001', ''),
-(3, 'madera', 'europeo', 8, 3, 'PAL-PAX-001', ''),
-(4, 'madera', 'europeo', 6, NULL, 'PAL-MIX-001', '');
+(1, 'madera',   'europeo',   8, 1,    'Verifone', ''),
+(2, 'plastico', 'americano', 8, 2,    'Ingenico', ''),
+(3, 'madera',   'europeo',   8, 3,    'PAX',      ''),
+(4, 'madera',   'europeo',   6, NULL, 'Ingenico',    '');
 
 ALTER TABLE palets AUTO_INCREMENT = 5;
 
@@ -254,9 +254,25 @@ INSERT INTO terminales_pago (id, numero_serie, modelo, marca, estado, notas, fec
 (17, 'SN10017', 'V240',     'Verifone', 'pendiente_revision', 'Error en lector de tarjetas', '2025-03-10 00:00:00', '2025-03-01 00:00:00', 9),
 (18, 'SN10018', 'V240',     'Verifone', 'pendiente_revision', 'Pantalla con fallo intermitente', '2025-03-11 00:00:00', '2025-03-02 00:00:00', 9),
 (19, 'SN10019', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-15 00:00:00', '2025-03-05 00:00:00', 10),
-(20, 'SN10020', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-16 00:00:00', '2025-03-06 00:00:00', 10);
+(20, 'SN10020', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-16 00:00:00', '2025-03-06 00:00:00', 10),
+-- Terminales sin caja asignada (caja_id NULL), para altas/asignaciones manuales
+-- Verifone (2 modelos)
+(21, 'SN10021', 'V240',     'Verifone', 'operativo',           'Terminal libre sin caja asignada', '2025-03-20 00:00:00', '2025-03-10 00:00:00', NULL),
+(22, 'SN10022', 'V240',     'Verifone', 'pendiente_revision',  'Terminal libre sin caja asignada', '2025-03-21 00:00:00', '2025-03-11 00:00:00', NULL),
+(23, 'SN10023', 'VX680',    'Verifone', 'operativo',           'Terminal libre sin caja asignada', '2025-03-22 00:00:00', '2025-03-12 00:00:00', NULL),
+(24, 'SN10024', 'VX680',    'Verifone', 'pendiente_laboratorio','Terminal libre sin caja asignada', '2025-03-23 00:00:00', '2025-03-13 00:00:00', NULL),
+-- Ingenico (2 modelos)
+(25, 'SN10025', 'Move5000', 'Ingenico', 'operativo',           'Terminal libre sin caja asignada', '2025-03-24 00:00:00', '2025-03-14 00:00:00', NULL),
+(26, 'SN10026', 'Move5000', 'Ingenico', 'pendiente_revision',  'Terminal libre sin caja asignada', '2025-03-25 00:00:00', '2025-03-15 00:00:00', NULL),
+(27, 'SN10027', 'Desk3500', 'Ingenico', 'operativo',           'Terminal libre sin caja asignada', '2025-03-26 00:00:00', '2025-03-16 00:00:00', NULL),
+(28, 'SN10028', 'Desk3500', 'Ingenico', 'pendiente_laboratorio','Terminal libre sin caja asignada', '2025-03-27 00:00:00', '2025-03-17 00:00:00', NULL),
+-- PAX (2 modelos)
+(29, 'SN10029', 'A920',     'PAX',      'operativo',           'Terminal libre sin caja asignada', '2025-03-28 00:00:00', '2025-03-18 00:00:00', NULL),
+(30, 'SN10030', 'A920',     'PAX',      'pendiente_revision',  'Terminal libre sin caja asignada', '2025-03-29 00:00:00', '2025-03-19 00:00:00', NULL),
+(31, 'SN10031', 'A80',      'PAX',      'operativo',           'Terminal libre sin caja asignada', '2025-03-30 00:00:00', '2025-03-20 00:00:00', NULL),
+(32, 'SN10032', 'A80',      'PAX',      'pendiente_laboratorio','Terminal libre sin caja asignada', '2025-03-31 00:00:00', '2025-03-21 00:00:00', NULL);
 
-ALTER TABLE terminales_pago AUTO_INCREMENT = 21;
+ALTER TABLE terminales_pago AUTO_INCREMENT = 33;
 
 -- =========================
 -- EXPEDICIONES

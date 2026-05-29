@@ -85,7 +85,7 @@ public class CatalogoService {
                     String marcaModelo = normalizarTexto(item.getMarca() + " " + item.getModeloProducto());
                     return normalizedTarget.equals(modelo) || normalizedTarget.equals(marcaModelo);
                 })
-                .map(ModeloProductoCatalogoDto::getModeloProducto)
+                .map(item -> item.getMarca().trim() + " " + item.getModeloProducto().trim())
                 .findFirst();
     }
 
@@ -116,13 +116,13 @@ public class CatalogoService {
 
     @Transactional(readOnly = true)
     public CapacidadMaximaModeloResponseDto obtenerCapacidadMaximaPorModelo(String modelo) {
-        String modeloNormalizado = modelo == null ? "" : modelo.trim();
-        if (modeloNormalizado.isBlank()) {
-            throw new IllegalArgumentException("El modelo es obligatorio");
+        String marcaNormalizada = modelo == null ? "" : modelo.trim();
+        if (marcaNormalizada.isBlank()) {
+            throw new IllegalArgumentException("La marca es obligatoria");
         }
 
-        Integer maxCapacity = cajaRepository.findMaxCapacityByModelo(modeloNormalizado);
-        return new CapacidadMaximaModeloResponseDto(modeloNormalizado, maxCapacity);
+        Integer maxCapacity = cajaRepository.findMaxCapacityByMarca(marcaNormalizada);
+        return new CapacidadMaximaModeloResponseDto(marcaNormalizada, maxCapacity);
     }
 
     private String normalizarTexto(String valor) {

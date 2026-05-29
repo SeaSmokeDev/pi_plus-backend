@@ -46,6 +46,11 @@ public class CajaService {
     public List<Caja> findSinPalet() {
         return cajaRepository.findCajasSinPalet();
     }
+
+    @Transactional(readOnly = true)
+    public List<Caja> findSinPaletByMarca(String marca) {
+        return cajaRepository.findCajasSinPaletByMarca(marca);
+    }
     
     @Transactional(readOnly = true)
     public CajaExpedicionDetailDTO findCajaExpedicionDetailByEtiqueta(String etiqueta) {
