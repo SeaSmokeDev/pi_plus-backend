@@ -4,12 +4,10 @@
  */
 package com.balmis.proyecto.model.dtos;
 
-import com.balmis.proyecto.model.EstadoExpedicion;
-import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 /**
  *
  * @author Ian
@@ -17,13 +15,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpedicionGroupListDTO {
+public class ExpedicionLoteEditDTO {
     private String referenciaExpedicion;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaRecepcion;
-    private LocalDateTime fechaEnvio;
     private String direccionDestino;
+    private Integer paquetes;
+    private Integer peso;
+    private String notas;
+    private Integer usuarioId;
     private String username;
-    private EstadoExpedicion estado;
-    private Long totalExpediciones;
+    private List<CajaExpedicionDetailDTO> cajas;
 }

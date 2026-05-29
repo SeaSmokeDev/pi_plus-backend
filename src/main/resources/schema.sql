@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS terminales_pago (
     numero_serie VARCHAR(255) NOT NULL UNIQUE,
     modelo VARCHAR(255) NOT NULL,
     marca VARCHAR(255) NOT NULL,
-    estado ENUM('en_transito', 'pendiente_revision', 'operativo', 'pendiente_laboratorio', 'nivel_1') NOT NULL,
+    estado ENUM('en_transito', 'pendiente_transito', 'pendiente_revision', 'operativo', 'pendiente_laboratorio', 'nivel_1') NOT NULL,
     notas VARCHAR(255),
     fecha_ingreso TIMESTAMP NOT NULL,
     fecha_creacion TIMESTAMP NOT NULL,

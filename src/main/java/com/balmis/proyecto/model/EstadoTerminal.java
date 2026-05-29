@@ -10,6 +10,7 @@ package com.balmis.proyecto.model;
  */
 public enum EstadoTerminal {
     en_transito,
+    pendiente_transito,
     pendiente_revision,
     operativo,
     pendiente_laboratorio,

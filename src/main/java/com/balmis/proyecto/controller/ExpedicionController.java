@@ -5,6 +5,7 @@ import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
+import com.balmis.proyecto.model.dtos.ExpedicionLoteEditDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionLoteRequestDTO;
 import com.balmis.proyecto.model.dtos.ExpeditionQuickViewDTO;
 import com.balmis.proyecto.service.ExpedicionService;
@@ -93,34 +94,6 @@ public class ExpedicionController {
         }
     }
 
-    // http://localhost:8080/bdproyecto/api/expediciones/dep/Ventas
-    // ***************************************************************************    
-    // SWAGGER
-    @Operation(summary = "Obtener expediciones por nombre de usuario",
-            description = "Retorna una lista de expediciones específicas basado en el nombre de usuario")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Expediciones encontradas"),})
-    // ***************************************************************************
-    @GetMapping("/nombre/usuario/{name}")
-    public ResponseEntity<List<Expedicion>> showByNombreUsuario(@PathVariable String name) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(expedicionService.findLikeNombre(name));
-    }
-
-    // http://localhost:8080/bdproyecto/api/expediciones/nombre?contiene=pe
-    // ***************************************************************************    
-    // SWAGGER
-    @Operation(summary = "Obtener expediciones por direccion",
-            description = "Retorna una lista de expediciones específicas basado en la direccion")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Expediciones encontradas"),})
-    // ***************************************************************************
-    @GetMapping("/direccion")
-    public ResponseEntity<List<Expedicion>> showBydireccion(@RequestParam("contiene") String direccion) {
-        return ResponseEntity.ok(expedicionService.findLikeDireccion(direccion));
-    }
-
     // http://localhost:8080/bdproyecto/api/expediciones/count
     // ***************************************************************************    
     // SWAGGER
@@ -144,83 +117,6 @@ public class ExpedicionController {
                 .body(map);
 
         return response;
-    }
-
-    // http://localhost:8080/bdproyecto/api/expediciones/today
-    // ***************************************************************************    
-    // SWAGGER
-    @Operation(summary = "Obtener todas las expediciones del dia de hoy",
-            description = "Retorna una lista con todas las expediciones con el dia de hoy")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
-    })
-    // ***************************************************************************
-    @GetMapping("/today")
-    public ResponseEntity<List<Expedicion>> showAllToday() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(expedicionService.findAllToday());
-    }
-
-    // http://localhost:8080/bdproyecto/api/expediciones/today
-    // ***************************************************************************    
-    // SWAGGER
-    @Operation(summary = "Obtener todas las expediciones con filtros",
-            description = "Retorna una lista con todas las expediciones con los filtros que se apliquen")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Expediciones obtenidas con éxito")
-    })
-    // ***************************************************************************
-    @GetMapping("/search")
-    public ResponseEntity<List<ExpedicionListDTO>> searchForList(
-            @RequestParam(required = false) LocalDate fechaCreacionDesde,
-            @RequestParam(required = false) LocalDate fechaCreacionHasta,
-            @RequestParam(required = false) LocalDate fechaRecepcionDesde,
-            @RequestParam(required = false) LocalDate fechaRecepcionHasta,
-            @RequestParam(required = false) LocalDate fechaEnvio,
-            @RequestParam(required = false) Integer usuarioId,
-            @RequestParam(required = false) String destino,
-            @RequestParam(required = false) String referenciaExpedicion,
-            @RequestParam(required = false) EstadoExpedicion estado
-    ) {
-        LocalDateTime creacionDesde = fechaCreacionDesde != null
-                ? fechaCreacionDesde.atStartOfDay()
-                : null;
-
-        LocalDateTime creacionHasta = fechaCreacionHasta != null
-                ? fechaCreacionHasta.plusDays(1).atStartOfDay()
-                : null;
-
-        LocalDateTime recepcionDesde = fechaRecepcionDesde != null
-                ? fechaRecepcionDesde.atStartOfDay()
-                : null;
-
-        LocalDateTime recepcionHasta = fechaRecepcionHasta != null
-                ? fechaRecepcionHasta.plusDays(1).atStartOfDay()
-                : null;
-
-        LocalDateTime envioInicioDia = fechaEnvio != null
-                ? fechaEnvio.atStartOfDay()
-                : null;
-
-        LocalDateTime envioFinDia = fechaEnvio != null
-                ? fechaEnvio.plusDays(1).atStartOfDay()
-                : null;
-
-        return ResponseEntity.ok(
-                expedicionService.searchForList(
-                        creacionDesde,
-                        creacionHasta,
-                        recepcionDesde,
-                        recepcionHasta,
-                        envioInicioDia,
-                        envioFinDia,
-                        usuarioId,
-                        destino,
-                        referenciaExpedicion,
-                        estado
-                )
-        );
     }
 
     // http://localhost:8080/bdproyecto/api/expediciones/today
@@ -349,6 +245,29 @@ public class ExpedicionController {
         return ResponseEntity.ok(dto);
     }
 
+    // *****************************************************************************************
+    // http://localhost:8080/bdproyecto/api/expediciones/referencia/EXP-20260505-001/edit
+    // ***************************************************************************************** 
+    // SWAGGER
+    @Operation(summary = "Obtener un grupo de expedicion",
+            description = "Retorna un grupo de expedicion")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Grupo expedicion obtenida con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/referencia/{referenciaExpedicion}/edit")
+    public ResponseEntity<ExpedicionLoteEditDTO> getLoteForEdit(
+            @PathVariable String referenciaExpedicion
+    ) {
+        ExpedicionLoteEditDTO dto = expedicionService.findLoteForEditByReferencia(referenciaExpedicion);
+
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(dto);
+    }
+
     // ***************************************************************************
     // ACTUALIZACIONES
     // ***************************************************************************
@@ -358,21 +277,21 @@ public class ExpedicionController {
     // ***************************************************************************    
     // SWAGGER
     @Operation(summary = "Crear una nueva expedicion",
-            description = "Registra una nueva expedicion en el sistema con los datos proporcionados")
+            description = "Registra una nueva expedicion en el sistema con los datos proporcionados y la expedicion queda abierta")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Expedicion creada con éxito", content = @Content()),
         @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content())
     })
     // ***************************************************************************
-    @PostMapping("/lote")
-    public ResponseEntity<Map<String, Object>> create(
-            @Valid @RequestBody ExpedicionLoteRequestDTO expedicionDTO) {
+    @PostMapping("/lote/guardar")
+    public ResponseEntity<Map<String, Object>> guardarLote(
+            @Valid @RequestBody ExpedicionLoteRequestDTO request) {
 
-        System.out.println(expedicionDTO);
+        System.out.println(request);
         ResponseEntity<Map<String, Object>> response;
 
-        if (expedicionDTO == null) {
+        if (request == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("error", "El cuerpo de la solicitud no puede estar vacío");
 
@@ -381,27 +300,27 @@ public class ExpedicionController {
                     .body(map);
         } else {
 
-            Usuario user = userService.findById(expedicionDTO.getUsuarioId());
+            Usuario user = userService.findById(request.getUsuarioId());
 
-            if (expedicionDTO.getDireccionDestino() == null || expedicionDTO.getDireccionDestino().trim().isEmpty()
-                    || expedicionDTO.getPaquetes() < 0
-                    || expedicionDTO.getPeso() < 0) {
+            if (request.getDireccionDestino() == null || request.getDireccionDestino().trim().isEmpty()
+                    || request.getPaquetes() < 0
+                    || request.getPeso() < 0) {
 
                 Map<String, Object> map = new HashMap<>();
                 String error = "";
-                if (expedicionDTO.getDireccionDestino() == null || expedicionDTO.getDireccionDestino().trim().isEmpty()) {
+                if (request.getDireccionDestino() == null || request.getDireccionDestino().trim().isEmpty()) {
                     if (!error.equals("")) {
                         error += " - ";
                     }
                     error += "El campo 'direccion destino' es obligatorio";
                 }
-                if (expedicionDTO.getPaquetes() < 0) {
+                if (request.getPaquetes() < 0) {
                     if (!error.equals("")) {
                         error += " - ";
                     }
                     error += "El campo 'paquetes' debe ser positivo";
                 }
-                if (expedicionDTO.getPeso() < 0) {
+                if (request.getPeso() < 0) {
                     if (!error.equals("")) {
                         error += " - ";
                     }
@@ -422,12 +341,98 @@ public class ExpedicionController {
                             .status(HttpStatus.NOT_FOUND)
                             .body(map);
                 } else {
-                    //expedicionDTO.setUsuario(user);
 
-                    ExpedicionGroupListDTO expedicionesGroup = expedicionService.createLote(expedicionDTO);
+                    ExpedicionGroupListDTO expedicionesGroup = expedicionService.createLote(request, false);
 
                     Map<String, Object> map = new HashMap<>();
-                    map.put("mensaje", "Expediciones creadas con éxito");
+                    map.put("mensaje", "Expediciones guardadas con éxito");
+                    map.put("insertRealizado", expedicionesGroup);
+
+                    response = ResponseEntity
+                            .status(HttpStatus.CREATED)
+                            .body(map);
+                }
+            }
+        }
+
+        return response;
+    }
+
+    // ****************************************************************************
+    // INSERT (POST)    
+    // http://localhost:8080/bdproyecto/api/empleados
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Crear una nueva expedicion",
+            description = "Registra una nueva expedicion en el sistema con los datos proporcionados y la expedicion pasa a estar en transito automaticamente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Expedicion creada con éxito", content = @Content()),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content())
+    })
+    // ***************************************************************************
+    @PostMapping("/lote/confirmar")
+    public ResponseEntity<Map<String, Object>> confirmarLoteNuevo(
+            @Valid @RequestBody ExpedicionLoteRequestDTO request) {
+
+        System.out.println(request);
+        ResponseEntity<Map<String, Object>> response;
+
+        if (request == null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "El cuerpo de la solicitud no puede estar vacío");
+
+            response = ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(map);
+        } else {
+
+            Usuario user = userService.findById(request.getUsuarioId());
+
+            if (request.getDireccionDestino() == null || request.getDireccionDestino().trim().isEmpty()
+                    || request.getPaquetes() < 0
+                    || request.getPeso() < 0) {
+
+                Map<String, Object> map = new HashMap<>();
+                String error = "";
+                if (request.getDireccionDestino() == null || request.getDireccionDestino().trim().isEmpty()) {
+                    if (!error.equals("")) {
+                        error += " - ";
+                    }
+                    error += "El campo 'direccion destino' es obligatorio";
+                }
+                if (request.getPaquetes() < 0) {
+                    if (!error.equals("")) {
+                        error += " - ";
+                    }
+                    error += "El campo 'paquetes' debe ser positivo";
+                }
+                if (request.getPeso() < 0) {
+                    if (!error.equals("")) {
+                        error += " - ";
+                    }
+                    error += "El campo 'peso' debe ser positivo";
+                }
+                map.put("error", error);
+
+                response = ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(map);
+            } else {
+
+                if (user == null) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("error", "El id del usuario es invalido o no existe el usuario");
+
+                    response = ResponseEntity
+                            .status(HttpStatus.NOT_FOUND)
+                            .body(map);
+                } else {
+
+                    ExpedicionGroupListDTO expedicionesGroup = expedicionService.createLote(request, true);
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("mensaje", "Expediciones guardadas con éxito");
                     map.put("insertRealizado", expedicionesGroup);
 
                     response = ResponseEntity
@@ -445,66 +450,91 @@ public class ExpedicionController {
     // http://localhost:8080/bdproyecto/api/expediciones
     // ***************************************************************************    
     // SWAGGER
-    @Operation(summary = "Actualizar una expedicion existente",
-            description = "Reemplaza completamente los datos de una expedicion identificada por su ID")
+    @Operation(summary = "Confirma una expedicion existente",
+            description = "Actualiza una expedición abierta existente con los datos recibidos y después la confirma, pasando sus cajas y terminales a tránsito")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Expedicion actualizada con éxito", content = @Content()),
         @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos", content = @Content()),
         @ApiResponse(responseCode = "404", description = "Expedicion no encontrada", content = @Content())
     })
     // ***************************************************************************
-    @PutMapping("")
-    public ResponseEntity<Map<String, Object>> update(
-            @Valid @RequestBody Expedicion exp) {
+    @PutMapping("referencia/{referenciaExpedicion}/confirmar")
+    public ResponseEntity<Map<String, Object>> confirmarLoteExistente(
+            @PathVariable String referenciaExpedicion,
+            @Valid @RequestBody ExpedicionLoteRequestDTO request) {
 
         ResponseEntity<Map<String, Object>> response;
 
-        if (exp == null) {
+        if (referenciaExpedicion == null || referenciaExpedicion.trim().isEmpty()) {
             Map<String, Object> map = new HashMap<>();
-            map.put("error", "El cuerpo de la solicitud no puede estar vacío");
+            map.put("error", "La referencia no puede estar nula");
 
             response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
         } else {
-            int id = exp.getId();
-            Expedicion existingObj = expedicionService.findById(id);
+            ExpedicionGroupListDTO dto = expedicionService.confirmarExpedicion(
+                    referenciaExpedicion,
+                    request
+            );
 
-            if (existingObj == null) {
+            if (dto == null) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("error", "Expedicion no encontrada");
-                map.put("id", id);
-
+                map.put("error", "La expedición no existe");
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
             } else {
-
-                // Actualizar campos si están presentes
-                if (exp.getFechaRecepcion() != null) {
-                    existingObj.setFechaRecepcion(exp.getFechaRecepcion());
-                }
-
-                if (exp.getDireccionDestino() != null) {
-                    existingObj.setDireccionDestino(exp.getDireccionDestino());
-                }
-
-                if (exp.getPaquetes() >= 0) {
-                    existingObj.setPaquetes(exp.getPaquetes());
-                }
-
-                if (exp.getPeso() >= 0) {
-                    existingObj.setPeso(exp.getPeso());
-                }
-
-                if (exp.getNotas() != null) {
-                    existingObj.setNotas(exp.getNotas());
-                }
-                //existingObj.setFechaModificacion(LocalDateTime.now());
-                Expedicion objPut = expedicionService.save(existingObj);
-
                 Map<String, Object> map = new HashMap<>();
-                map.put("mensaje", "Expedicion actualizada con éxito");
-                map.put("updateRealizado", objPut);
+                map.put("mensaje", "Expedición confirmada con éxito");
+                map.put("updateRealizado", dto);
 
                 response = ResponseEntity.status(HttpStatus.OK).body(map);
             }
+        }
+
+        return response;
+    }
+
+    // ****************************************************************************
+    // UPDATE (PUT)
+    // http://localhost:8080/bdproyecto/api/expediciones
+    // ***************************************************************************    
+    // SWAGGER
+    @Operation(summary = "Actualizar una expedicion existente",
+            description = "Actualizar una expedicion existente y sigue estando abierta")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Expedicion actualizada con éxito", content = @Content()),
+        @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos", content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Expedicion no encontrada", content = @Content())
+    })
+    // ***************************************************************************
+    @PutMapping("referencia/{referenciaExpedicion}/guardar")
+    public ResponseEntity<Map<String, Object>> guardarLoteExistente(
+            @PathVariable String referenciaExpedicion,
+            @Valid @RequestBody ExpedicionLoteRequestDTO request) {
+
+        ResponseEntity<Map<String, Object>> response;
+
+        if (referenciaExpedicion == null || referenciaExpedicion.isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "La referencia no puede estar nula");
+
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        } else {
+
+            ExpedicionGroupListDTO dto = expedicionService.guardarExpedicionAbierta(
+                    referenciaExpedicion,
+                    request
+            );
+
+            if (dto == null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "La expedicion es nula");
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+            } else {
+                Map<String, Object> map = new HashMap<>();
+                map.put("mensaje", "Expedicion actualizada con éxito");
+                map.put("updateRealizado", dto);
+                response = ResponseEntity.status(HttpStatus.OK).body(map);
+            }
+
         }
 
         return response;

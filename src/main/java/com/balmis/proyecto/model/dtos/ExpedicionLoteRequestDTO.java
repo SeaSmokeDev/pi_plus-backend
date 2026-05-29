@@ -4,7 +4,6 @@
  */
 package com.balmis.proyecto.model.dtos;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +22,5 @@ public class ExpedicionLoteRequestDTO {
     private int peso;
     private String notas;
     private Integer usuarioId;
-    private LocalDateTime fechaEnvio;
     private List<Integer> cajaIds;
 }
