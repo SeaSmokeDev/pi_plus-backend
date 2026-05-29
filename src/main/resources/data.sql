@@ -190,6 +190,7 @@ ALTER TABLE estanterias AUTO_INCREMENT = 101;
 -- Las etiquetas de cajas usan el mismo criterio, pero con guiones:
 -- Ejemplo: ubicación 1C1 -> caja 1-C-1-1.
 INSERT INTO ubicaciones_almacen (id, referencia, estanteria_id, nivel) VALUES
+
 (1,  '1C1', 3, 1),
 (2,  '1C2', 3, 2),
 (3,  '1D1', 4, 1),
@@ -203,6 +204,7 @@ INSERT INTO ubicaciones_almacen (id, referencia, estanteria_id, nivel) VALUES
 (11, '3C3', 23, 3),
 (12, '3D1', 24, 1);
 
+
 ALTER TABLE ubicaciones_almacen AUTO_INCREMENT = 13;
 
 -- =========================
@@ -212,6 +214,7 @@ ALTER TABLE ubicaciones_almacen AUTO_INCREMENT = 13;
 -- Las cajas en tránsito/recibidas tienen palet_id NULL.
 -- Las cajas de expediciones abiertas siguen físicamente en almacén, por eso mantienen palet_id.
 INSERT INTO palets (id, material, tipo, capacidad_max_cajas, ubicacion_almacen_id, codigo_marca, descripcion) VALUES
+
 (1,  'madera',   'europeo',   8, 1,  'Verifone', 'Palé Verifone V240 operativos'),
 (2,  'madera',   'europeo',   8, 2,  'Verifone', 'Palé Verifone V240 pendiente revisión'),
 (3,  'madera',   'europeo',   8, 3,  'Verifone', 'Palé Verifone VX680 pendiente laboratorio'),
@@ -296,6 +299,7 @@ INSERT INTO terminales_pago (id, numero_serie, modelo, marca, estado, notas, fec
 (19, 'SN10019', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-15 00:00:00', '2025-03-05 00:00:00', 10),
 (20, 'SN10020', 'A920',     'PAX',      'nivel_1', 'Configuración inicial pendiente', '2025-03-16 00:00:00', '2025-03-06 00:00:00', 10),
 
+
 -- Cajas disponibles para pruebas de agregar/desasignar
 (21, 'SN10021', 'V240',     'Verifone', 'operativo', 'Terminal operativo en almacén', '2025-03-20 00:00:00', '2025-03-10 00:00:00', 11),
 (22, 'SN10022', 'V240',     'Verifone', 'operativo', 'Terminal operativo en almacén', '2025-03-21 00:00:00', '2025-03-11 00:00:00', 11),
@@ -309,6 +313,7 @@ INSERT INTO terminales_pago (id, numero_serie, modelo, marca, estado, notas, fec
 (30, 'SN10030', 'A920',     'PAX',      'operativo', 'Terminal operativo en almacén', '2025-03-29 00:00:00', '2025-03-19 00:00:00', 15),
 (31, 'SN10031', 'A80',      'PAX',      'operativo', 'Terminal operativo en almacén', '2025-03-30 00:00:00', '2025-03-20 00:00:00', 16),
 (32, 'SN10032', 'A80',      'PAX',      'operativo', 'Terminal operativo en almacén', '2025-03-31 00:00:00', '2025-03-21 00:00:00', 16);
+
 
 ALTER TABLE terminales_pago AUTO_INCREMENT = 33;
 

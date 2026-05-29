@@ -4,6 +4,7 @@ import com.balmis.proyecto.model.Palet;
 import com.balmis.proyecto.model.MaterialPalet;
 import com.balmis.proyecto.model.TipoPalet;
 import com.balmis.proyecto.model.UbicacionAlmacen;
+import com.balmis.proyecto.model.dtos.ActualizarUbicacionPaletRequestDto;
 import com.balmis.proyecto.model.dtos.PaletCreateRequestDto;
 import com.balmis.proyecto.service.PaletService;
 import com.balmis.proyecto.service.UbicacionAlmacenService;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -270,8 +272,9 @@ public class PaletController {
         paletService.deleteById(id);
 
         Map<String, Object> map = new HashMap<>();
+        map.put("success", true);
         map.put("mensaje", "Palet eliminado con éxito");
-        map.put("deletedPalet", existingPalet);
+        map.put("paletId", id);
 
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
@@ -287,6 +290,52 @@ public class PaletController {
             @PathVariable int paletId,
             @PathVariable int cajaId) {
         Map<String, Object> result = paletService.desasignarCajaDePalet(paletId, cajaId);
+        if (Boolean.TRUE.equals(result.get("success"))) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    @Operation(summary = "Actualizar solo la ubicación de un palé",
+            description = "Permite mover un palé a otra ubicación del almacén usando su id. Si ubicacionAlmacenId es null, desasigna la ubicación actual.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Ubicación del palé actualizada con éxito"),
+        @ApiResponse(responseCode = "400", description = "Error de validación de negocio", content = @Content())
+    })
+    @PatchMapping("/{id}/ubicacion")
+    public ResponseEntity<Map<String, Object>> actualizarUbicacionPalet(
+            @PathVariable int id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Nueva ubicación del palé",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                @ExampleObject(
+                                        name = "MoverPalet",
+                                        value = """
+                                                {
+                                                  "ubicacionAlmacenId": 4
+                                                }
+                                                """
+                                ),
+                                @ExampleObject(
+                                        name = "DesasignarUbicacion",
+                                        value = """
+                                                {
+                                                  "ubicacionAlmacenId": null
+                                                }
+                                                """
+                                )
+                            }
+                    )
+            )
+            @RequestBody ActualizarUbicacionPaletRequestDto request) {
+        Map<String, Object> result = paletService.actualizarUbicacionPalet(
+                id,
+                request != null ? request.getUbicacionAlmacenId() : null
+        );
+
         if (Boolean.TRUE.equals(result.get("success"))) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }

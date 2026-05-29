@@ -4,6 +4,7 @@ import com.balmis.proyecto.model.Palet;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,4 +26,8 @@ public interface PaletRepository extends JpaRepository<Palet, Integer> {
 
     @Query(value = "SELECT * FROM palets WHERE ubicacion_almacen_id IS NULL", nativeQuery = true)
     List<Palet> findSqlFree();
+
+    @Modifying
+    @Query(value = "UPDATE palets SET ubicacion_almacen_id = :ubicacionId WHERE id = :paletId", nativeQuery = true)
+    int updateUbicacionAlmacenId(@Param("paletId") int paletId, @Param("ubicacionId") Integer ubicacionId);
 }
