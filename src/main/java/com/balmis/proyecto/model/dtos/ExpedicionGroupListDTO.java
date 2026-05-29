@@ -21,7 +21,6 @@ public class ExpedicionGroupListDTO {
     private String referenciaExpedicion;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaRecepcion;
-    private LocalDateTime fechaModificacion;
     private LocalDateTime fechaEnvio;
     private String direccionDestino;
     private String username;

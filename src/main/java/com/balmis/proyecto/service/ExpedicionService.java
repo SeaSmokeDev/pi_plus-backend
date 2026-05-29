@@ -62,66 +62,6 @@ public class ExpedicionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Expedicion> search(
-            LocalDateTime fechaCreacionDesde,
-            LocalDateTime fechaCreacionHasta,
-            LocalDateTime fechaRecepcionDesde,
-            LocalDateTime fechaRecepcionHasta,
-            Integer usuarioId,
-            String destino,
-            EstadoExpedicion estado
-    ) {
-        if (destino != null && destino.trim().isEmpty()) {
-            destino = null;
-        }
-
-        return expedicionRepository.search(
-                fechaCreacionDesde,
-                fechaCreacionHasta,
-                fechaRecepcionDesde,
-                fechaRecepcionHasta,
-                usuarioId,
-                destino,
-                estado
-        );
-    }
-
-    @Transactional(readOnly = true)
-    public List<ExpedicionListDTO> searchForList(
-            LocalDateTime fechaCreacionDesde,
-            LocalDateTime fechaCreacionHasta,
-            LocalDateTime fechaRecepcionDesde,
-            LocalDateTime fechaRecepcionHasta,
-            LocalDateTime fechaEnvioInicioDia,
-            LocalDateTime fechaEnvioFinDia,
-            Integer usuarioId,
-            String destino,
-            String referenciaExpedicion,
-            EstadoExpedicion estado
-    ) {
-        if (destino != null && destino.trim().isEmpty()) {
-            destino = null;
-        }
-
-        if (referenciaExpedicion != null && referenciaExpedicion.trim().isEmpty()) {
-            referenciaExpedicion = null;
-        }
-
-        return expedicionRepository.searchForList(
-                fechaCreacionDesde,
-                fechaCreacionHasta,
-                fechaRecepcionDesde,
-                fechaRecepcionHasta,
-                fechaEnvioInicioDia,
-                fechaEnvioFinDia,
-                usuarioId,
-                destino,
-                referenciaExpedicion,
-                estado
-        );
-    }
-
-    @Transactional(readOnly = true)
     public List<ExpedicionListDTO> findAllForList() {
         return expedicionRepository.findAllForList();
     }
