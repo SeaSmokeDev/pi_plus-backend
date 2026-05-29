@@ -5,6 +5,7 @@ import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
+import com.balmis.proyecto.model.dtos.ExpedicionLoteEditDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionLoteRequestDTO;
 import com.balmis.proyecto.model.dtos.ExpeditionQuickViewDTO;
 import com.balmis.proyecto.service.ExpedicionService;
@@ -238,6 +239,29 @@ public class ExpedicionController {
             @PathVariable String referenciaExpedicion
     ) {
         ExpeditionQuickViewDTO dto = expedicionService.findQuickViewByReferencia(referenciaExpedicion);
+
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(dto);
+    }
+    
+    // *****************************************************************************************
+    // http://localhost:8080/bdproyecto/api/expediciones/referencia/EXP-20260505-001/edit
+    // ***************************************************************************************** 
+    // SWAGGER
+    @Operation(summary = "Obtener un grupo de expedicion",
+            description = "Retorna un grupo de expedicion")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Grupo expedicion obtenida con éxito")
+    })
+    // ***************************************************************************
+    @GetMapping("/referencia/{referenciaExpedicion}/edit")
+    public ResponseEntity<ExpedicionLoteEditDTO> getLoteForEdit(
+            @PathVariable String referenciaExpedicion
+    ) {
+        ExpedicionLoteEditDTO dto = expedicionService.findLoteForEditByReferencia(referenciaExpedicion);
 
         if (dto == null) {
             return ResponseEntity.notFound().build();

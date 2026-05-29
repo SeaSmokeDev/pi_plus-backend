@@ -6,11 +6,14 @@ import com.balmis.proyecto.model.EstadoTerminal;
 import com.balmis.proyecto.model.Usuario;
 import com.balmis.proyecto.model.Expedicion;
 import com.balmis.proyecto.model.Terminal;
+import com.balmis.proyecto.model.dtos.CajaExpedicionDetailDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionGroupListDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionListDTO;
+import com.balmis.proyecto.model.dtos.ExpedicionLoteEditDTO;
 import com.balmis.proyecto.model.dtos.ExpedicionLoteRequestDTO;
 import com.balmis.proyecto.model.dtos.ExpeditionQuickViewDTO;
 import com.balmis.proyecto.model.dtos.ExpeditionQuickViewPaymentDTO;
+import com.balmis.proyecto.model.dtos.TerminalCajaDTO;
 import com.balmis.proyecto.repository.CajaRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +111,67 @@ public class ExpedicionService {
                 destino,
                 referenciaExpedicion,
                 estado
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ExpedicionLoteEditDTO findLoteForEditByReferencia(String referenciaExpedicion) {
+        if (referenciaExpedicion == null || referenciaExpedicion.trim().isEmpty()) {
+            throw new RuntimeException("La referencia de expedición es obligatoria");
+        }
+
+        String referencia = referenciaExpedicion.trim();
+
+        List<Expedicion> expediciones = expedicionRepository.findByReferenciaWithQuickViewData(referencia);
+
+        if (expediciones == null || expediciones.isEmpty()) {
+            return null;
+        }
+
+        validarExpedicionAbierta(expediciones);
+
+        Expedicion primera = expediciones.get(0);
+
+        String username = null;
+
+        if (primera.getUsuario() != null && primera.getUsuario().getUsuarioSecurity() != null) {
+            username = primera.getUsuario().getUsuarioSecurity().getUsername();
+        }
+
+        List<CajaExpedicionDetailDTO> cajas = expediciones.stream()
+                .filter(expedicion -> expedicion.getCaja() != null)
+                .map(expedicion -> {
+                    Caja caja = expedicion.getCaja();
+
+                    List<TerminalCajaDTO> terminales = caja.getTerminales()
+                            .stream()
+                            .map(terminal -> new TerminalCajaDTO(
+                            terminal.getModelo(),
+                            terminal.getMarca(),
+                            terminal.getEstado(),
+                            terminal.getNumeroSerie()
+                    ))
+                            .toList();
+
+                    return new CajaExpedicionDetailDTO(
+                            caja.getId(),
+                            caja.getEtiqueta(),
+                            caja.getModeloProducto(),
+                            (long) terminales.size(),
+                            terminales
+                    );
+                })
+                .toList();
+
+        return new ExpedicionLoteEditDTO(
+                primera.getReferenciaExpedicion(),
+                primera.getDireccionDestino(),
+                primera.getPaquetes(),
+                primera.getPeso(),
+                primera.getNotas(),
+                primera.getUsuario() != null ? primera.getUsuario().getId() : null,
+                username,
+                cajas
         );
     }
 
@@ -376,7 +440,6 @@ public class ExpedicionService {
 
         List<Expedicion> expedicionesAEliminar = new ArrayList<>();
 
-
         for (Expedicion expedicion : expedicionesActuales) {
             Caja cajaActual = expedicion.getCaja();
 
@@ -397,11 +460,9 @@ public class ExpedicionService {
             expedicionesActuales.removeAll(expedicionesAEliminar);
         }
 
-
         for (Expedicion expedicion : expedicionesActuales) {
             actualizarDatosExpedicionAbierta(expedicion, request, usuario, now);
         }
-
 
         List<Integer> cajaIdsActuales = expedicionesActuales.stream()
                 .map(expedicion -> expedicion.getCaja().getId())
@@ -447,7 +508,7 @@ public class ExpedicionService {
     private void validarExpedicionAbierta(List<Expedicion> expediciones) {
         for (Expedicion expedicion : expediciones) {
             if (expedicion.getEstado() != EstadoExpedicion.abierta) {
-                throw new RuntimeException("Solo se pueden guardar cambios en expediciones abiertas");
+                throw new RuntimeException("Solo se pueden editar expediciones abiertas");
             }
         }
     }

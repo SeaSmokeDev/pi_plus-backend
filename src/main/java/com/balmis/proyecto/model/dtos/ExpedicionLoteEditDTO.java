@@ -8,7 +8,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 /**
  *
  * @author Ian
@@ -16,11 +15,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpedicionLoteRequestDTO {
+public class ExpedicionLoteEditDTO {
+    private String referenciaExpedicion;
     private String direccionDestino;
-    private int paquetes;
-    private int peso;
+    private Integer paquetes;
+    private Integer peso;
     private String notas;
     private Integer usuarioId;
-    private List<Integer> cajaIds;
+    private String username;
+    private List<CajaExpedicionDetailDTO> cajas;
 }
