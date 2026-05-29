@@ -212,15 +212,15 @@ public class ExpedicionService {
 
             validarCajaDisponibleParaExpedicion(caja);
 
-            Expedicion expedicion = crearExpedicionDesdeLote(request, usu, caja, referencia, now, fechaEnvio, estadoInicial);
-
-            expediciones.add(expedicion);
-
             if (confirmar) {
                 marcarCajaEnTransito(caja);
             } else {
                 marcarCajaPendienteTransito(caja);
             }
+            Expedicion expedicion = crearExpedicionDesdeLote(request, usu, caja, referencia, now, fechaEnvio, estadoInicial);
+
+            expediciones.add(expedicion);
+
         }
 
         expedicionRepository.saveAll(expediciones);
@@ -346,8 +346,25 @@ public class ExpedicionService {
     }
 
     @Transactional
-    public ExpedicionGroupListDTO confirmarExpedicion(String referenciaExpedicion) {
-        List<Expedicion> expediciones = expedicionRepository.findByReferenciaWithCajasAndTerminales(referenciaExpedicion.trim());
+    public ExpedicionGroupListDTO confirmarExpedicion(String referenciaExpedicion, ExpedicionLoteRequestDTO request) {
+
+        if (referenciaExpedicion == null || referenciaExpedicion.trim().isEmpty()) {
+            throw new RuntimeException("La referencia de expedición es obligatoria");
+        }
+
+        if (request == null) {
+            throw new RuntimeException("Los datos de la expedición son obligatorios");
+        }
+
+        String referencia = referenciaExpedicion.trim();
+
+        ExpedicionGroupListDTO dtoGuardado = guardarExpedicionAbierta(referencia, request);
+
+        if (dtoGuardado == null) {
+            return null;
+        }
+
+        List<Expedicion> expediciones = expedicionRepository.findByReferenciaWithCajasAndTerminales(referencia);
 
         if (expediciones == null || expediciones.isEmpty()) {
             return null;
