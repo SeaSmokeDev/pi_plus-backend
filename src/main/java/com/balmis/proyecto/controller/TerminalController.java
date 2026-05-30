@@ -1,6 +1,11 @@
 package com.balmis.proyecto.controller;
 
 import com.balmis.proyecto.model.Terminal;
+import com.balmis.proyecto.model.dtos.TerminalCreateRequestDTO;
+import com.balmis.proyecto.model.dtos.TerminalCreateResponseDTO;
+import com.balmis.proyecto.model.dtos.TerminalEditResponseDTO;
+import com.balmis.proyecto.model.dtos.TerminalMarcaModeloDTO;
+import com.balmis.proyecto.model.dtos.TerminalUpdateRequestDTO;
 import com.balmis.proyecto.service.TerminalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -101,20 +106,63 @@ public class TerminalController {
         }
     }
 
+    // SWAGGER
+    @Operation(summary = "Obtener terminal por número de serie para editar",
+            description = "Retorna un Terminal específico basado en su número de serie (SN)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Terminal encontrado"),
+        @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
+    })
+    // ***************************************************************************
+    @GetMapping("/{numeroSerie}/edit")
+    public ResponseEntity<Map<String, Object>> getTerminalForEdit(
+            @PathVariable String numeroSerie
+    ) {
+        ResponseEntity<Map<String, Object>> response;
+
+        if (numeroSerie == null || numeroSerie.trim().isEmpty()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", "El número de serie no puede estar vacío");
+
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
+        } else {
+            TerminalEditResponseDTO dto = terminalService.findTerminalForEditByNumeroSerie(numeroSerie);
+
+            if (dto == null) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("error", "Terminal no encontrado");
+
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
+            } else {
+                Map<String, Object> map = new HashMap<>();
+                map.put("mensaje", "Terminal obtenido correctamente");
+                map.put("terminal", dto);
+
+                response = ResponseEntity.status(HttpStatus.OK).body(map);
+            }
+        }
+
+        return response;
+    }
+
     // http://localhost:8080/apirest/terminales/mayor/7
     // ***************************************************************************    
     // SWAGGER
-    @Operation(summary = "Obtener terminales mayores de un ID",
-            description = "Retorna una lista con todos los terminales con ID mayor que un valor")
+    @Operation(summary = "Obtener las marcas y modelos",
+            description = "Retorna una lista con todos las marcas y modelos de los terminales")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Terminales obtenidos con éxito")
+        @ApiResponse(responseCode = "200", description = "Marcas y modelos obtenidos con éxito")
     })
     // ***************************************************************************    
-    @GetMapping("/mayor/{id}")
-    public ResponseEntity<List<Terminal>> showTerminalesMayores(@PathVariable int id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(terminalService.findByIdGrThan(id));
+    @GetMapping("/marcas-modelos")
+    public ResponseEntity<Map<String, Object>> getMarcasModelos() {
+        List<TerminalMarcaModeloDTO> marcasModelos = terminalService.findDistinctMarcasModelos();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("mensaje", "Marcas y modelos obtenidos correctamente");
+        map.put("marcasModelos", marcasModelos);
+
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
     // http://localhost:8080/apirest/terminales/count
@@ -159,11 +207,11 @@ public class TerminalController {
 
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> createTerminal(
-            @Valid @RequestBody Terminal terminal) {
+            @Valid @RequestBody TerminalCreateRequestDTO request) {
 
         ResponseEntity<Map<String, Object>> response;
 
-        if (terminal == null) {
+        if (request == null) {
             Map<String, Object> map = new HashMap<>();
             map.put("error", "El cuerpo de la solicitud no puede estar vacío");
 
@@ -172,27 +220,25 @@ public class TerminalController {
                     .body(map);
         } else {
 
-            if (terminal.getNumeroSerie() == null || terminal.getModelo()== null
-                || terminal.getMarca() == null || terminal.getEstado() == null
-                || terminal.getFechaCreacion() == null || terminal.getFechaIngreso() == null){
+            if (request.getModelo() == null
+                    || request.getMarca() == null || request.getEstado() == null) {
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("error", "Los campos 'numero_serie', 'modelo' , 'marca', 'estado', 'fecha_ingreso' y 'fecha_creacion' son obligatorios");
+                map.put("error", "Los campos 'modelo' , 'marca', 'estado' son obligatorios");
 
                 response = ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(map);
             } else {
-                System.out.println(terminal);
-                Terminal terminalPost = terminalService.save(terminal);
+
+                TerminalCreateResponseDTO dto = terminalService.createTerminal(request);
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("mensaje", "Terminal creado con éxito");
-                map.put("insertterminal", terminalPost);
+                map.put("mensaje", dto.getMensaje());
+                map.put("numeroSerie", dto.getNumeroSerie());
 
-                response = ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(map);
+                return ResponseEntity.status(HttpStatus.CREATED).body(map);
+
             }
         }
 
@@ -212,33 +258,30 @@ public class TerminalController {
         @ApiResponse(responseCode = "404", description = "Terminal no encontrado", content = @Content())
     })
     // ***************************************************************************    
-    @PutMapping("/sn/{numeroSerie}")
+    @PutMapping("/{numeroSerie}")
     public ResponseEntity<Map<String, Object>> updateterminalByNumeroSerie(
             @PathVariable String numeroSerie,
-            @Valid @RequestBody Terminal terminalUpdate) {
+            @Valid @RequestBody TerminalUpdateRequestDTO request) {
 
         ResponseEntity<Map<String, Object>> response;
 
-        if (terminalUpdate == null) {
+        if (numeroSerie == null || numeroSerie.trim().isEmpty()) {
             Map<String, Object> map = new HashMap<>();
-            map.put("error", "El cuerpo de la solicitud no puede estar vacío");
+            map.put("error", "El número de serie no puede estar vacío");
 
             response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
         } else {
-            Terminal existingTerminal = terminalService.findByNumeroSerie(numeroSerie);
+            Terminal terminal = terminalService.updateTerminal(numeroSerie, request);
 
-            if (existingTerminal == null) {
+            if (terminal == null) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("error", "Terminal no encontrado");
-                map.put("numeroSerie", numeroSerie);
 
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(map);
             } else {
-                Terminal usuPut = terminalService.updateByNumeroSerie(numeroSerie, terminalUpdate);
-
                 Map<String, Object> map = new HashMap<>();
-                map.put("mensaje", "Terminal actualizado con éxito");
-                map.put("updatedterminal", usuPut);
+                map.put("mensaje", "Terminal actualizado correctamente");
+                map.put("numeroSerie", terminal.getNumeroSerie());
 
                 response = ResponseEntity.status(HttpStatus.OK).body(map);
             }
