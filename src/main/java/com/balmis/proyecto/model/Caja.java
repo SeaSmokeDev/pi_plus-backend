@@ -53,7 +53,7 @@ public class Caja implements Serializable {
     @Schema(description = "Descripción de la etiqueta", example = "P2E4N4C3")
     @NotBlank(message = "La descripción es obligatoria")
     @Size(min=1, max=100, message = "La descripción no puede tener más de 100 caracteres")
-    @Column(name = "etiqueta", nullable = false, unique = true) 
+    @Column(name = "etiqueta", nullable = false, unique = false) 
     private String etiqueta;
 
     @Schema(description = "Descripción del producto", example = "Terminales Samsung - Link/2500 LE")
