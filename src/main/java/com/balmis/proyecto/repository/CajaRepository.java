@@ -52,7 +52,6 @@ public interface CajaRepository extends JpaRepository<Caja, Integer> {
     """)
     Caja findByEtiquetaWithTerminales(@Param("etiqueta") String etiqueta);
 
-
     @Query("""
         SELECT c
         FROM Caja c
