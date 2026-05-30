@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS palets (
 -- =========================
 CREATE TABLE IF NOT EXISTS cajas (
     id INT NOT NULL AUTO_INCREMENT,
-    etiqueta VARCHAR(255) NOT NULL UNIQUE COMMENT 'Etiqueta de ubicación/referencia',
+    etiqueta VARCHAR(255) NOT NULL COMMENT 'Etiqueta de ubicación/referencia',
     modelo_producto VARCHAR(255),
     max_capacity INT NOT NULL DEFAULT 100 COMMENT 'Capacidad maxima de terminales en caja',
     palet_id INT DEFAULT NULL,

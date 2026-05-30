@@ -330,6 +330,8 @@ public class ExpedicionService {
         for (Terminal terminal : caja.getTerminales()) {
             terminal.setEstado(EstadoTerminal.en_transito);
         }
+        String etiquetaNueva = "EXP-" + caja.getEtiqueta();
+        caja.setEtiqueta(etiquetaNueva);
 
         caja.setPalet(null);
 
