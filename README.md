@@ -1,5 +1,17 @@
 # pi_plus-backend
 
+Backend de gestión de almacén y terminales para PI-PLUS.
+
+## Setup
+Para preparar entorno y levantar el backend, consulta:
+
+- [Setup Backend.md](./Setup%20Backend.md)
+
+## Documentación TFG
+Documentación funcional/técnica del backend:
+
+- [Documentación TFG - Backend.md](./Documentaci%C3%B3n%20TFG%20-%20Backend.md)
+
 ## Rutas de entrada al arrancar la aplicación
 
 Configuración actual en `application.properties`:
@@ -125,6 +137,7 @@ Body recomendado para asignar caja existente a palé:
 - `POST /api/palets`
 - `PUT /api/palets`
 - `PATCH /api/palets/{id}/ubicacion` (asignar o desasignar ubicación)
+- `PATCH /api/palets/{id}/descripcion` (editar solo descripción)
 - `DELETE /api/palets/{paletId}/cajas/{cajaId}` (desasignar caja de palé)
 - `DELETE /api/palets/{id}`
 
@@ -155,6 +168,14 @@ Para desasignar:
 ```json
 {
   "ubicacionAlmacenId": null
+}
+```
+
+Body para editar descripción de palé:
+
+```json
+{
+  "descripcion": "Palé PAX A920 reservado para expedición urgente"
 }
 ```
 
