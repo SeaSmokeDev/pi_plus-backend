@@ -4,6 +4,7 @@ import com.balmis.proyecto.model.Palet;
 import com.balmis.proyecto.model.MaterialPalet;
 import com.balmis.proyecto.model.TipoPalet;
 import com.balmis.proyecto.model.UbicacionAlmacen;
+import com.balmis.proyecto.model.dtos.ActualizarDescripcionPaletRequestDto;
 import com.balmis.proyecto.model.dtos.ActualizarUbicacionPaletRequestDto;
 import com.balmis.proyecto.model.dtos.PaletCreateRequestDto;
 import com.balmis.proyecto.service.PaletService;
@@ -334,6 +335,43 @@ public class PaletController {
         Map<String, Object> result = paletService.actualizarUbicacionPalet(
                 id,
                 request != null ? request.getUbicacionAlmacenId() : null
+        );
+
+        if (Boolean.TRUE.equals(result.get("success"))) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    @Operation(summary = "Actualizar solo la descripción de un palé",
+            description = "Permite editar únicamente el campo descripción del palé.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Descripción del palé actualizada con éxito"),
+        @ApiResponse(responseCode = "400", description = "Error de validación de negocio", content = @Content())
+    })
+    @PatchMapping("/{id}/descripcion")
+    public ResponseEntity<Map<String, Object>> actualizarDescripcionPalet(
+            @PathVariable int id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Nueva descripción del palé",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "ActualizarDescripcionPalet",
+                                    value = """
+                                            {
+                                              "descripcion": "Palé PAX A920 reservado para expedición urgente"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            @RequestBody ActualizarDescripcionPaletRequestDto request) {
+
+        Map<String, Object> result = paletService.actualizarDescripcionPalet(
+                id,
+                request != null ? request.getDescripcion() : null
         );
 
         if (Boolean.TRUE.equals(result.get("success"))) {
