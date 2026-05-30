@@ -181,6 +181,36 @@ public class PaletService {
         );
     }
 
+    @Transactional
+    public Map<String, Object> actualizarDescripcionPalet(int paletId, String descripcion) {
+        Palet palet = paletRepository.findSqlById(paletId);
+        if (palet == null) {
+            return Map.of(
+                    "success", false,
+                    "error", "Palet no encontrado",
+                    "paletId", paletId
+            );
+        }
+
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            return Map.of(
+                    "success", false,
+                    "error", "La 'descripcion' es obligatoria",
+                    "paletId", paletId
+            );
+        }
+
+        palet.setDescripcion(descripcion.trim());
+        paletRepository.save(palet);
+
+        return Map.of(
+                "success", true,
+                "mensaje", "Descripción del palet actualizada con éxito",
+                "paletId", paletId,
+                "descripcion", palet.getDescripcion()
+        );
+    }
+
     // ************************
     // ACTUALIZACIONES
     // ************************
